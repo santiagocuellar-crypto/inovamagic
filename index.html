@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovalogic | {{ config.colegio }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --accent: #2563eb; 
+            --accent-glow: rgba(37, 99, 235, 0.25);
+            --text: #0f172a; 
+            --bg: #f8fafc; 
+            --white: rgba(255, 255, 255, 0.75); 
+            --nequi: #7d3291; 
+            --success: #10b981; 
+            --border: rgba(226, 232, 240, 0.8);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --sidebar-bg: rgba(255, 255, 255, 0.65);
+            --search-bg: rgba(241, 245, 249, 0.9);
+            --glass-blur: blur(16px);
+        }
+
+        [data-theme="dark"] {
+            --text: #f8fafc;
+            --bg: #070b13;
+            --white: rgba(30, 41, 59, 0.65);
+            --border: rgba(51, 65, 85, 0.4);
+            --card-bg: rgba(30, 41, 59, 0.75);
+            --sidebar-bg: rgba(15, 23, 42, 0.55);
+            --search-bg: rgba(51, 65, 85, 0.75);
+            --accent-glow: rgba(59, 130, 246, 0.35);
+        }
+
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.3s, color 0.3s, border-color 0.3s; }
+        
+        body { 
+            background: var(--bg); 
+            margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; color: var(--text); position: relative; 
+        }
+
+        /* 🪐 1. FONDO DE PARTÍCULAS DINÁMICAS CSS */
+        .bg-particles {
+            position: absolute; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; opacity: 0.6;
+        }
+        .particle {
+            position: absolute; background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            border-radius: 50%; filter: blur(40px); animation: floatParticle 18s infinite linear;
+        }
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            50% { opacity: 0.4; }
+            100% { transform: translateY(-20vh) scale(1.5); opacity: 0; }
+        }
+
+        header { 
+            background: var(--white); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            padding: 15px 30px; border-bottom: 1px solid var(--border); 
+            display: flex; justify-content: space-between; align-items: center; z-index: 100; position: relative;
+        }
+        
+        .search-container { flex: 1; max-width: 500px; background: var(--search-bg); border-radius: 12px; padding: 10px 20px; margin: 0 20px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); }
+        .search-container input { border: none; background: transparent; width: 100%; outline: none; color: var(--text); }
+        .voice-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; padding: 0; }
+        .voice-active { animation: listeningPulse 1s infinite alternate; color: #ef4444 !important; }
+        @keyframes listeningPulse { from { transform: scale(1); opacity: 1; } to { transform: scale(1.2); opacity: 0.6; } }
+
+        .dark-toggle { background: var(--search-bg); border: 1px solid var(--border); color: var(--text); padding: 8px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+
+        /* 🔥 WIDGET EN VIVO MELA */
+        .live-counter {
+            background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.25);
+            color: #ef4444; font-size: 0.78rem; font-weight: 700; padding: 6px 12px; border-radius: 20px;
+            display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.1);
+        }
+        .live-pulse { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; animation: pulseRing 1.2s infinite alternate; }
+        @keyframes pulseRing { from { transform: scale(0.8); opacity: 0.5; } to { transform: scale(1.3); opacity: 1; } }
+
+        .main-layout { display: flex; flex: 1; overflow: hidden; position: relative; z-index: 10; }
+        
+        .sidebar { 
+            width: 290px; background: var(--sidebar-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; 
+        }
+        .sidebar h3 { font-size: 0.75rem; text-transform: uppercase; color: #64748b; margin-bottom: 5px; margin-top: 15px; letter-spacing: 0.5px; }
+        .cat-btn { background: transparent; border: 1px solid transparent; padding: 12px; text-align: left; border-radius: 10px; cursor: pointer; font-weight: 600; color: var(--text); transition: all 0.2s ease; }
+        .cat-btn:hover, .cat-btn.active { background: rgba(37, 99, 235, 0.1); color: var(--accent); border-color: rgba(37, 99, 235, 0.2); transform: translateX(4px); }
+
+        .content-area { flex: 1; padding: 25px; overflow-y: auto; position: relative; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; }
+        
+        /* 💎 CARDS CON EFECTO FLUORESCENTE MEJORADO */
+        .card { 
+            background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border); 
+            display: flex; flex-direction: column; overflow: hidden; position: relative;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
+        }
+        .card:hover {
+            transform: translateY(-8px); border-color: var(--accent); box-shadow: 0 15px 30px var(--accent-glow);
+        }
+        
+        .stock-badge { position: absolute; top: 12px; left: 12px; padding: 5px 9px; border-radius: 8px; font-size: 0.68rem; font-weight: 800; color: white; z-index: 10; }
+        .stock-high { background: var(--success); }
+        .stock-low { background: #ef4444; animation: blinker 1.5s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0.5; } }
+
+        .img-box { width: 100%; aspect-ratio: 1/1; overflow: hidden; }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .card:hover .img-box img { transform: scale(1.07); }
+        
+        .content { padding: 18px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .price { font-size: 1.25rem; font-weight: 800; color: #3b82f6; margin: 8px 0; }
+        
+        select { width: 100%; padding: 9px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px; font-size: 0.8rem; background: var(--search-bg); color: var(--text); }
+        
+        .add-btn { 
+            width: 100%; background: var(--text); color: var(--bg); border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; 
+            position: relative; overflow: hidden;
+        }
+        [data-theme="dark"] .add-btn { background: #2563eb; color: white; }
+
+        /* 🎉 ANIMACIÓN DE CONFETI EMISOR (Efecto Burst) */
+        .confetti-particle {
+            position: fixed; pointer-events: none; width: 8px; height: 8px; border-radius: 50%; z-index: 10000;
+            animation: explodeConfetti 0.7s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        }
+        @keyframes explodeConfetti {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) scale(0.2); opacity: 0; }
+        }
+
+        /* LOADERS ESQUELETO */
+        .skeleton-wrapper { display: none; }
+        .skeleton-wrapper.active { display: grid; }
+        .skeleton-card { background: var(--card-bg); border-radius: 20px; height: 340px; border: 1px solid var(--border); padding: 15px; display: flex; flex-direction: column; gap: 12px; position: relative; overflow: hidden; }
+        .skeleton-img { width: 100%; aspect-ratio: 1/1; background: rgba(100,116,139,0.15); border-radius: 12px; }
+        .skeleton-line { height: 14px; background: rgba(100,116,139,0.15); border-radius: 6px; width: 80%; }
+        .skeleton-line.short { width: 40%; }
+        .skeleton-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); transform: translateX(-100%); animation: loadingSweep 1.5s infinite; }
+        @keyframes loadingSweep { 100% { transform: translateX(100%); } }
+
+        .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal.active { display: flex; }
+        .modal-box { background: var(--card-bg); border: 1px solid var(--border); backdrop-filter: var(--glass-blur); padding: 30px; border-radius: 24px; width: 90%; max-width: 450px; position: relative; color: var(--text); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+
+        .bottom-bar { background: var(--white); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); padding: 15px 40px; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; gap: 20px; z-index: 90; position: relative; }
+        
+        .budget-container { width: 100%; background: rgba(100,116,139,0.2); height: 14px; border-radius: 20px; overflow: hidden; position: relative; }
+        .budget-bar { height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); width: 0%; transition: width 1s ease-in-out; }
+        
+        .coupon-section { background: rgba(100,116,139,0.05); padding: 12px; border-radius: 12px; border: 1px dashed var(--accent); margin-top: 5px; }
+        .coupon-box { display: flex; gap: 5px; margin-top: 8px; }
+        .coupon-box input { flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--search-bg); color: var(--text); text-transform: uppercase; font-weight: 700; }
+        .coupon-box button { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+        .cyber-panel { background: #0f172a; color: #10b981; padding: 15px; border-radius: 12px; font-family: monospace; font-size: 0.8rem; border: 1px solid #1e293b; margin-top: 10px; }
+        .cyber-switch { background: #ef4444; color: white; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        
+        #matrix-alarm { display: none; position: fixed; inset: 0; background: rgba(239, 68, 68, 0.15); z-index: 5000; pointer-events: none; border: 10px solid #ef4444; animation: pulse 0.5s infinite alternate; }
+        @keyframes pulse { from { opacity: 0.3; } to { opacity: 1; } }
+
+        .roulette-container { display: flex; flex-direction: column; align-items: center; background: rgba(100,116,139,0.05); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-top: 10px; text-align: center; }
+        .wheel-wrapper { position: relative; width: 130px; height: 130px; margin-bottom: 8px; }
+        .wheel { width: 100%; height: 100%; border-radius: 50%; border: 4px solid #0f172a; background: conic-gradient(#ef4444 0deg 90deg, #3b82f6 90deg 180deg, #10b981 180deg 270deg, #f59e0b 270deg 360deg); transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1); }
+        .wheel-pointer { position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 15px solid #6366f1; z-index: 10; }
+        .wheel-btn { width: 100%; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border: none; padding: 8px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .wheel-btn:disabled { background: #64748b; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <div class="bg-particles" id="particle-container"></div>
+    <div id="matrix-alarm"></div>
+
+    <header>
+        <div style="font-weight: 900; color: var(--accent); font-size: 1.3rem; letter-spacing: -0.5px;">INNOVALOGIC CORE 🚀</div>
+        
+        <div class="search-container">
+            🔍 <input type="text" id="search-input" placeholder="¿Qué buscas hoy?" onkeyup="filterProducts(this.value)">
+            <button class="voice-btn" id="voice-trigger" onclick="startVoiceSearch()">🎙️</button>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div class="live-counter">
+                <div class="live-pulse"></div>
+                <span id="live-users-txt">🔥 12 alumnos en línea</span>
+            </div>
+            <button class="dark-toggle" onclick="toggleTheme()">
+                <span id="theme-icon">🌙</span> <span id="theme-text">Modo Oscuro</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <h3>Categorías</h3>
+            <button class="cat-btn active" onclick="filterByCategory('todos', this)">📂 Todos</button>
+            <button class="cat-btn" onclick="filterByCategory('uniformes', this)">👕 Uniformes</button>
+            <button class="cat-btn" onclick="filterByCategory('escolar', this)">📚 Escolar</button>
+            <button class="cat-btn" onclick="filterByCategory('belleza', this)">💄 Belleza</button>
+            <button class="cat-btn" onclick="filterByCategory('construccion', this)">🎨 Obra/Pintura</button>
+            <button class="cat-btn" onclick="filterByCategory('deportes', this)">⚽ Deportes</button>
+
+            <h3>Fidelización Premium</h3>
+            <div class="roulette-container">
+                <div class="wheel-wrapper">
+                    <div class="wheel-pointer"></div>
+                    <div class="wheel" id="lucky-wheel"></div>
+                </div>
+                <button class="wheel-btn" id="spin-btn" onclick="spinWheel()">Girar Ruleta de la Suerte</button>
+                <small id="wheel-msg" style="font-size: 0.7rem; font-weight: bold; margin-top: 5px; color: #64748b;"></small>
+            </div>
+
+            <h3>Cupones</h3>
+            <div class="coupon-section">
+                <small style="font-weight: 800; color: var(--accent);">¿Tienes un código promocional?</small>
+                <div class="coupon-box">
+                    <input type="text" id="coupon-input" placeholder="Ej: EVARISTO50">
+                    <button onclick="cart.validarCupon()">Usar</button>
+                </div>
+                <div id="coupon-status" style="font-size: 0.75rem; margin-top: 5px; font-weight: bold;"></div>
+            </div>
+
+            <h3>Ciberseguridad</h3>
+            <div class="cyber-panel">
+                <div>⚡ SHIELD DE INFRAESTRUCTURA</div>
+                <div id="cyber-status" style="color: #64748b; margin: 4px 0;">Estado: Protegido (Firewall Activo)</div>
+                <button class="cyber-switch" id="cyber-btn" onclick="triggerCyberTest()">Simular Ataque DDoS de Prueba</button>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <div class="grid skeleton-wrapper active" id="skeleton-grid">
+                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>
+                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>
+                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>
+                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>
+            </div>
+
+            <div class="grid" id="main-grid" style="display: none;">
+                {% for p in catalogo %}
+                <div class="card" data-name="{{ p.nombre.lower() }}" data-cat="{{ p.cat }}">
+                    
+                    {% if p.stock <= 3 %}
+                    <span class="stock-badge stock-low">⚠️ ¡Solo {{ p.stock }} Disp!</span>
+                    {% else %}
+                    <span class="stock-badge stock-high">✔ Stock: {{ p.stock }}</span>
+                    {% endif %}
+
+                    <div class="img-box"><img src="{{ p.img }}"></div>
+                    <div class="content">
+                        <div>
+                            <small style="color:#64748b; font-weight: bold; text-transform: uppercase; font-size: 0.7rem;">{{ p.prov }}</small>
+                            <h3 style="font-size:0.95rem; margin:5px 0; font-weight: 700;">{{ p.nombre }}</h3>
+                        </div>
+                        <div>
+                            <div class="price">$ {{ p.precio_f }}</div>
+
+                            {% if p.tallas %}
+                            <select id="t-{{ p.id }}">
+                                <option value="">Talla...</option>
+                                {% for t in p.tallas %}<option value="{{ t }}">Talla {{ t }}</option>{% endfor %}
+                            </select>
+                            {% endif %}
+
+                            {% if p.especialidades %}
+                            <select id="e-{{ p.id }}">
+                                <option value="">Especialidad...</option>
+                                {% for e in p.especialidades %}<option value="{{ e }}">{{ e }}</option>{% endfor %}
+                            </select>
+                            {% endif %}
+
+                            <button class="add-btn" onclick="triggerConfetti(event); cart.add('{{ p.nombre }}', {{ p.precio }}, '{{ p.id }}')">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </main>
+    </div>
+
+    <div class="bottom-bar">
+        <div onclick="cart.showDatos()" style="cursor:pointer; font-weight:700;">
+            🛒 Carrito: <span id="count">0</span> arts
+        </div>
+        
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <span style="font-size: 0.75rem; font-weight: bold; margin-bottom: 3px; color: #475569;">
+                Presupuesto y Capitalización del Proyecto: <span id="budget-txt">$ 0</span> / $ {{ "{:,.0f}".format(meta).replace(",", ".") }}
+            </span>
+            <div class="budget-container">
+                <div class="budget-bar" id="budget-bar-fill"></div>
+            </div>
+        </div>
+
+        <div id="total" style="font-size: 1.3rem; font-weight:800; color:var(--accent); text-align: right;">$ 0</div>
+    </div>
+
+    <div id="modal-recibo" class="modal">
+        <div class="modal-box" style="position: relative; padding-top: 40px;">
+            <button onclick="cerrarRecibo()" style="position: absolute; top: 15px; right: 15px; background: #ef4444; border: none; border-radius: 50%; width: 32px; height: 32px; font-weight: 800; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; z-index: 10000; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">✕</button>
+
+            <h2 style="text-align:center; color:var(--nequi); margin:0; font-weight: 800;">PASARELA DIRECTA NEQUI</h2>
+            <p style="text-align:center; font-size:0.8rem; color:#64748b; margin-top:5px;">Innovalogic Interoperable QR Gateway</p>
+            
+            <div id="recibo-info" style="margin: 15px 0; font-size: 0.9rem; border-top: 1px dashed rgba(100,116,139,0.3); padding-top: 15px;"></div>
+            
+            <div style="background: rgba(100,116,139,0.05); border: 1px dashed var(--accent); padding: 10px; border-radius: 10px; margin-bottom: 12px;">
+                <label style="font-size: 0.75rem; font-weight: bold; display: block; margin-bottom: 4px;">📍 Selecciona tu Bloque de Entrega:</label>
+                <select id="logistica-bloque" onchange="calcularTiempoEntrega()" style="margin-bottom: 4px;">
+                    <option value="">Seleccionar ubicación...</option>
+                    <option value="A">Bloque A (Sistemas / Administrativo)</option>
+                    <option value="B">Bloque B (Talleres / Técnico)</option>
+                    <option value="C">Bloque C (Aulas Generales / Patios)</option>
+                </select>
+                <div id="tiempo-entrega-txt" style="font-size: 0.75rem; font-weight: bold; color: var(--accent); margin-top: 2px;"></div>
+            </div>
+
+            <div style="text-align:center; margin: 15px 0;">
+                <p style="font-size:0.75rem; font-weight:bold; color:var(--nequi); margin-bottom:5px;">Escanea este QR desde tu App Nequi o Bancolombia:</p>
+                <img id="nequi-qr" src="" style="width:165px; height:165px; border:3px solid var(--nequi); border-radius:12px; padding:5px; background: white;">
+            </div>
+
+            <div style="background: #f3e8ff; padding: 10px; border-radius: 12px; border: 2px solid var(--nequi); text-align:center; margin-bottom: 15px;">
+                <p style="margin:0; font-size:0.8rem; font-weight:700; color: #111827;">Celular Destino / Cuenta Nequi:</p>
+                <b style="font-size: 1.4rem; color:var(--nequi);">{{ config.nequi_numero }}</b>
+            </div>
+
+            <button class="add-btn" style="background:var(--nequi); margin-bottom: 8px; color: white;" onclick="cart.abrirNequiReal()">💳 Abrir Nequi en este Dispositivo</button>
+            <button class="add-btn" style="background:#10b981; color: white;" onclick="cart.send()">Confirmar Transacción y Enviar a WhatsApp</button>
+        </div>
+    </div>
+
+    <script>
+        let ventasAcumuladas = parseInt("{{ ventas_reales }}") || 0;
+        const metaFinanciera = parseInt("{{ meta }}") || 2000000;
+
+        // 🪐 LOGICA DE PARTÍCULAS DINÁMICAS
+        function createParticles() {
+            const container = document.getElementById('particle-container');
+            const count = 8;
+            for(let i=0; i<count; i++) {
+                let p = document.createElement('div');
+                p.classList.add('particle');
+                p.style.width = Math.random() * 200 + 100 + 'px';
+                p.style.height = p.style.width;
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDelay = Math.random() * 15 + 's';
+                container.appendChild(p);
+            }
+        }
+
+        // 🎉 LANZADOR DE CONFETI EMISOR (BURST)
+        function triggerConfetti(e) {
+            const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#a855f7'];
+            for(let i=0; i<20; i++) {
+                let p = document.createElement('div');
+                p.classList.add('confetti-particle');
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                p.style.left = e.clientX + 'px';
+                p.style.top = e.clientY + 'px';
+                
+                let angle = Math.random() * Math.PI * 2;
+                let velocity = Math.random() * 90 + 40;
+                p.style.setProperty('--x', Math.cos(angle) * velocity + 'px');
+                p.style.setProperty('--y', Math.sin(angle) * velocity + 'px');
+                
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 700);
+            }
+        }
+
+        window.onload = function() {
+            createParticles();
+            actualizarBarraPresupuesto(ventasAcumuladas);
+            
+            setTimeout(() => {
+                document.getElementById('skeleton-grid').classList.remove('active');
+                document.getElementById('main-grid').style.display = 'grid';
+            }, 1200);
+
+            // SIMULADOR DE USUARIOS CAMBIANDO EN VIVO
+            setInterval(() => {
+                let randomUsers = Math.floor(Math.random() * 8) + 9;
+                document.getElementById('live-users-txt').innerText = `🔥 ${randomUsers} alumnos en línea`;
+            }, 5000);
+        };
+
+        function calcularTiempoEntrega() {
+            const bloque = document.getElementById('logistica-bloque').value;
+            const txt = document.getElementById('tiempo-entrega-txt');
+            if(!bloque) { txt.innerText = ""; return; }
+            let minutos = bloque === 'A' ? 5 : (bloque === 'B' ? 9 : 12);
+            txt.innerHTML = `🚀 <b>Despacho:</b> Entrega al Bloque ${bloque} en <b>${minutos} minutos</b>.`;
+            cart.bloqueEntrega = bloque;
+            cart.tiempoEstimado = minutos;
+        }
+
+        function startVoiceSearch() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) return alert("Mano, tu navegador no soporta comandos por voz.");
+            const recognition = new SpeechRecognition();
+            const trigger = document.getElementById('voice-trigger');
+            const searchInput = document.getElementById('search-input');
+            recognition.lang = 'es-CO';
+            trigger.classList.add('voice-active');
+            recognition.start();
+            recognition.onresult = function(event) {
+                const textoEscuchado = event.results[0][0].transcript.toLowerCase();
+                searchInput.value = textoEscuchado;
+                filterProducts(textoEscuchado);
+            };
+            recognition.onspeechend = function() { recognition.stop(); trigger.classList.remove('voice-active'); };
+            recognition.onerror = function() { trigger.classList.remove('voice-active'); };
+        }
+
+        function spinWheel() {
+            const wheel = document.getElementById('lucky-wheel');
+            const btn = document.getElementById('spin-btn');
+            const msg = document.getElementById('wheel-msg');
+            btn.disabled = true;
+            msg.innerText = "Calculando...";
+            const premios = [
+                { nombre: "SUERTE10 (10% Desc)", grados: 1440 + 45 },  
+                { nombre: "INNOVA20 (20% Desc)", grados: 1440 + 135 }, 
+                { nombre: "EVARISTO50 (50% Desc)", grados: 1440 + 225 },
+                { nombre: "PROFE100 (100% GRATIS!)", grados: 1440 + 315 }
+            ];
+            const premioGanado = premios[Math.floor(Math.random() * premios.length)];
+            wheel.style.transform = `rotate(${premioGanado.grados}deg)`;
+            setTimeout(() => {
+                msg.innerText = `Código: ${premioGanado.nombre.split(' ')[0]}`;
+                document.getElementById('coupon-input').value = premioGanado.nombre.split(' ')[0];
+                alert(`¡Ganaste: ${premioGanado.nombre}`);
+            }, 4000);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.getElementById('theme-icon').innerText = newTheme === 'dark' ? '☀️' : '🌙';
+            document.getElementById('theme-text').innerText = newTheme === 'dark' ? 'Modo Claro' : 'Modo Oscuro';
+            document.documentElement.setAttribute('data-theme', newTheme);
+        }
+
+        function actualizarBarraPresupuesto(totalActual) {
+            let porcentaje = (totalActual / metaFinanciera) * 100;
+            if(porcentaje > 100) porcentaje = 100;
+            document.getElementById('budget-bar-fill').style.width = porcentaje + "%";
+            document.getElementById('budget-txt').innerText = "$ " + totalActual.toLocaleString('es-CO');
+        }
+
+        function filterProducts(q) {
+            const query = q.toLowerCase();
+            document.querySelectorAll('.card').forEach(c => {
+                c.style.display = c.dataset.name.includes(query) ? 'flex' : 'none';
+            });
+        }
+
+        function filterByCategory(cat, btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.card').forEach(c => {
+                c.style.display = (cat === 'todos' || c.dataset.cat === cat) ? 'flex' : 'none';
+            });
+        }
+
+        function cerrarRecibo() { document.getElementById('modal-recibo').classList.remove('active'); }
+
+        function triggerCyberTest() {
+            const status = document.getElementById('cyber-status');
+            const alarm = document.getElementById('matrix-alarm');
+            const btn = document.getElementById('cyber-btn');
+            btn.disabled = true;
+            status.innerText = "¡ALERTA DDoS DETECTADO!";
+            status.style.color = "#ef4444";
+            alarm.style.display = "block";
+            fetch('/api/cyber-alert', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({evento: "Ataque mitigado."})});
+            setTimeout(() => {
+                alarm.style.display = "none";
+                status.innerText = "Estado: Protegido (Firewall Activo)";
+                status.style.color = "#10b981";
+                btn.disabled = false;
+                alert("¡Innovalogic Shield mitigó la intrusión!");
+            }, 3500);
+        }
+
+        const cart = {
+            items: [], total: 0, subtotal: 0, descuento: 0, clienteNom: "", clienteGrad: "", bloqueEntrega: "", tiempoEstimado: 0,
+            add(name, price, id) {
+                const t = document.getElementById('t-'+id);
+                const e = document.getElementById('e-'+id);
+                if(t && !t.value) return alert("Mano, debes elegir la talla");
+                if(e && !e.value) return alert("Mano, debes elegir la especialidad");
+                let d = (t ? "Talla " + t.value : "") + (e ? " - " + e.value : "");
+                this.items.push({name, price, d});
+                this.update();
+            },
+            update() {
+                this.subtotal = this.items.reduce((s, i) => s + i.price, 0);
+                this.total = this.subtotal * (1 - this.descuento);
+                document.getElementById('count').innerText = this.items.length;
+                document.getElementById('total').innerText = "$ " + this.total.toLocaleString('es-CO');
+            },
+            validarCupon() {
+                const code = document.getElementById('coupon-input').value;
+                if(!code) return;
+                fetch('/api/validar-cupon', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({codigo: code}) })
+                .then(res => res.json())
+                .then(data => {
+                    const status = document.getElementById('coupon-status');
+                    if(data.valid) {
+                        this.descuento = data.descuento;
+                        status.innerText = `¡Cupón Aceptado! -${data.descuento * 100}%`;
+                        status.style.color = "var(--success)";
+                    } else {
+                        this.descuento = 0;
+                        status.innerText = "Este cupón no existe, mano.";
+                        status.style.color = "red";
+                    }
+                    this.update();
+                });
+            },
+            showDatos() {
+                if(this.items.length === 0) return alert("El carrito está vacío, mano.");
+                let n = prompt("Nombre completo del Estudiante:");
+                let g = prompt("Grado actual:");
+                if(!n || !g) return;
+                this.clienteNom = n; this.clienteGrad = g;
+                let html = `<b>Comprador:</b> ${n}<br><b>Curso:</b> ${g}<br><br><b>Insumos Solicitados:</b><br>`;
+                this.items.forEach(i => html += `• ${i.name} (${i.d})<br>`);
+                if(this.descuento > 0) html += `<br><span style="color:red;">Subtotal: $${this.subtotal.toLocaleString('es-CO')}</span><br>`;
+                html += `<br><b style="font-size:1.1rem; color:#2563eb;">VALOR FACTURADO: $${this.total.toLocaleString('es-CO')}</b>`;
+                const qrDataReal = `co.nequi://transfer?phone={{ config.nequi_numero }}&amount=${this.total}&message=Innovalogic_${g}`;
+                document.getElementById('nequi-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrDataReal)}`;
+                document.getElementById('recibo-info').innerHTML = html;
+                document.getElementById('logistica-bloque').value = "";
+                document.getElementById('tiempo-entrega-txt').innerText = "";
+                document.getElementById('modal-recibo').classList.add('active');
+            },
+            abrirNequiReal() {
+                setTimeout(() => { window.open('https://recarga.nequi.com.co/', '_blank'); }, 500);
+                window.location.href = `nequi://transfer?phone={{ config.nequi_numero }}&amount=${this.total}`;
+            },
+            send() {
+                const bSelect = document.getElementById('logistica-bloque').value;
+                if(!bSelect) return alert("Mano, por favor selecciona el bloque de entrega.");
+                this.msg = `*INNOVALOGIC ENTERPRISE - NUEVO PEDIDO*\n*Nombre:* ${this.clienteNom}\n*Grado:* ${this.clienteGrad}\n*Ubicación:* Bloque ${this.bloqueEntrega} (Entrega en ${this.tiempoEstimado} mins)\n\n*Insumos:* \n`;
+                this.items.forEach(i => this.msg += `- ${i.name} ${i.d}\n`);
+                if(this.descuento > 0) this.msg += `_Descuento: ${this.descuento * 100}%_\n`;
+                this.msg += `\n*TOTAL NETO PAGADO: $${this.total.toLocaleString('es-CO')}*`;
+
+                fetch('/api/registrar-venta', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ cliente: this.clienteNom, grado: this.clienteGrad, total: this.total, productos: this.items }) })
+                .then(res => res.json())
+                .then(data => {
+                    actualizarBarraPresupuesto(data.nuevas_ventas);
+                    window.open(`https://wa.me/{{ config.whatsapp_admin }}?text=${encodeURIComponent(this.msg)}`, '_blank');
+                    this.items = []; this.descuento = 0;
+                    document.getElementById('coupon-input').value = ""; document.getElementById('coupon-status').innerText = "";
+                    this.update(); cerrarRecibo();
+                });
+            }
+        };
+    </script>
+</body>
+</html>
