@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Carrito | Checkout</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #f4f4f4; padding: 40px 20px; }
+        .cart-container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .total { font-size: 1.8rem; text-align: right; margin: 30px 0; font-weight: bold; color: #003366; }
+        .btn-order { background: #25d366; color: white; text-decoration: none; display: block; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="cart-container">
+        <h1>Tu Pedido</h1>
+        {% if carrito %}
+            {% for item in carrito %}
+            <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;">
+                <span>{{ item.nombre }}</span>
+                <span><strong>${{ item.precio }}</strong></span>
+            </div>
+            {% endfor %}
+            <div class="total">Total: ${{ total }}</div>
+            <a href="https://wa.me/573000000000?text=Hola!%20Quiero%20comprar:%20{% for i in carrito %}-%20{{ i.nombre }}%20{% endfor %}%20Total:%20${{ total }}" class="btn-order" target="_blank">
+                <i class="fab fa-whatsapp"></i> Confirmar por WhatsApp
+            </a>
+        {% else %}
+            <p style="text-align:center;">El carrito está vacío, mano.</p>
+        {% endif %}
+        <div style="margin-top:20px; display:flex; justify-content:space-between;">
+            <a href="/" style="text-decoration:none; color:#666;">← Volver</a>
+            <a href="/limpiar" style="color:red; text-decoration:none;">Vaciar</a>
+        </div>
+    </div>
+</body>
+</html>

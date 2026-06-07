@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Innovalogic | {{ config.colegio }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --accent: #2563eb; 
+            --accent-glow: rgba(37, 99, 235, 0.15);
+            --text: #0f172a; 
+            --bg: #f8fafc; 
+            --white: rgba(255, 255, 255, 0.85); 
+            --nequi: #7d3291; 
+            --success: #10b981; 
+            --border: rgba(226, 232, 240, 0.8);
+            --card-bg: #ffffff;
+            --sidebar-bg: rgba(255, 255, 255, 0.6);
+            --glass-blur: blur(20px);
+        }
+
+        [data-theme="dark"] {
+            --text: #f8fafc; --bg: #070b13; --white: rgba(30, 41, 59, 0.7);
+            --border: rgba(51, 65, 85, 0.5); --card-bg: #1e293b;
+            --sidebar-bg: rgba(15, 23, 42, 0.6); --accent-glow: rgba(59, 130, 246, 0.3);
+        }
+
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.25s, color 0.25s, border-color 0.25s; }
+        
+        /* 📱 RESPONSIVE & IPHONE FLUID SMOOTH SCROLL */
+        body { 
+            background: var(--bg); color: var(--text); margin: 0;
+            display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+            position: relative; -webkit-font-smoothing: antialiased;
+        }
+
+        /* 📌 BARRAS FIJAS CON SEGURIDAD CAPA */
+        header { 
+            position: fixed; top: 0; left: 0; right: 0; height: 70px;
+            background: var(--white); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            padding: 0 20px; border-bottom: 1px solid var(--border); 
+            display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+        }
+        
+        .main-layout { 
+            display: flex; flex: 1; margin-top: 70px; margin-bottom: 75px; height: calc(100vh - 145px); overflow: hidden; 
+        }
+
+        /* 🧭 SIDEBAR RESPONSIVA (Se esconde en móviles o colapsa con suavidad) */
+        .sidebar { 
+            width: 280px; background: var(--sidebar-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 10px; 
+            overflow-y: auto; -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
+        }
+
+        .content-area { 
+            flex: 1; padding: 20px; overflow-y: auto; 
+            scroll-behavior: smooth; -webkit-overflow-scrolling: touch; /* Física de scroll suave iOS */
+        }
+
+        /* 📦 GRID ADAPTABLE AUTOMÁTICO (RESPONSIVE SAINTS) */
+        .grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; 
+        }
+
+        /* 💎 TARJETAS CON DETALLES ESTILO TEMU/ALIEXPRESS */
+        .card { 
+            background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); 
+            display: flex; flex-direction: column; overflow: hidden; position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+
+        .img-box { width: 100%; aspect-ratio: 1/1; overflow: hidden; position: relative; background: #f1f5f9; }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ❤️ CORAZÓN FLOTANTE ESTILO ALIEPRESS */
+        .fav-heart {
+            position: absolute; top: 12px; right: 12px; background: white; border: none;
+            width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 50; transition: transform 0.2s active;
+        }
+        .fav-heart:active { transform: scale(0.85); }
+        .fav-heart.active { color: #ef4444; }
+
+        /* 🔗 BOTÓN COMPARTIR INDIVIDUAL */
+        .share-card-btn {
+            position: absolute; top: 12px; right: 54px; background: white; border: none;
+            width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 50;
+        }
+
+        .content { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        
+        /* 💰 PRECIOS LIMPIOS Y SEGUROS */
+        .price { font-size: 1.3rem; font-weight: 800; color: #2563eb; margin: 5px 0; letter-spacing: -0.5px; }
+
+        /* 📏 SELECTORES EN LINEA RECTA (ESTILO COMPRA RÁPIDA) */
+        .selector-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #64748b; margin: 8px 0 4px 0; }
+        .btn-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+        .row-btn { 
+            background: var(--bg); border: 1px solid var(--border); color: var(--text); 
+            padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 600; cursor: pointer;
+        }
+        .row-btn.selected { 
+            background: var(--text); color: var(--bg); border-color: var(--text); 
+        }
+
+        .add-btn { 
+            width: 100%; background: #0f172a; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 5px;
+        }
+        [data-theme="dark"] .add-btn { background: #2563eb; }
+
+        /* 📌 BARRA INFERIOR COMPLETAMENTE FIJA */
+        .bottom-bar { 
+            position: fixed; bottom: 0; left: 0; right: 0; height: 75px;
+            background: var(--white); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            padding: 0 20px; border-top: 1px solid var(--border); 
+            display: grid; grid-template-columns: 1fr 1.5fr 1fr; align-items: center; z-index: 1000;
+        }
+
+        /* 🔐 VENTANA MODAL DE INICIO DE SESIÓN COMPACTO */
+        .login-btn { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .user-badge { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 0.85rem; }
+
+        .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal.active { display: flex; }
+        .modal-box { background: var(--card-bg); border: 1px solid var(--border); padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; position: relative; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 5px; }
+        .form-group input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+
+        .search-container { flex: 1; max-width: 400px; background: var(--border); border-radius: 10px; padding: 8px 15px; margin: 0 15px; display: flex; align-items: center; gap: 8px; }
+        .search-container input { border: none; background: transparent; width: 100%; outline: none; color: var(--text); }
+
+        /* 📱 MEDIA QUERIES PARA ADAPTAR DISPOSITIVOS MÓVILES */
+        @media (max-width: 768px) {
+            .sidebar { display: none; } /* Esconde filtros avanzados en pantallas muy chicas */
+            .bottom-bar { grid-template-columns: 1fr 1fr; padding: 0 10px; }
+            .bottom-bar > div:nth-child(2) { display: none; } /* Esconde barra de presupuesto en móvil para dar espacio */
+            header { padding: 0 10px; }
+            .search-container { display: none; } /* En móvil se prioriza el catálogo */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="font-weight: 900; color: var(--accent); font-size: 1.15rem;">INNOVALOGIC Core</div>
+        
+        <div class="search-container">
+            🔍 <input type="text" id="search-input" placeholder="Buscar insumos..." onkeyup="filterProducts(this.value)">
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div id="auth-section">
+                <button class="login-btn" onclick="abrirLogin()">🔑 Ingresar</button>
+            </div>
+            <button style="background:none; border:none; cursor:pointer; font-size:1.2rem;" onclick="toggleTheme()">🌙</button>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <h3>Categorías</h3>
+            <button class="row-btn selected" style="width:100%; text-align:left;" onclick="filterByCategory('todos', this)">📂 Todos los Insumos</button>
+            <button class="row-btn" style="width:100%; text-align:left;" onclick="filterByCategory('uniformes', this)">👕 Uniformes</button>
+            <button class="row-btn" style="width:100%; text-align:left;" onclick="filterByCategory('escolar', this)">📚 Escolar</button>
+            <button class="row-btn" style="width:100%; text-align:left;" onclick="filterByCategory('belleza', this)">💄 Belleza</button>
+            <button class="row-btn" style="width:100%; text-align:left;" onclick="filterByCategory('deportes', this)">⚽ Deportes</button>
+            
+            <div style="margin-top:20px; border-top:1px dashed var(--border); padding-top:15px;">
+                <h4>Favoritos Guardados (<span id="fav-count">0</span>)</h4>
+                <div id="fav-list-preview" style="font-size:0.75rem; color:#64748b;">No tienes productos marcados.</div>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <div class="grid" id="main-grid">
+                {% for p in catalogo %}
+                <div class="card" data-name="{{ p.nombre.lower() }}" data-cat="{{ p.cat }}">
+                    <div class="img-box">
+                        <button class="fav-heart" id="heart-{{ p.id }}" onclick="toggleFavorito('{{ p.id }}', '{{ p.nombre }}')">❤</button>
+                        <button class="share-card-btn" onclick="compartirProducto('{{ p.nombre }}')">🔗</button>
+                        <img src="{{ p.img }}">
+                    </div>
+                    <div class="content">
+                        <div>
+                            <small style="color:#64748b; font-weight:bold; font-size:0.7rem;">{{ p.prov }}</small>
+                            <h3 style="font-size:0.9rem; margin:4px 0; font-weight:700;">{{ p.nombre }}</h3>
+                            <div class="price">$ {{ p.precio_f }}</div>
+                        </div>
+
+                        <div>
+                            {% if p.tallas %}
+                            <div class="selector-label">Selecciona Talla:</div>
+                            <div class="btn-row" id="row-talla-{{ p.id }}">
+                                {% for t in p.tallas %}
+                                <button class="row-btn" onclick="selectOption('talla', '{{ p.id }}', '{{ t }}', this)">{{ t }}</button>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            {% if p.especialidades %}
+                            <div class="selector-label">Selecciona Especialidad:</div>
+                            <div class="btn-row" id="row-esp-{{ p.id }}">
+                                {% for e in p.especialidades %}
+                                <button class="row-btn" onclick="selectOption('esp', '{{ p.id }}', '{{ e }}', this)">{{ e }}</button>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            <button class="add-btn" onclick="cart.add('{{ p.nombre }}', {{ p.precio }}, '{{ p.id }}')">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </main>
+    </div>
+
+    <div class="bottom-bar">
+        <div onclick="cart.showDatos()" style="cursor:pointer; font-weight:700; font-size:0.9rem;">
+            🛒 Mi Orden: <span id="count" style="color:var(--accent);">0</span> arts
+        </div>
+        <div style="text-align:center;">
+            <small style="font-weight:700; color:#64748b;">Infraestructura Financiera Activa</small>
+        </div>
+        <div id="total" style="font-size:1.2rem; font-weight:800; color:var(--accent); text-align:right;">$0</div>
+    </div>
+
+    <div id="modal-login" class="modal">
+        <div class="modal-box">
+            <h3 style="margin-top:0; font-weight:800;">Crear Cuenta / Ingreso</h3>
+            <p style="font-size:0.8rem; color:#64748b;">Introduce tus datos institucionales para continuar de forma segura.</p>
+            
+            <div class="form-group">
+                <label>Nombre Completo:</label>
+                <input type="text" id="login-name" placeholder="Ej: Santiago Cuellar">
+            </div>
+            <div class="form-group">
+                <label>Grado / Curso Escolar:</label>
+                <input type="text" id="login-grade" placeholder="Ej: 10-2">
+            </div>
+
+            <button class="add-btn" style="background:var(--accent);" onclick="guardarSesion()">Crear Cuenta e Ingresar</button>
+            <button class="add-btn" style="background:#64748b; margin-top:5px;" onclick="cerrarLogin()">Cancelar</button>
+        </div>
+    </div>
+
+    <div id="modal-recibo" class="modal">
+        <div class="modal-box">
+            <h3 style="margin-top:0; color:var(--nequi); font-weight:800; text-align:center;">PASARELA DIRECTA NEQUI</h3>
+            <div id="recibo-info" style="margin:15px 0; font-size:0.85rem; line-height:1.4;"></div>
+            <button class="add-btn" style="background:#10b981;" onclick="cart.send()">Confirmar Transacción vía WhatsApp</button>
+            <button class="add-btn" style="background:#64748b; margin-top:5px;" onclick="document.getElementById('modal-recibo').classList.remove('active')">Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+        let usuarioActivo = null;
+        let favoritos = [];
+        let seleccionesUsuario = {};
+
+        window.onload = function() {
+            // Cargar datos persistentes de la memoria del dispositivo (Persistencia Estilo iPhone)
+            if(localStorage.getItem('usuario')) {
+                usuarioActivo = JSON.parse(localStorage.getItem('usuario'));
+                pintarUsuario();
+            }
+            if(localStorage.getItem('favoritos')) {
+                favoritos = JSON.parse(localStorage.getItem('favoritos'));
+                actualizarFavoritosUI();
+            }
+            cart.cargarCarrito();
+        };
+
+        // --- SISTEMA DE INICIO DE SESIÓN CON PERSISTENCIA ---
+        function abrirLogin() { document.getElementById('modal-login').classList.add('active'); }
+        function cerrarLogin() { document.getElementById('modal-login').classList.remove('active'); }
+        
+        function guardarSesion() {
+            const name = document.getElementById('login-name').value.strip ? document.getElementById('login-name').value.strip() : document.getElementById('login-name').value;
+            const grade = document.getElementById('login-grade').value;
+            if(!name || !grade) return alert("Por favor completa los campos institucionales.");
+            
+            usuarioActivo = { nombre: name, grado: grade };
+            localStorage.setItem('usuario', JSON.stringify(usuarioActivo));
+            pintarUsuario();
+            cerrarLogin();
+        }
+
+        function pintarUsuario() {
+            document.getElementById('auth-section').innerHTML = `
+                <div class="user-badge">
+                    👤 <span>${usuarioActivo.nombre} (${usuarioActivo.grado})</span>
+                    <button onclick="cerrarSesion()" style="background:none; border:none; color:#ef4444; font-size:0.75rem; cursor:pointer; font-weight:bold;">[Salir]</button>
+                </div>`;
+        }
+
+        function cerrarSesion() {
+            localStorage.removeItem('usuario');
+            usuarioActivo = null;
+            location.reload();
+        }
+
+        // --- APARTADO DE SELECCIÓN EN LÍNEA RECTA ---
+        function selectOption(tipo, prodId, valor, btn) {
+            if(!seleccionesUsuario[prodId]) seleccionesUsuario[prodId] = {};
+            seleccionesUsuario[prodId][tipo] = valor;
+            
+            // Quitar clase seleccionada a los hermanos
+            const contId = tipo === 'talla' ? `row-talla-${prodId}` : `row-esp-${prodId}`;
+            document.querySelectorAll(`#${contId} .row-btn`).forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+        }
+
+        // --- APARTADO DE FAVORITOS (ESTILO TEMU) ---
+        function toggleFavorito(id, nombre) {
+            const index = favoritos.findIndex(f => f.id === id);
+            const btn = document.getElementById(`heart-${id}`);
+            
+            if(index === -1) {
+                favoritos.push({id, nombre});
+                btn.classList.add('active');
+            } else {
+                favoritos.splice(index, 1);
+                btn.classList.remove('active');
+            }
+            localStorage.setItem('favoritos', JSON.stringify(favoritos));
+            actualizarFavoritosUI();
+        }
+
+        function actualizarFavoritosUI() {
+            document.getElementById('fav-count').innerText = favoritos.length;
+            const preview = document.getElementById('fav-list-preview');
+            if(favoritos.length === 0) {
+                preview.innerText = "No tienes productos marcados.";
+            } else {
+                preview.innerHTML = favoritos.map(f => `• ${f.nombre}`).join('<br>');
+            }
+            favoritos.forEach(f => {
+                const btn = document.getElementById(`heart-${f.id}`);
+                if(btn) btn.classList.add('active');
+            });
+        }
+
+        // --- BOTÓN DE COMPARTIR INDIVIDUAL ---
+        function compartirProducto(nombre) {
+            const texto = `¡Mira este producto en Innovalogic!: ${nombre}. Disponible en la plataforma escolar.`;
+            if(navigator.share) {
+                navigator.share({ title: 'Innovalogic', text: texto, url: window.location.href });
+            } else {
+                navigator.clipboard.writeText(`${texto} ${window.location.href}`);
+                alert("¡Enlace del producto copiado al portapapeles, mano!");
+            }
+        }
+
+        // --- FILTROS DE BÚSQUEDA ---
+        function filterProducts(q) {
+            const query = q.toLowerCase();
+            document.querySelectorAll('.card').forEach(c => {
+                c.style.display = c.dataset.name.includes(query) ? 'flex' : 'none';
+            });
+        }
+
+        function filterByCategory(cat, btn) {
+            document.querySelectorAll('.sidebar .row-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            document.querySelectorAll('.card').forEach(c => {
+                c.style.display = (cat === 'todos' || c.dataset.cat === cat) ? 'flex' : 'none';
+            });
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+        }
+
+        // --- CARRITO DE COMPRAS CON AUTENTICACIÓN ASOCIADA ---
+        const cart = {
+            items: [], total: 0,
+            add(name, price, id) {
+                if(!usuarioActivo) { alert("Mano, debes iniciar sesión arriba para poder comprar."); return abrirLogin(); }
+                
+                let detalles = [];
+                const tarjeta = document.querySelector(`#row-talla-${id}`);
+                const especialidad = document.querySelector(`#row-esp-${id}`);
+                
+                if(tarjeta && (!seleccionesUsuario[id] || !seleccionesUsuario[id]['talla'])) return alert("Por favor escoge una Talla.");
+                if(especialidad && (!seleccionesUsuario[id] || !seleccionesUsuario[id]['esp'])) return alert("Por favor escoge una Especialidad.");
+                
+                if(seleccionesUsuario[id]) {
+                    if(seleccionesUsuario[id]['talla']) detalles.push("Talla " + seleccionesUsuario[id]['talla']);
+                    if(seleccionesUsuario[id]['esp']) detalles.push(seleccionesUsuario[id]['esp']);
+                }
+
+                this.items.push({name, price, d: detalles.join(' - ') || 'Estándar'});
+                this.guardarCarrito();
+                this.update();
+            },
+            update() {
+                this.total = this.items.reduce((s, i) => s + i.price, 0);
+                document.getElementById('count').innerText = this.items.length;
+                document.getElementById('total').innerText = "$ " + this.total.toLocaleString('es-CO');
+            },
+            guardarCarrito() { localStorage.setItem('carrito', JSON.stringify(this.items)); },
+            cargarCarrito() {
+                if(localStorage.getItem('carrito')) {
+                    this.items = JSON.parse(localStorage.getItem('carrito'));
+                    this.update();
+                }
+            },
+            showDatos() {
+                if(this.items.length === 0) return alert("El carrito está vacío, mano.");
+                let html = `<b>Comprador:</b> ${usuarioActivo.nombre}<br><b>Curso:</b> ${usuarioActivo.grado}<br><br><b>Insumos:</b><br>`;
+                this.items.forEach(i => html += `• ${i.name} (${i.d}) - $${i.price.toLocaleString('es-CO')}<br>`);
+                html += `<br><b style="font-size:1.1rem; color:#2563eb;">TOTAL A PAGAR: $${this.total.toLocaleString('es-CO')}</b>`;
+                document.getElementById('recibo-info').innerHTML = html;
+                document.getElementById('modal-recibo').classList.add('active');
+            },
+            send() {
+                let msg = `*INNOVALOGIC - PEDIDO CONFIRMADO*\n*Cliente:* ${usuarioActivo.nombre}\n*Grado:* ${usuarioActivo.grado}\n\n*Productos:* \n`;
+                this.items.forEach(i => msg += `- ${i.name} (${i.d})\n`);
+                msg += `\n*TOTAL NETO PAGADO: $${this.total.toLocaleString('es-CO')}*`;
+
+                fetch('/api/registrar-venta', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ cliente: usuarioActivo.nombre, grado: usuarioActivo.grado, total: this.total, productos: this.items }) })
+                .then(res => res.json())
+                .then(data => {
+                    window.open(`https://wa.me/{{ config.whatsapp_admin }}?text=${encodeURIComponent(msg)}`, '_blank');
+                    this.items = []; this.guardarCarrito(); this.update();
+                    document.getElementById('modal-recibo').classList.remove('active');
+                });
+            }
+        };
+    </script>
+</body>
+</html>
