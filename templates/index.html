@@ -18,7 +18,6 @@
             --card-bg: #ffffff;
             --sidebar-bg: rgba(255, 255, 255, 0.65);
             --glass-blur: blur(20px);
-            /* 📱 Curva de aceleración oficial de Apple (iOS) */
             --ios-ease: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -36,7 +35,6 @@
             box-sizing: border-box; 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             margin: 0; padding: 0;
-            /* Desactiva el retraso táctil gris feo en celulares */
             -webkit-tap-highlight-color: transparent; 
         }
         
@@ -64,7 +62,7 @@
 
         .main-layout { display: flex; flex: 1; overflow: hidden; position: relative; z-index: 10; }
         
-        /* 🍏 SIDEBAR VERTICAL / HORIZONTAL CON DESLIZAMIENTO INERCIAL DE IPHONE */
+        /* 🍏 SIDEBAR / MENÚ DE CATEGORÍAS */
         .sidebar { 
             width: 280px; background: var(--sidebar-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; 
@@ -72,7 +70,6 @@
         .sidebar h3 { font-size: 0.75rem; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; margin-bottom: 5px; }
         .categories-group { display: flex; flex-direction: column; gap: 6px; }
         
-        /* Botones de categoría estilo chip de iOS */
         .cat-btn { 
             background: transparent; border: 1px solid transparent; padding: 10px 14px; text-align: left; border-radius: 12px; 
             cursor: pointer; font-weight: 600; color: var(--text); font-size: 0.9rem;
@@ -83,10 +80,10 @@
 
         .content-area { 
             flex: 1; padding: 20px; overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; /* Deslizamiento fluido y elástico nativo de iPhone */
+            -webkit-overflow-scrolling: touch; 
         }
         
-        /* 💥 CUADRÍCULA ESTILO TEMU / ALIEXPRESS */
+        /* 💥 INTERFAZ EN CUADRÍCULA */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
         
         .card { 
@@ -101,7 +98,6 @@
         .stock-high { background: var(--success); }
         .stock-low { background: #ef4444; }
 
-        /* Botones de acción comercial flotantes */
         .action-container { position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 6px; z-index: 20; }
         .action-circle-btn { 
             width: 34px; height: 34px; background: rgba(255,255,255,0.9); border-radius: 50%; border: 1px solid #e2e8f0; 
@@ -118,7 +114,7 @@
         .content { padding: 14px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; }
         .price { font-size: 1.25rem; font-weight: 800; color: var(--text); }
         
-        /* 📏 CONTENEDOR DE TALLAS EN LÍNEA RECTA HORIZONTAL RECTANGULAR/REDONDA */
+        /* 📏 DISEÑO DE TALLAS EN LÍNEA RECTA DE IPHONE */
         .selector-label { font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
         .inline-selector-row { 
             display: flex; gap: 6px; overflow-x: auto; padding: 2px 0; 
@@ -143,7 +139,6 @@
         .add-btn:active { transform: scale(0.95); }
         [data-theme="dark"] .add-btn { background: var(--accent); }
 
-        /* SKELETON */
         .skeleton-wrapper { display: none; }
         .skeleton-wrapper.active { display: grid; }
         .skeleton-card { background: var(--card-bg); border-radius: 18px; height: 320px; border: 1px solid var(--border); padding: 14px; display: flex; flex-direction: column; gap: 12px; }
@@ -163,24 +158,23 @@
         .budget-container { width: 100%; background: rgba(100,116,139,0.12); height: 8px; border-radius: 10px; overflow: hidden; }
         .budget-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.8s var(--ios-ease); }
 
-        /* 📱 DISEÑO EXCLUSIVO DE IPHONE / CELULAR (TEMU STYLE) */
+        /* 📱 CONFIGURACIÓN MÓVIL ESTILO TEMU COHESIVO */
         @media (max-width: 768px) {
             header { padding: 10px 16px; flex-direction: column; gap: 8px; }
             .search-container { max-width: 100%; width: 100%; margin: 0; border-radius: 12px; padding: 8px 14px; }
             
             .main-layout { flex-direction: column; }
             
-            /* Menú Deslizable Horizontal Arriba con amortiguación iOS */
+            /* ¡ARREGLADO! Las categorías se muestran perfectamente deslizables arriba */
             .sidebar { 
                 width: 100%; border-right: none; border-bottom: 1px solid var(--border); 
                 padding: 10px 16px; flex-direction: row; overflow-x: auto; overflow-y: hidden; white-space: nowrap; gap: 8px;
-                scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+                scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; display: flex !important;
             }
             .sidebar h3, .sidebar .roulette-container, .sidebar .coupon-section, .sidebar .cyber-panel { display: none; } 
-            .categories-group { flex-direction: row; gap: 6px; }
-            .cat-btn { padding: 8px 16px; font-size: 0.85rem; background: rgba(100,116,139,0.05); border: 1px solid var(--border); border-radius: 20px; }
+            .categories-group { flex-direction: row; gap: 6px; display: flex !important; }
+            .cat-btn { padding: 8px 16px; font-size: 0.85rem; background: rgba(100,116,139,0.05); border: 1px solid var(--border); border-radius: 20px; white-space: nowrap; }
             
-            /* Cuadrícula compacta exacta de 2 columnas tipo AliExpress */
             .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
             .card { border-radius: 14px; }
             .content { padding: 10px; gap: 6px; }
@@ -242,6 +236,7 @@
                 <button class="cat-btn" onclick="filterByCategory('belleza', this)">💄 Belleza</button>
                 <button class="cat-btn" onclick="filterByCategory('construccion', this)">🎨 Técnicos</button>
                 <button class="cat-btn" onclick="filterByCategory('deportes', this)">⚽ Deportes</button>
+                <button class="cat-btn" onclick="filterByCategory('favoritos', this)" style="color: #ef4444;">❤️ Mis Favoritos</button>
             </div>
         </aside>
 
@@ -253,7 +248,7 @@
 
             <div class="grid" id="main-grid" style="display: none;">
                 {% for p in catalogo %}
-                <div class="card" data-name="{{ p.nombre.lower() }}" data-cat="{{ p.cat }}">
+                <div class="card" data-name="{{ p.nombre.lower() }}" data-cat="{{ p.cat }}" id="prod-card-{{ p.id }}">
                     
                     {% if p.stock <= 3 %}
                     <span class="stock-badge stock-low">⚠️ {{ p.stock }} Disp</span>
@@ -303,6 +298,7 @@
                 </div>
                 {% endfor %}
             </div>
+            <div id="no-favs-message" style="display:none; text-align:center; padding:40px; color:#64748b; font-size:0.9rem;">No has guardado productos favoritos todavía. ¡Dale al corazón! ❤️</div>
         </main>
     </div>
 
@@ -327,7 +323,7 @@
             
             <div style="background: rgba(100,116,139,0.04); padding: 8px; border-radius: 8px; margin-bottom: 10px;">
                 <label style="font-size: 0.7rem; font-weight: bold; display: block; margin-bottom: 2px;">📍 Bloque de Entrega:</label>
-                <select id="logistica-bloque" onchange="calcularTiempoEntrega()" style="width: 100%; padding: 8px; border-radius: 8px;">
+                <select id="logistica-bloque" onchange="calcularTiempoEntrega()" style="width: 100%; padding: 8px; border-radius: 8px; background: var(--bg); color: var(--text);">
                     <option value="">Seleccionar...</option>
                     <option value="A">Bloque A (Sistemas)</option>
                     <option value="B">Bloque B (Talleres)</option>
@@ -346,9 +342,8 @@
         let ventasAcumuladas = parseInt("{{ ventas_reales }}") || 0;
         const metaFinanciera = parseInt("{{ meta }}") || 2000000;
         let isRegisterMode = false;
-        
-        // Memoria de selecciones
         let selectedSelections = {};
+        let currentCategoryFilter = 'todos';
 
         function switchLoginMode(e) {
             e.preventDefault();
@@ -376,7 +371,6 @@
             document.getElementById('login-screen').style.display = 'none';
         }
 
-        // CONTROLADOR DE TALLAS EN LÍNEA ESTILO IPHONE
         function selectChip(productId, type, value, element) {
             const parent = element.parentElement;
             parent.querySelectorAll('.size-chip').forEach(chip => chip.classList.remove('selected'));
@@ -386,6 +380,7 @@
             selectedSelections[productId][type] = value;
         }
 
+        /* FAVORITOS INTERACTIVOS REALES */
         function toggleFavorito(id) {
             const btn = document.getElementById('fav-'+id);
             btn.classList.toggle('fav-active');
@@ -395,6 +390,9 @@
             } else {
                 btn.innerText = "🤍";
                 localStorage.removeItem('fav-'+id);
+            }
+            if(currentCategoryFilter === 'favoritos') {
+                applyCategoryFiltering('favoritos');
             }
         }
 
@@ -445,13 +443,29 @@
         function filterByCategory(cat, btn) {
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            document.querySelectorAll('.card').forEach(c => c.style.display = (cat === 'todos' || c.dataset.cat === cat) ? 'flex' : 'none');
+            currentCategoryFilter = cat;
+            applyCategoryFiltering(cat);
+        }
+
+        function applyCategoryFiltering(cat) {
+            let favsCount = 0;
+            document.querySelectorAll('.card').forEach(c => {
+                const id = c.id.replace('prod-card-', '');
+                if (cat === 'favoritos') {
+                    const isFav = localStorage.getItem('fav-' + id) === 'true';
+                    c.style.display = isFav ? 'flex' : 'none';
+                    if (isFav) favsCount++;
+                } else {
+                    c.style.display = (cat === 'todos' || c.dataset.cat === cat) ? 'flex' : 'none';
+                }
+            });
+            document.getElementById('no-favs-message').style.display = (cat === 'favoritos' && favsCount === 0) ? 'block' : 'none';
         }
 
         function cerrarRecibo() { document.getElementById('modal-recibo').classList.remove('active'); }
 
         const cart = {
-            items: [], total: 0, subtotal: 0, clienteNom: "Estudiante", clienteGrad: "10", bloqueEntrega: "", tiempoEstimado: 0,
+            items: [], total: 0, subtotal: 0, bloqueEntrega: "", tiempoEstimado: 0,
             add(name, price, id) {
                 const selection = selectedSelections[id] || {};
                 const hasTallas = document.getElementById('talla-row-'+id) !== null;
@@ -482,19 +496,4 @@
             abrirNequiReal() { window.location.href = `nequi://transfer?phone={{ config.nequi_numero }}&amount=${this.total}`; },
             send() {
                 if(!document.getElementById('logistica-bloque').value) return alert("Selecciona bloque de entrega.");
-                let msg = `*INNOVALOGIC ORDER*\n*Entrega:* Bloque ${this.bloqueEntrega}\n`;
-                this.items.forEach(i => msg += `- ${i.name} ${i.d}\n`);
-                msg += `*TOTAL: $${this.total.toLocaleString('es-CO')}*`;
-                
-                fetch('/api/registrar-venta', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ total: this.total }) })
-                .then(res => res.json())
-                .then(data => {
-                    actualizarBarraPresupuesto(data.nuevas_ventas);
-                    window.open(`https://wa.me/{{ config.whatsapp_admin }}?text=${encodeURIComponent(msg)}`, '_blank');
-                    this.items = []; this.update(); cerrarRecibo();
-                });
-            }
-        };
-    </script>
-</body>
-</html>
+                let msg = `*INNO

@@ -9,17 +9,91 @@ config_proyecto = {
     "whatsapp_admin": "573123456789" # Tu número de WhatsApp administrador
 }
 
-# CATÁLOGO DE PRODUCTOS - IMÁGENES GENÉRICAS DE ALTA VELOCIDAD PARA EL CELULAR
+# CATÁLOGO DE PRODUCTOS REOPTIMIZADO - CON IMÁGENES REALES DE ALTA CALIDAD
 catalogo_productos = [
-    {"id": "1", "nombre": "Uniforme de Diario Completo", "precio": 45000, "precio_f": "45.000", "cat": "uniformes", "prov": "Confecciones Evaristo", "stock": 5, "tallas": ["S", "M", "L", "XL"], "img": "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400"},
-    {"id": "2", "nombre": "Cuaderno Cuadriculado 100 H", "precio": 5500, "precio_f": "5.500", "cat": "escolar", "prov": "Norma", "stock": 20, "img": "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=400"},
-    {"id": "3", "nombre": "Sudadera Educación Física", "precio": 38000, "precio_f": "38.000", "cat": "uniformes", "prov": "Confecciones Evaristo", "stock": 2, "tallas": ["S", "M", "L"], "img": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400"},
-    {"id": "4", "nombre": "Kit de Pinturas y Pinceles", "precio": 12000, "precio_f": "12.000", "cat": "construccion", "prov": "Artes Cali", "stock": 10, "especialidades": ["Sistemas", "Dibujo", "Electricidad"], "img": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400"},
-    {"id": "5", "nombre": "Balón de Fútbol Golty", "precio": 60000, "precio_f": "60.000", "cat": "deportes", "prov": "Golty", "stock": 4, "img": "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=400"},
-    {"id": "6", "nombre": "Brillo Labial Hidratante", "precio": 3500, "precio_f": "3.500", "cat": "belleza", "prov": "Cosméticos SAS", "stock": 15, "img": "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=400"}
+    {
+        "id": "1", 
+        "nombre": "Uniforme de Diario Completo", 
+        "precio": 45000, "precio_f": "45.000", 
+        "cat": "uniformes", "prov": "Confecciones Evaristo", 
+        "stock": 5, "tallas": ["S", "M", "L", "XL"], 
+        "img": "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&auto=format&fit=crop&q=80"
+    },
+    {
+        "id": "2", 
+        "nombre": "Cuaderno Cuadriculado 100 H", 
+        "precio": 5500, "precio_f": "5.500", 
+        "cat": "escolar", "prov": "Norma", 
+        "stock": 20, 
+        "img": "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=400&auto=format&fit=crop&q=80"
+    },
+    {
+        "id": "3", 
+        "nombre": "Sudadera Educación Física", 
+        "precio": 38000, "precio_f": "38.000", 
+        "cat": "uniformes", "prov": "Confecciones Evaristo", 
+        "stock": 2, "tallas": ["S", "M", "L"], 
+        "img": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&auto=format&fit=crop&q=80"
+    },
+    {
+        "id": "4", 
+        "nombre": "Kit de Pinturas y Pinceles", 
+        "precio": 12000, "precio_f": "12.000", 
+        "cat": "construccion", "prov": "Artes Cali", 
+        "stock": 10, "especialidades": ["Sistemas", "Dibujo", "Electricidad"], 
+        "img": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&auto=format&fit=crop&q=80"
+    },
+    {
+        "id": "5", 
+        "nombre": "Balón de Fútbol Golty Profesional", 
+        "precio": 60000, "precio_f": "60.000", 
+        "cat": "deportes", "prov": "Golty", 
+        "stock": 4, 
+        "img": "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=400&auto=format&fit=crop&q=80"
+    },
+    {
+        "id": "6", 
+        "nombre": "Brillo Labial Hidratante", 
+        "precio": 3500, "precio_f": "3.500", 
+        "cat": "belleza", "prov": "Cosméticos SAS", 
+        "stock": 15, 
+        "img": "https://images.unsplash.com/photo-1617897903246-719242758050?w=400&auto=format&fit=crop&q=80"
+    },
+    {
+        "id": "7", 
+        "nombre": "Calculadora Científica Escolar", 
+        "precio": 25000, "precio_f": "25.000", 
+        "cat": "escolar", "prov": "Casio", 
+        "stock": 8, 
+        "img": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&auto=format&fit=crop&q=80"
+    },
+    {
+        "id": "8", 
+        "nombre": "Camibuso Tipo Polo Blanco", 
+        "precio": 22000, "precio_f": "22.000", 
+        "cat": "uniformes", "prov": "Confecciones Evaristo", 
+        "stock": 12, "tallas": ["S", "M", "L"], 
+        "img": "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=400&auto=format&fit=crop&q=80"
+    },
+    {
+        "id": "9", 
+        "nombre": "Regla T Técnica de Dibujo", 
+        "precio": 14000, "precio_f": "14.000", 
+        "cat": "construccion", "prov": "Rotring", 
+        "stock": 3, "especialidades": ["Dibujo Técnico"], 
+        "img": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&auto=format&fit=crop&q=80"
+    },
+    {
+        "id": "10", 
+        "nombre": "Banda Elástica de Entrenamiento", 
+        "precio": 8000, "precio_f": "8.000", 
+        "cat": "deportes", "prov": "Sport Fitness", 
+        "stock": 25, 
+        "img": "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=400&auto=format&fit=crop&q=80"
+    }
 ]
 
-ventas_totales = 240000  
+ventas_totales = 310000  
 meta_financiera = 2000000
 
 @app.route('/')
