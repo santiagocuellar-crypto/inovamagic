@@ -2,13 +2,13 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Innovalogic | {{ config.colegio }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { 
             --accent: #2563eb; 
-            --accent-glow: rgba(37, 99, 235, 0.15);
+            --accent-glow: rgba(37, 99, 235, 0.12);
             --text: #0f172a; 
             --bg: #f8fafc; 
             --white: rgba(255, 255, 255, 0.85); 
@@ -17,8 +17,9 @@
             --border: rgba(226, 232, 240, 0.8);
             --card-bg: #ffffff;
             --sidebar-bg: rgba(255, 255, 255, 0.65);
-            --search-bg: #f145f9, rgba(241, 245, 249, 0.9);
-            --glass-blur: blur(16px);
+            --glass-blur: blur(20px);
+            /* 📱 Curva de aceleración oficial de Apple (iOS) */
+            --ios-ease: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         [data-theme="dark"] {
@@ -28,25 +29,22 @@
             --border: rgba(51, 65, 85, 0.4);
             --card-bg: #1e293b;
             --sidebar-bg: rgba(15, 23, 42, 0.55);
-            --search-bg: rgba(51, 65, 85, 0.75);
-            --accent-glow: rgba(59, 130, 246, 0.25);
+            --accent-glow: rgba(59, 130, 246, 0.2);
         }
 
-        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.3s, color 0.3s, border-color 0.3s; margin: 0; padding: 0; }
+        * { 
+            box-sizing: border-box; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            margin: 0; padding: 0;
+            /* Desactiva el retraso táctil gris feo en celulares */
+            -webkit-tap-highlight-color: transparent; 
+        }
         
         body { 
             background: var(--bg); 
             color: var(--text);
             display: flex; flex-direction: column; height: 100vh; overflow: hidden; position: relative; 
-        }
-
-        /* 🪐 FONDO DE PARTÍCULAS */
-        .bg-particles { position: absolute; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; opacity: 0.4; }
-        .particle { position: absolute; background: radial-gradient(circle, var(--accent) 0%, transparent 70%); border-radius: 50%; filter: blur(40px); animation: floatParticle 18s infinite linear; }
-        @keyframes floatParticle {
-            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
-            50% { opacity: 0.3; }
-            100% { transform: translateY(-20vh) scale(1.2); opacity: 0; }
+            transition: background 0.4s var(--ios-ease);
         }
 
         header { 
@@ -55,170 +53,182 @@
             display: flex; justify-content: space-between; align-items: center; z-index: 100; position: relative;
         }
         
-        .search-container { flex: 1; max-width: 450px; background: rgba(100,116,139,0.08); border-radius: 12px; padding: 8px 16px; margin: 0 15px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); }
+        .search-container { flex: 1; max-width: 450px; background: rgba(100,116,139,0.06); border-radius: 14px; padding: 10px 16px; margin: 0 15px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); }
         .search-container input { border: none; background: transparent; width: 100%; outline: none; color: var(--text); font-size: 0.9rem; }
-        .voice-btn { background: none; border: none; cursor: pointer; font-size: 1.1rem; }
-        .voice-active { animation: listeningPulse 1s infinite alternate; color: #ef4444 !important; }
-        @keyframes listeningPulse { from { transform: scale(1); } to { transform: scale(1.2); } }
 
-        .dark-toggle { background: rgba(100,116,139,0.08); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 10px; font-weight: bold; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .dark-toggle { background: rgba(100,116,139,0.06); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; }
 
-        .live-counter { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; font-size: 0.75rem; font-weight: 700; padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px; }
-        .live-pulse { width: 6px; height: 6px; background: #ef4444; border-radius: 50%; animation: pulseRing 1.2s infinite alternate; }
-        @keyframes pulseRing { from { transform: scale(0.8); opacity: 0.5; } to { transform: scale(1.3); opacity: 1; } }
+        .live-counter { background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.15); color: #ef4444; font-size: 0.75rem; font-weight: 700; padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px; }
+        .live-pulse { width: 6px; height: 6px; background: #ef4444; border-radius: 50%; animation: pulseRing 1.4s infinite alternate var(--ios-ease); }
+        @keyframes pulseRing { from { transform: scale(0.85); opacity: 0.6; } to { transform: scale(1.25); opacity: 1; } }
 
-        /* 📱 CONTENEDOR PRINCIPAL INTERFAZ */
         .main-layout { display: flex; flex: 1; overflow: hidden; position: relative; z-index: 10; }
         
-        /* BARRA LATERAL (ESCRITORIO) / MENÚ HORIZONTAL SLIDER (CELULAR) */
+        /* 🍏 SIDEBAR VERTICAL / HORIZONTAL CON DESLIZAMIENTO INERCIAL DE IPHONE */
         .sidebar { 
             width: 280px; background: var(--sidebar-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; 
         }
         .sidebar h3 { font-size: 0.75rem; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; margin-bottom: 5px; }
         .categories-group { display: flex; flex-direction: column; gap: 6px; }
-        .cat-btn { background: transparent; border: 1px solid transparent; padding: 10px 12px; text-align: left; border-radius: 10px; cursor: pointer; font-weight: 600; color: var(--text); transition: all 0.2s; font-size: 0.9rem; }
-        .cat-btn:hover, .cat-btn.active { background: rgba(37, 99, 235, 0.1); color: var(--accent); border-color: rgba(37, 99, 235, 0.15); }
-
-        .content-area { flex: 1; padding: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         
-        /* 💥 DISPLAY TEMU/ALIXPRESS MULTI-COLUMNAS AUTOMÁTICAS */
+        /* Botones de categoría estilo chip de iOS */
+        .cat-btn { 
+            background: transparent; border: 1px solid transparent; padding: 10px 14px; text-align: left; border-radius: 12px; 
+            cursor: pointer; font-weight: 600; color: var(--text); font-size: 0.9rem;
+            transition: transform 0.2s var(--ios-ease), background 0.2s var(--ios-ease), color 0.2s var(--ios-ease); 
+        }
+        .cat-btn:active { transform: scale(0.96); }
+        .cat-btn:hover, .cat-btn.active { background: rgba(37, 99, 235, 0.08); color: var(--accent); }
+
+        .content-area { 
+            flex: 1; padding: 20px; overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; /* Deslizamiento fluido y elástico nativo de iPhone */
+        }
+        
+        /* 💥 CUADRÍCULA ESTILO TEMU / ALIEXPRESS */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
         
-        /* 💎 DISEÑO DE TARJETAS COMERCIALES */
         .card { 
-            background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); 
+            background: var(--card-bg); border-radius: 18px; border: 1px solid var(--border); 
             display: flex; flex-direction: column; overflow: hidden; position: relative;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.01);
+            transition: transform 0.4s var(--ios-ease), box-shadow 0.4s var(--ios-ease);
         }
-        .card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px var(--accent-glow); }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px var(--accent-glow); }
         
-        .stock-badge { position: absolute; top: 8px; left: 8px; padding: 4px 8px; border-radius: 6px; font-size: 0.65rem; font-weight: 800; color: white; z-index: 10; }
+        .stock-badge { position: absolute; top: 10px; left: 10px; padding: 4px 8px; border-radius: 8px; font-size: 0.65rem; font-weight: 800; color: white; z-index: 10; }
         .stock-high { background: var(--success); }
         .stock-low { background: #ef4444; }
 
-        /* BOTONES INTERACTIVOS (FAVORITOS Y COMPARTIR) */
-        .action-container { position: absolute; top: 8px; right: 8px; display: flex; flex-direction: column; gap: 6px; z-index: 20; }
-        .action-circle-btn { width: 32px; height: 32px; background: rgba(255,255,255,0.9); border-radius: 50%; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.2s; }
-        .action-circle-btn:hover { transform: scale(1.1); }
-        .fav-active { color: #ef4444 !important; font-weight: bold; }
+        /* Botones de acción comercial flotantes */
+        .action-container { position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 6px; z-index: 20; }
+        .action-circle-btn { 
+            width: 34px; height: 34px; background: rgba(255,255,255,0.9); border-radius: 50%; border: 1px solid #e2e8f0; 
+            display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.95rem; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.3s var(--ios-ease); 
+        }
+        .action-circle-btn:active { transform: scale(0.85); }
+        .fav-active { color: #ef4444 !important; font-weight: bold; transform: scale(1.1); }
 
-        .img-box { width: 100%; aspect-ratio: 1/1; background: #f1f5f9; overflow: hidden; }
-        .img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .img-box { width: 100%; aspect-ratio: 1/1; background: #f1f5f9; overflow: hidden; position: relative; }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s var(--ios-ease); }
+        .card:hover .img-box img { transform: scale(1.04); }
         
-        .content { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; }
-        .price { font-size: 1.2rem; font-weight: 800; color: var(--accent); }
+        .content { padding: 14px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; }
+        .price { font-size: 1.25rem; font-weight: 800; color: var(--text); }
         
-        select { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.8rem; background: var(--bg); color: var(--text); outline: none; }
+        /* 📏 CONTENEDOR DE TALLAS EN LÍNEA RECTA HORIZONTAL RECTANGULAR/REDONDA */
+        .selector-label { font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
+        .inline-selector-row { 
+            display: flex; gap: 6px; overflow-x: auto; padding: 2px 0; 
+            scrollbar-width: none; -webkit-overflow-scrolling: touch;
+        }
+        .inline-selector-row::-webkit-scrollbar { display: none; }
         
-        .add-btn { width: 100%; background: #1e293b; color: white; border: none; padding: 10px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+        .size-chip {
+            min-width: 34px; height: 34px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--border);
+            background: var(--bg); color: var(--text); font-size: 0.78rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            transition: all 0.2s var(--ios-ease); flex-shrink: 0;
+        }
+        .size-chip.selected {
+            background: var(--text); color: var(--bg); border-color: var(--text); transform: scale(1.05);
+        }
+
+        .add-btn { 
+            width: 100%; background: #0f172a; color: white; border: none; padding: 12px; border-radius: 12px; 
+            font-weight: 700; font-size: 0.88rem; cursor: pointer; transition: transform 0.2s var(--ios-ease); 
+        }
+        .add-btn:active { transform: scale(0.95); }
         [data-theme="dark"] .add-btn { background: var(--accent); }
 
-        /* SKELETON LOADERS */
+        /* SKELETON */
         .skeleton-wrapper { display: none; }
         .skeleton-wrapper.active { display: grid; }
-        .skeleton-card { background: var(--card-bg); border-radius: 16px; height: 300px; border: 1px solid var(--border); padding: 12px; display: flex; flex-direction: column; gap: 10px; }
-        .skeleton-img { width: 100%; aspect-ratio: 1/1; background: rgba(100,116,139,0.1); border-radius: 10px; }
-        .skeleton-line { height: 12px; background: rgba(100,116,139,0.1); border-radius: 4px; }
+        .skeleton-card { background: var(--card-bg); border-radius: 18px; height: 320px; border: 1px solid var(--border); padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+        .skeleton-img { width: 100%; aspect-ratio: 1/1; background: rgba(100,116,139,0.08); border-radius: 12px; }
+        .skeleton-line { height: 12px; background: rgba(100,116,139,0.08); border-radius: 4px; }
 
-        .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 15px; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.3); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(12px); padding: 16px; }
         .modal.active { display: flex; }
-        .modal-box { background: var(--card-bg); border: 1px solid var(--border); padding: 25px; border-radius: 20px; width: 100%; max-width: 420px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        .modal-box { 
+            background: var(--card-bg); border: 1px solid var(--border); padding: 25px; border-radius: 24px; width: 100%; max-width: 400px; position: relative; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+            transform: scale(0.9); animation: iosModalOpen 0.4s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
+        }
+        @keyframes iosModalOpen { to { transform: scale(1); } }
 
-        .bottom-bar { background: var(--white); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); padding: 12px 24px; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; gap: 15px; z-index: 90; position: relative; }
-        .budget-container { width: 100%; background: rgba(100,116,139,0.15); height: 10px; border-radius: 10px; overflow: hidden; }
-        .budget-bar { height: 100%; background: linear-gradient(90deg, #10b981, #2563eb); width: 0%; transition: width 1s ease; }
-        
-        .coupon-section, .cyber-panel, .roulette-container { background: rgba(100,116,139,0.04); padding: 12px; border-radius: 12px; border: 1px solid var(--border); }
-        .coupon-box { display: flex; gap: 5px; margin-top: 6px; }
-        .coupon-box input { flex: 1; padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-weight: bold; font-size: 0.8rem; }
-        .coupon-box button { background: var(--accent); color: white; border: none; padding: 0 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; }
+        .bottom-bar { background: var(--white); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); padding: 14px 24px; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; gap: 15px; z-index: 90; position: relative; }
+        .budget-container { width: 100%; background: rgba(100,116,139,0.12); height: 8px; border-radius: 10px; overflow: hidden; }
+        .budget-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.8s var(--ios-ease); }
 
-        .wheel-wrapper { position: relative; width: 100px; height: 100px; margin: 5px auto; }
-        .wheel { width: 100%; height: 100%; border-radius: 50%; border: 3px solid #0f172a; background: conic-gradient(#ef4444 0deg 90deg, #3b82f6 90deg 180deg, #10b981 180deg 270deg, #f59e0b 270deg 360deg); transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1); }
-        .wheel-btn { width: 100%; background: #6366f1; color: white; border: none; padding: 6px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; }
-
-        #matrix-alarm { display: none; position: fixed; inset: 0; background: rgba(239, 68, 68, 0.1); z-index: 5000; pointer-events: none; border: 8px solid #ef4444; animation: pulse 0.5s infinite alternate; }
-        @keyframes pulse { from { opacity: 0.3; } to { opacity: 1; } }
-
-        /* 📱 REGLAS EXCLUSIVAS MÓVILES - EFECTO TEMU / ALIEXPRESS */
+        /* 📱 DISEÑO EXCLUSIVO DE IPHONE / CELULAR (TEMU STYLE) */
         @media (max-width: 768px) {
-            header { padding: 10px; flex-direction: column; gap: 8px; }
-            .search-container { max-width: 100%; width: 100%; margin: 0; }
+            header { padding: 10px 16px; flex-direction: column; gap: 8px; }
+            .search-container { max-width: 100%; width: 100%; margin: 0; border-radius: 12px; padding: 8px 14px; }
             
-            /* Cambia Sidebar vertical a Menú Deslizable Horizontal Arriba */
             .main-layout { flex-direction: column; }
+            
+            /* Menú Deslizable Horizontal Arriba con amortiguación iOS */
             .sidebar { 
                 width: 100%; border-right: none; border-bottom: 1px solid var(--border); 
-                padding: 10px; flex-direction: row; overflow-x: auto; overflow-y: hidden; white-space: nowrap; gap: 10px; scrollbar-width: none;
+                padding: 10px 16px; flex-direction: row; overflow-x: auto; overflow-y: hidden; white-space: nowrap; gap: 8px;
+                scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
             }
-            .sidebar::-webkit-scrollbar { display: none; }
-            .sidebar h3, .sidebar .roulette-container, .sidebar .coupon-section, .sidebar .cyber-panel { display: none; } /* Oculta modulos secundarios en celular para dar espacio */
-            .categories-group { flex-direction: row; gap: 8px; }
-            .cat-btn { padding: 6px 14px; font-size: 0.85rem; background: rgba(100,116,139,0.06); border: 1px solid var(--border); }
+            .sidebar h3, .sidebar .roulette-container, .sidebar .coupon-section, .sidebar .cyber-panel { display: none; } 
+            .categories-group { flex-direction: row; gap: 6px; }
+            .cat-btn { padding: 8px 16px; font-size: 0.85rem; background: rgba(100,116,139,0.05); border: 1px solid var(--border); border-radius: 20px; }
             
-            /* Cuadrícula de 2 columnas perfectas en celulares */
-            .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 5px; }
-            .card { border-radius: 12px; }
-            .content { padding: 8px; gap: 4px; }
-            .price { font-size: 1.05rem; }
+            /* Cuadrícula compacta exacta de 2 columnas tipo AliExpress */
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
+            .card { border-radius: 14px; }
+            .content { padding: 10px; gap: 6px; }
+            .price { font-size: 1.1rem; }
             h3 { font-size: 0.85rem !important; }
-            .add-btn { padding: 8px; font-size: 0.8rem; }
+            .add-btn { padding: 10px; font-size: 0.8rem; border-radius: 10px; }
 
-            .bottom-bar { grid-template-columns: 1fr; text-align: center; gap: 8px; padding: 10px; }
+            .bottom-bar { grid-template-columns: 1fr; text-align: center; gap: 8px; padding: 12px; }
         }
     </style>
 </head>
 <body>
 
-    <div id="login-screen" style="position: fixed; inset: 0; background: var(--bg); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 15px;">
-        <div style="background: var(--card-bg); border: 1px solid var(--border); padding: 30px; border-radius: 20px; width: 100%; max-width: 380px; box-shadow: 0 15px 30px rgba(0,0,0,0.1); text-align: center;">
-            <div style="font-size: 2.5rem; margin-bottom: 8px;">🛍️</div>
-            <h2 id="login-title" style="margin: 0; font-weight: 800; color: var(--accent); font-size: 1.4rem;">BIENVENIDO A INNOVALOGIC</h2>
-            <p id="login-subtitle" style="color: #64748b; font-size: 0.8rem; margin-top: 4px; margin-bottom: 20px;">Ingresa tus datos de acceso estudiantil</p>
+    <div id="login-screen" style="position: fixed; inset: 0; background: var(--bg); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 16px;">
+        <div style="background: var(--card-bg); border: 1px solid var(--border); padding: 30px; border-radius: 24px; width: 100%; max-width: 360px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); text-align: center;">
+            <div style="font-size: 2.4rem; margin-bottom: 8px;">🛍️</div>
+            <h2 id="login-title" style="margin: 0; font-weight: 800; color: var(--text); font-size: 1.35rem; letter-spacing: -0.5px;">INNOVALOGIC MARKET</h2>
+            <p id="login-subtitle" style="color: #64748b; font-size: 0.8rem; margin-top: 4px; margin-bottom: 20px;">Portal seguro de compras e insumos</p>
             
             <div style="text-align: left; margin-bottom: 12px;">
-                <label style="font-size: 0.75rem; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Correo Institucional o Personal:</label>
-                <input type="email" id="login-email" placeholder="ejemplo@correo.com" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none; font-size: 0.85rem;">
+                <input type="email" id="login-email" placeholder="Correo Electrónico" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none; font-size: 0.88rem;">
             </div>
 
-            <div style="text-align: left; margin-bottom: 15px;">
-                <label style="font-size: 0.75rem; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Contraseña:</label>
-                <input type="password" id="login-pass" placeholder="••••••••" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none; font-size: 0.85rem;">
+            <div style="text-align: left; margin-bottom: 16px;">
+                <input type="password" id="login-pass" placeholder="Contraseña de Seguridad" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none; font-size: 0.88rem;">
             </div>
 
-            <div id="extra-login-fields" style="text-align: left; margin-bottom: 15px; display: none;">
-                <label style="font-size: 0.75rem; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Grado:</label>
-                <select id="login-grade">
-                    <option value="10-1">Décimo 10-1</option>
-                    <option value="10-2">Décimo 10-2</option>
-                    <option value="11-1">Once 11-1</option>
-                    <option value="11-2">Once 11-2</option>
+            <div id="extra-login-fields" style="text-align: left; margin-bottom: 16px; display: none;">
+                <select id="login-grade" style="padding: 12px; border-radius: 12px; width:100%;">
+                    <option value="10-1">Grado 10-1</option>
+                    <option value="10-2">Grado 10-2</option>
+                    <option value="11-1">Grado 11-1</option>
+                    <option value="11-2">Grado 11-2</option>
                 </select>
             </div>
 
-            <button id="main-login-btn" onclick="procesarAutenticacion()" style="width: 100%; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer; margin-bottom: 10px;">Iniciar Sesión</button>
-            
-            <a id="toggle-login-mode" href="#" onclick="switchLoginMode(event)" style="font-size: 0.78rem; color: var(--accent); font-weight: 600; text-decoration: none;">¿No tienes cuenta? Regístrate aquí</a>
+            <button id="main-login-btn" onclick="procesarAutenticacion()" style="width: 100%; background: var(--text); color: var(--bg); border: none; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; margin-bottom: 12px;">Iniciar Sesión</button>
+            <a id="toggle-login-mode" href="#" onclick="switchLoginMode(event)" style="font-size: 0.78rem; color: var(--accent); font-weight: 600; text-decoration: none;">¿Eres nuevo? Regístrate aquí</a>
         </div>
     </div>
 
-    <div class="bg-particles" id="particle-container"></div>
-    <div id="matrix-alarm"></div>
-
     <header>
-        <div style="font-weight: 900; color: var(--accent); font-size: 1.2rem; letter-spacing: -0.5px;">INNOVALOGIC CORE 🚀</div>
-        
+        <div style="font-weight: 800; color: var(--text); font-size: 1.15rem; letter-spacing: -0.5px;">INNOVALOGIC CORE 🚀</div>
         <div class="search-container">
-            🔍 <input type="text" id="search-input" placeholder="Buscar en Temu Evaristo..." onkeyup="filterProducts(this.value)">
-            <button class="voice-btn" id="voice-trigger" onclick="startVoiceSearch()">🎙️</button>
+            🔍 <input type="text" id="search-input" placeholder="Buscar insumos escolares..." onkeyup="filterProducts(this.value)">
         </div>
-
         <div style="display: flex; align-items: center; gap: 10px;">
-            <div class="live-counter">
-                <div class="live-pulse"></div>
-                <span id="live-users-txt">🔥 14 en línea</span>
-            </div>
+            <div class="live-counter"><div class="live-pulse"></div><span id="live-users-txt">🔥 14 en línea</span></div>
             <button class="dark-toggle" onclick="toggleTheme()">🌙</button>
         </div>
     </header>
@@ -226,30 +236,12 @@
     <div class="main-layout">
         <aside class="sidebar">
             <div class="categories-group">
-                <h3>Categorías</h3>
                 <button class="cat-btn active" onclick="filterByCategory('todos', this)">📂 Todos</button>
                 <button class="cat-btn" onclick="filterByCategory('uniformes', this)">👕 Uniformes</button>
                 <button class="cat-btn" onclick="filterByCategory('escolar', this)">📚 Escolar</button>
                 <button class="cat-btn" onclick="filterByCategory('belleza', this)">💄 Belleza</button>
-                <button class="cat-btn" onclick="filterByCategory('construccion', this)">🎨 Obra/Pintura</button>
+                <button class="cat-btn" onclick="filterByCategory('construccion', this)">🎨 Técnicos</button>
                 <button class="cat-btn" onclick="filterByCategory('deportes', this)">⚽ Deportes</button>
-            </div>
-
-            <div class="roulette-container">
-                <div class="wheel-wrapper"><div class="wheel" id="lucky-wheel"></div></div>
-                <button class="wheel-btn" id="spin-btn" onclick="spinWheel()">🎰 Ruleta de Premios</button>
-            </div>
-
-            <div class="coupon-section">
-                <div class="coupon-box">
-                    <input type="text" id="coupon-input" placeholder="CUPÓN">
-                    <button onclick="cart.validarCupon()">Usar</button>
-                </div>
-                <div id="coupon-status" style="font-size: 0.7rem; margin-top: 3px; font-weight: bold;"></div>
-            </div>
-
-            <div class="cyber-panel">
-                <button class="cyber-switch" id="cyber-btn" onclick="triggerCyberTest()">Simular DDoS</button>
             </div>
         </aside>
 
@@ -274,30 +266,38 @@
                         <button class="action-circle-btn" onclick="compartirProducto('{{ p.nombre }}')">🔗</button>
                     </div>
 
-                    <div class="img-box"><img src="{{ p.img }}"></div>
+                    <div class="img-box"><img src="{{ p.img }}" loading="lazy"></div>
                     <div class="content">
                         <div>
                             <small style="color:#64748b; font-weight: bold; text-transform: uppercase; font-size: 0.65rem;">{{ p.prov }}</small>
-                            <h3 style="font-size:0.9rem; margin:3px 0; font-weight: 700; line-height: 1.2;">{{ p.nombre }}</h3>
+                            <h3 style="font-size:0.88rem; margin:3px 0; font-weight: 700; color: var(--text); line-height: 1.2;">{{ p.nombre }}</h3>
                         </div>
+                        
                         <div>
-                            <div class="price">$ {{ p.precio_f }}</div>
-
                             {% if p.tallas %}
-                            <select id="t-{{ p.id }}" style="margin-bottom: 5px;">
-                                <option value="">Talla...</option>
-                                {% for t in p.tallas %}<option value="{{ t }}">Talla {{ t }}</option>{% endfor %}
-                            </select>
+                            <div style="margin-bottom: 8px;">
+                                <div class="selector-label">Selecciona Talla:</div>
+                                <div class="inline-selector-row" id="talla-row-{{ p.id }}">
+                                    {% for t in p.tallas %}
+                                    <div class="size-chip" onclick="selectChip('{{ p.id }}', 'talla', '{{ t }}', this)">{{ t }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
                             {% endif %}
 
                             {% if p.especialidades %}
-                            <select id="e-{{ p.id }}" style="margin-bottom: 5px;">
-                                <option value="">Especialidad...</option>
-                                {% for e in p.especialidades %}<option value="{{ e }}">{{ e }}</option>{% endfor %}
-                            </select>
+                            <div style="margin-bottom: 8px;">
+                                <div class="selector-label">Especialidad:</div>
+                                <div class="inline-selector-row" id="esp-row-{{ p.id }}">
+                                    {% for e in p.especialidades %}
+                                    <div class="size-chip" onclick="selectChip('{{ p.id }}', 'esp', '{{ e }}', this)" style="padding: 0 12px; min-width: auto;">{{ e }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
                             {% endif %}
 
-                            <button class="add-btn" onclick="cart.add('{{ p.nombre }}', {{ p.precio }}, '{{ p.id }}')">🛒 Añadir</button>
+                            <div class="price" style="margin-bottom: 8px;">$ {{ p.precio_f }}</div>
+                            <button class="add-btn" onclick="cart.add('{{ p.nombre }}', {{ p.precio }}, '{{ p.id }}')">Añadir</button>
                         </div>
                     </div>
                 </div>
@@ -310,43 +310,35 @@
         <div onclick="cart.showDatos()" style="cursor:pointer; font-weight:700; font-size: 0.9rem;">
             🛒 Bolsa: <span id="count">0</span> items
         </div>
-        
         <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
             <span style="font-size: 0.7rem; font-weight: bold; margin-bottom: 2px;">
-                Ventas: <span id="budget-txt">$ 0</span> / $ {{ "{:,.0f}".format(meta).replace(",", ".") }}
+                Caja Mayor: <span id="budget-txt">$ 0</span> / $ {{ "{:,.0f}".format(meta).replace(",", ".") }}
             </span>
             <div class="budget-container"><div class="budget-bar" id="budget-bar-fill"></div></div>
         </div>
-
         <div id="total" style="font-size: 1.1rem; font-weight:800; color:var(--accent); text-align: right;">$ 0</div>
     </div>
 
     <div id="modal-recibo" class="modal">
         <div class="modal-box">
             <button onclick="cerrarRecibo()" style="position: absolute; top: 12px; right: 12px; background: #ef4444; border: none; border-radius: 50%; width: 28px; height: 28px; color: white; font-weight: bold; cursor: pointer;">✕</button>
-            <h3 style="text-align:center; color:var(--nequi); font-weight: 800;">PASARELA DIRECTA NEQUI</h3>
-            
+            <h3 style="text-align:center; color:var(--nequi); font-weight: 800; font-size: 1.1rem;">PASARELA DIRECTA NEQUI</h3>
             <div id="recibo-info" style="margin: 12px 0; font-size: 0.85rem; border-top: 1px dashed #cbd5e1; padding-top: 10px;"></div>
             
-            <div style="background: rgba(100,116,139,0.05); padding: 8px; border-radius: 8px; margin-bottom: 10px;">
+            <div style="background: rgba(100,116,139,0.04); padding: 8px; border-radius: 8px; margin-bottom: 10px;">
                 <label style="font-size: 0.7rem; font-weight: bold; display: block; margin-bottom: 2px;">📍 Bloque de Entrega:</label>
-                <select id="logistica-bloque" onchange="calcularTiempoEntrega()">
+                <select id="logistica-bloque" onchange="calcularTiempoEntrega()" style="width: 100%; padding: 8px; border-radius: 8px;">
                     <option value="">Seleccionar...</option>
                     <option value="A">Bloque A (Sistemas)</option>
                     <option value="B">Bloque B (Talleres)</option>
-                    <option value="C">Bloque C (Aulas Generales)</option>
+                    <option value="C">Bloque C (Aulas)</option>
                 </select>
                 <div id="tiempo-entrega-txt" style="font-size: 0.7rem; font-weight: bold; color: var(--accent); margin-top: 2px;"></div>
             </div>
 
-            <div style="text-align:center; margin: 10px 0;"><img id="nequi-qr" src="" style="width:130px; height:130px; border:2px solid var(--nequi); border-radius:10px;"></div>
-
-            <div style="background: #f3e8ff; padding: 8px; border-radius: 8px; text-align:center; margin-bottom: 10px;">
-                <b style="font-size: 1.2rem; color:var(--nequi);">{{ config.nequi_numero }}</b>
-            </div>
-
+            <div style="text-align:center; margin: 10px 0;"><img id="nequi-qr" src="" style="width:130px; height:130px; border-radius:10px;"></div>
             <button class="add-btn" style="background:var(--nequi); margin-bottom: 6px; color: white;" onclick="cart.abrirNequiReal()">💳 Abrir Nequi</button>
-            <button class="add-btn" style="background:#10b981; color: white;" onclick="cart.send()">Confirmar por WhatsApp</button>
+            <button class="add-btn" style="background:#10b981; color: white;" onclick="cart.send()">Confirmar Transacción</button>
         </div>
     </div>
 
@@ -354,48 +346,44 @@
         let ventasAcumuladas = parseInt("{{ ventas_reales }}") || 0;
         const metaFinanciera = parseInt("{{ meta }}") || 2000000;
         let isRegisterMode = false;
+        
+        // Memoria de selecciones
+        let selectedSelections = {};
 
         function switchLoginMode(e) {
             e.preventDefault();
             isRegisterMode = !isRegisterMode;
-            document.getElementById('login-title').innerText = isRegisterMode ? "CREAR CUENTA NUEVA" : "BIENVENIDO A INNOVALOGIC";
-            document.getElementById('login-subtitle').innerText = isRegisterMode ? "Regístrate para guardar tus favoritos y compras" : "Ingresa tus datos de acceso estudiantil";
-            document.getElementById('main-login-btn').innerText = isRegisterMode ? "Registrarse e Ingresar" : "Iniciar Sesión";
-            document.getElementById('toggle-login-mode').innerText = isRegisterMode ? "¿Ya tienes cuenta? Inicia sesión" : "¿No tienes cuenta? Regístrate aquí";
+            document.getElementById('login-title').innerText = isRegisterMode ? "CREAR CUENTA" : "INNOVALOGIC MARKET";
             document.getElementById('extra-login-fields').style.display = isRegisterMode ? "block" : "none";
+            document.getElementById('main-login-btn').innerText = isRegisterMode ? "Registrarse" : "Iniciar Sesión";
         }
 
         function procesarAutenticacion() {
             const email = document.getElementById('login-email').value.trim();
             const pass = document.getElementById('login-pass').value.trim();
-            const grade = document.getElementById('login-grade').value;
-
-            if(!email || !pass) {
-                alert("Por favor rellena todos los campos.");
-                return;
-            }
+            if(!email || !pass) return alert("Completa los datos, mano.");
 
             if(isRegisterMode) {
                 localStorage.setItem('user_email', email);
                 localStorage.setItem('user_password', pass);
-                localStorage.setItem('user_grade', grade);
-                alert("Cuenta creada con éxito, mano. ¡Ingresando!");
+                localStorage.setItem('user_grade', document.getElementById('login-grade').value);
             } else {
                 const localEmail = localStorage.getItem('user_email') || "estudiante@evaristo.com";
                 const localPass = localStorage.getItem('user_password') || "12345";
-                const localGrade = localStorage.getItem('user_grade') || "10-1";
-
-                if(email !== localEmail || pass !== localPass) {
-                    alert("Correo o contraseña incorrectos. Si eres nuevo, dale al botón de registrarse.");
-                    return;
-                }
-                localStorage.setItem('user_grade', localGrade);
+                if(email !== localEmail || pass !== localPass) return alert("Datos incorrectos.");
             }
-
             localStorage.setItem('session_active', 'true');
-            cart.clienteNom = email.split('@')[0];
-            cart.clienteGrad = localStorage.getItem('user_grade');
             document.getElementById('login-screen').style.display = 'none';
+        }
+
+        // CONTROLADOR DE TALLAS EN LÍNEA ESTILO IPHONE
+        function selectChip(productId, type, value, element) {
+            const parent = element.parentElement;
+            parent.querySelectorAll('.size-chip').forEach(chip => chip.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            if (!selectedSelections[productId]) selectedSelections[productId] = {};
+            selectedSelections[productId][type] = value;
         }
 
         function toggleFavorito(id) {
@@ -411,161 +399,99 @@
         }
 
         function compartirProducto(nombre) {
-            const dummyUrl = window.location.href + "?share=" + encodeURIComponent(nombre);
-            navigator.clipboard.writeText(dummyUrl).then(() => {
-                alert(`¡Enlace de "${nombre}" copiado para compartir por WhatsApp!`);
-            });
+            const shareUrl = window.location.href.split('?')[0] + "?item=" + encodeURIComponent(nombre);
+            navigator.clipboard.writeText(shareUrl).then(() => alert(`¡Enlace copiado! Envíaselo a tus amigos de la Evaristo.`));
         }
 
         window.onload = function() {
-            if(localStorage.getItem('session_active') === 'true') {
-                document.getElementById('login-screen').style.display = 'none';
-                cart.clienteNom = (localStorage.getItem('user_email') || "estudiante").split('@')[0];
-                cart.clienteGrad = localStorage.getItem('user_grade') || "10-1";
-            }
-
-            // Cargar Favoritos guardados
+            if(localStorage.getItem('session_active') === 'true') document.getElementById('login-screen').style.display = 'none';
             document.querySelectorAll('.action-circle-btn[id^="fav-"]').forEach(btn => {
                 const id = btn.id.split('-')[1];
-                if(localStorage.getItem('fav-'+id) === 'true') {
-                    btn.classList.add('fav-active');
-                    btn.innerText = "❤️";
-                }
+                if(localStorage.getItem('fav-'+id) === 'true') { btn.classList.add('fav-active'); btn.innerText = "❤️"; }
             });
-
             actualizarBarraPresupuesto(ventasAcumuladas);
-            
             setTimeout(() => {
                 document.getElementById('skeleton-grid').classList.remove('active');
                 document.getElementById('main-grid').style.display = 'grid';
-            }, 800);
+            }, 400);
         };
 
         function calcularTiempoEntrega() {
             const bloque = document.getElementById('logistica-bloque').value;
             const txt = document.getElementById('tiempo-entrega-txt');
             if(!bloque) { txt.innerText = ""; return; }
-            let minutos = bloque === 'A' ? 5 : (bloque === 'B' ? 9 : 12);
-            txt.innerHTML = `🚀 Despacho al Bloque ${bloque} en ${minutos} minutos.`;
+            let minutos = bloque === 'A' ? 5 : (bloque === 'B' ? 8 : 12);
+            txt.innerHTML = `🚀 Llega al Bloque ${bloque} en ${minutos} minutos.`;
             cart.bloqueEntrega = bloque;
             cart.tiempoEstimado = minutos;
         }
 
-        function spinWheel() {
-            const wheel = document.getElementById('lucky-wheel');
-            const btn = document.getElementById('spin-btn');
-            btn.disabled = true;
-            let grados = 1440 + Math.floor(Math.random() * 360);
-            wheel.style.transform = `rotate(${grados}deg)`;
-            setTimeout(() => {
-                alert("¡Ganaste un cupón del 10%! Usa el código: SUERTE10");
-                document.getElementById('coupon-input').value = "SUERTE10";
-                btn.disabled = false;
-            }, 4000);
-        }
-
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
-            let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
+            document.documentElement.setAttribute('data-theme', currentTheme === 'dark' ? 'light' : 'dark');
         }
 
         function actualizarBarraPresupuesto(totalActual) {
             let porcentaje = (totalActual / metaFinanciera) * 100;
-            if(porcentaje > 100) porcentaje = 100;
-            document.getElementById('budget-bar-fill').style.width = porcentaje + "%";
+            document.getElementById('budget-bar-fill').style.width = Math.min(porcentaje, 100) + "%";
             document.getElementById('budget-txt').innerText = "$ " + totalActual.toLocaleString('es-CO');
         }
 
         function filterProducts(q) {
             const query = q.toLowerCase();
-            document.querySelectorAll('.card').forEach(c => {
-                c.style.display = c.dataset.name.includes(query) ? 'flex' : 'none';
-            });
+            document.querySelectorAll('.card').forEach(c => c.style.display = c.dataset.name.includes(query) ? 'flex' : 'none');
         }
 
         function filterByCategory(cat, btn) {
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            document.querySelectorAll('.card').forEach(c => {
-                c.style.display = (cat === 'todos' || c.dataset.cat === cat) ? 'flex' : 'none';
-            });
+            document.querySelectorAll('.card').forEach(c => c.style.display = (cat === 'todos' || c.dataset.cat === cat) ? 'flex' : 'none');
         }
 
         function cerrarRecibo() { document.getElementById('modal-recibo').classList.remove('active'); }
 
-        function triggerCyberTest() {
-            const status = document.getElementById('cyber-btn');
-            const alarm = document.getElementById('matrix-alarm');
-            status.innerText = "¡MITIGANDO ATAQUE!";
-            alarm.style.display = "block";
-            setTimeout(() => {
-                alarm.style.display = "none";
-                status.innerText = "Simular DDoS";
-                alert("¡Innovalogic Shield protegió los servidores móvil y web!");
-            }, 2500);
-        }
-
         const cart = {
-            items: [], total: 0, subtotal: 0, descuento: 0, clienteNom: "", clienteGrad: "", bloqueEntrega: "", tiempoEstimado: 0,
+            items: [], total: 0, subtotal: 0, clienteNom: "Estudiante", clienteGrad: "10", bloqueEntrega: "", tiempoEstimado: 0,
             add(name, price, id) {
-                const t = document.getElementById('t-'+id);
-                const e = document.getElementById('e-'+id);
-                if(t && !t.value) return alert("Elige la talla, mano");
-                let d = (t ? "Talla " + t.value : "") + (e ? " - " + e.value : "");
+                const selection = selectedSelections[id] || {};
+                const hasTallas = document.getElementById('talla-row-'+id) !== null;
+                const hasEsps = document.getElementById('esp-row-'+id) !== null;
+
+                if(hasTallas && !selection.talla) return alert("Selecciona una talla en los botones, mano.");
+                if(hasEsps && !selection.esp) return alert("Selecciona la especialidad, mano.");
+
+                let d = (selection.talla ? "Talla " + selection.talla : "") + (selection.esp ? " - " + selection.esp : "");
                 this.items.push({name, price, d});
                 this.update();
             },
             update() {
                 this.subtotal = this.items.reduce((s, i) => s + i.price, 0);
-                this.total = this.subtotal * (1 - this.descuento);
+                this.total = this.subtotal;
                 document.getElementById('count').innerText = this.items.length;
                 document.getElementById('total').innerText = "$ " + this.total.toLocaleString('es-CO');
             },
-            validarCupon() {
-                const code = document.getElementById('coupon-input').value;
-                fetch('/api/validar-cupon', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({codigo: code}) })
-                .then(res => res.json())
-                .then(data => {
-                    const status = document.getElementById('coupon-status');
-                    if(data.valid) {
-                        this.descuento = data.descuento;
-                        status.innerText = `Cupón Activo -${data.descuento * 100}%`;
-                        status.style.color = "#10b981";
-                    } else {
-                        this.descuento = 0;
-                        status.innerText = "No válido";
-                        status.style.color = "red";
-                    }
-                    this.update();
-                });
-            },
             showDatos() {
-                if(this.items.length === 0) return alert("La bolsa está vacía.");
-                let html = `<b>Usuario:</b> ${this.clienteNom}<br><b>Curso:</b> ${this.clienteGrad}<br><br><b>Orden:</b><br>`;
+                if(this.items.length === 0) return alert("Bolsa vacía.");
+                let html = `<b>Pedido de Insumos:</b><br>`;
                 this.items.forEach(i => html += `• ${i.name} (${i.d})<br>`);
-                html += `<br><b style="font-size:1rem; color:#2563eb;">NETO A PAGAR: $${this.total.toLocaleString('es-CO')}</b>`;
-                const qrDataReal = `co.nequi://transfer?phone={{ config.nequi_numero }}&amount=${this.total}&message=Innovalogic_${this.clienteGrad}`;
-                document.getElementById('nequi-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrDataReal)}`;
+                html += `<br><b style="font-size:1rem; color:#2563eb;">Total: $${this.total.toLocaleString('es-CO')}</b>`;
+                document.getElementById('nequi-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Innovalogic_${this.total}`;
                 document.getElementById('recibo-info').innerHTML = html;
                 document.getElementById('modal-recibo').classList.add('active');
             },
-            abrirNequiReal() {
-                window.location.href = `nequi://transfer?phone={{ config.nequi_numero }}&amount=${this.total}`;
-            },
+            abrirNequiReal() { window.location.href = `nequi://transfer?phone={{ config.nequi_numero }}&amount=${this.total}`; },
             send() {
                 if(!document.getElementById('logistica-bloque').value) return alert("Selecciona bloque de entrega.");
-                let msg = `*INNOVALOGIC - ORDEN DE COMPRA*\n*Usuario:* ${this.clienteNom}\n*Grado:* ${this.clienteGrad}\n*Entrega:* Bloque ${this.bloqueEntrega} (${this.tiempoEstimated || 5} mins)\n\n`;
+                let msg = `*INNOVALOGIC ORDER*\n*Entrega:* Bloque ${this.bloqueEntrega}\n`;
                 this.items.forEach(i => msg += `- ${i.name} ${i.d}\n`);
-                msg += `\n*TOTAL NETO: $${this.total.toLocaleString('es-CO')}*`;
-
-                fetch('/api/registrar-venta', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ cliente: this.clienteNom, grado: this.clienteGrad, total: this.total, productos: this.items }) })
+                msg += `*TOTAL: $${this.total.toLocaleString('es-CO')}*`;
+                
+                fetch('/api/registrar-venta', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ total: this.total }) })
                 .then(res => res.json())
                 .then(data => {
                     actualizarBarraPresupuesto(data.nuevas_ventas);
                     window.open(`https://wa.me/{{ config.whatsapp_admin }}?text=${encodeURIComponent(msg)}`, '_blank');
-                    this.items = []; this.descuento = 0;
-                    this.update(); cerrarRecibo();
+                    this.items = []; this.update(); cerrarRecibo();
                 });
             }
         };
