@@ -18,6 +18,7 @@
             --card-bg: #ffffff;
             --sidebar-bg: rgba(255, 255, 255, 0.65);
             --glass-blur: blur(20px);
+            /* 📱 Curva de aceleración de Apple iOS */
             --ios-ease: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -62,7 +63,7 @@
 
         .main-layout { display: flex; flex: 1; overflow: hidden; position: relative; z-index: 10; }
         
-        /* 🍏 SIDEBAR / MENÚ DE CATEGORÍAS */
+        /* 🍏 SIDEBAR DE CATEGORÍAS */
         .sidebar { 
             width: 280px; background: var(--sidebar-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; 
@@ -83,7 +84,7 @@
             -webkit-overflow-scrolling: touch; 
         }
         
-        /* 💥 INTERFAZ EN CUADRÍCULA */
+        /* 💥 CUADRÍCULA ESTILO TEMU */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
         
         .card { 
@@ -114,7 +115,7 @@
         .content { padding: 14px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; }
         .price { font-size: 1.25rem; font-weight: 800; color: var(--text); }
         
-        /* 📏 DISEÑO DE TALLAS EN LÍNEA RECTA DE IPHONE */
+        /* 📏 DISEÑO DE TALLAS EN LÍNEA RECTA HORIZONTAL */
         .selector-label { font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
         .inline-selector-row { 
             display: flex; gap: 6px; overflow-x: auto; padding: 2px 0; 
@@ -158,20 +159,20 @@
         .budget-container { width: 100%; background: rgba(100,116,139,0.12); height: 8px; border-radius: 10px; overflow: hidden; }
         .budget-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.8s var(--ios-ease); }
 
-        /* 📱 CONFIGURACIÓN MÓVIL ESTILO TEMU COHESIVO */
+        /* 📱 VISTA MÓVIL OPTIMIZADA CON CATEGORÍAS */
         @media (max-width: 768px) {
             header { padding: 10px 16px; flex-direction: column; gap: 8px; }
             .search-container { max-width: 100%; width: 100%; margin: 0; border-radius: 12px; padding: 8px 14px; }
             
             .main-layout { flex-direction: column; }
             
-            /* ¡ARREGLADO! Las categorías se muestran perfectamente deslizables arriba */
+            /* Menú superior deslizable horizontalmente para celulares */
             .sidebar { 
                 width: 100%; border-right: none; border-bottom: 1px solid var(--border); 
                 padding: 10px 16px; flex-direction: row; overflow-x: auto; overflow-y: hidden; white-space: nowrap; gap: 8px;
                 scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; display: flex !important;
             }
-            .sidebar h3, .sidebar .roulette-container, .sidebar .coupon-section, .sidebar .cyber-panel { display: none; } 
+            .sidebar h3 { display: none; } 
             .categories-group { flex-direction: row; gap: 6px; display: flex !important; }
             .cat-btn { padding: 8px 16px; font-size: 0.85rem; background: rgba(100,116,139,0.05); border: 1px solid var(--border); border-radius: 20px; white-space: nowrap; }
             
@@ -203,7 +204,7 @@
             </div>
 
             <div id="extra-login-fields" style="text-align: left; margin-bottom: 16px; display: none;">
-                <select id="login-grade" style="padding: 12px; border-radius: 12px; width:100%;">
+                <select id="login-grade" style="padding: 12px; border-radius: 12px; width:100%; background: var(--bg); color: var(--text); border: 1px solid var(--border);">
                     <option value="10-1">Grado 10-1</option>
                     <option value="10-2">Grado 10-2</option>
                     <option value="11-1">Grado 11-1</option>
@@ -323,7 +324,7 @@
             
             <div style="background: rgba(100,116,139,0.04); padding: 8px; border-radius: 8px; margin-bottom: 10px;">
                 <label style="font-size: 0.7rem; font-weight: bold; display: block; margin-bottom: 2px;">📍 Bloque de Entrega:</label>
-                <select id="logistica-bloque" onchange="calcularTiempoEntrega()" style="width: 100%; padding: 8px; border-radius: 8px; background: var(--bg); color: var(--text);">
+                <select id="logistica-bloque" onchange="calcularTiempoEntrega()" style="width: 100%; padding: 8px; border-radius: 8px; background: var(--bg); color: var(--text); border: 1px solid var(--border);">
                     <option value="">Seleccionar...</option>
                     <option value="A">Bloque A (Sistemas)</option>
                     <option value="B">Bloque B (Talleres)</option>
@@ -380,7 +381,6 @@
             selectedSelections[productId][type] = value;
         }
 
-        /* FAVORITOS INTERACTIVOS REALES */
         function toggleFavorito(id) {
             const btn = document.getElementById('fav-'+id);
             btn.classList.toggle('fav-active');
@@ -419,7 +419,7 @@
             const txt = document.getElementById('tiempo-entrega-txt');
             if(!bloque) { txt.innerText = ""; return; }
             let minutos = bloque === 'A' ? 5 : (bloque === 'B' ? 8 : 12);
-            txt.innerHTML = `🚀 Llega al Bloque ${bloque} en ${minutos} minutos.`;
+            txt.innerHTML = `🚀 Llega al Bloque ${bloque} en ${minutos} minutes.`;
             cart.bloqueEntrega = bloque;
             cart.tiempoEstimado = minutos;
         }
@@ -496,4 +496,19 @@
             abrirNequiReal() { window.location.href = `nequi://transfer?phone={{ config.nequi_numero }}&amount=${this.total}`; },
             send() {
                 if(!document.getElementById('logistica-bloque').value) return alert("Selecciona bloque de entrega.");
-                let msg = `*INNO
+                let msg = `*INNOVALOGIC ORDER*\n*Entrega:* Bloque ${this.bloqueEntrega}\n`;
+                this.items.forEach(i => msg += `- ${i.name} ${i.d}\n`);
+                msg += `*TOTAL: $${this.total.toLocaleString('es-CO')}*`;
+                
+                fetch('/api/registrar-venta', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ total: this.total }) })
+                .then(res => res.json())
+                .then(data => {
+                    actualizarBarraPresupuesto(data.nuevas_ventas);
+                    window.open(`https://wa.me/{{ config.whatsapp_admin }}?text=${encodeURIComponent(msg)}`, '_blank');
+                    this.items = []; this.update(); cerrarRecibo();
+                });
+            }
+        };
+    </script>
+</body>
+</html>
