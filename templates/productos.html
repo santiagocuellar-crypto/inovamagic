@@ -16,77 +16,92 @@
         }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); padding: 16px; min-height: 100vh; }
         
-        .container { max-width: 800px; margin: 0 auto; background: var(--white); border-radius: 24px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
+        .container { max-width: 1000px; margin: 0 auto; background: var(--white); border-radius: 24px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
+        .back-btn { display: inline-flex; align-items: center; gap: 8px; color: var(--accent); font-weight: 700; font-size: 0.9rem; padding: 20px 24px 10px; text-decoration: none; }
         
-        .back-btn { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: none; color: var(--accent); font-weight: 700; font-size: 0.9rem; cursor: pointer; padding: 20px 24px 10px; text-decoration: none; }
+        .detail-layout { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 32px; padding: 24px; }
+        .image-section { display: flex; flex-direction: column; gap: 12px; }
+        .main-image-box { width: 100%; aspect-ratio: 1/1; border-radius: 16px; overflow: hidden; background: #f1f5f9; border: 1px solid var(--border); }
+        .main-image-box img { width: 100%; height: 100%; object-fit: cover; }
         
-        .detail-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 24px; }
-        
-        .image-gallery { width: 100%; aspect-ratio: 1/1; border-radius: 16px; overflow: hidden; background: #f1f5f9; border: 1px solid var(--border); }
-        .image-gallery img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .info-panel { display: flex; flex-direction: column; justify-content: space-between; }
-        
-        .badge { display: inline-block; background: rgba(37, 99, 235, 0.08); color: var(--accent); font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; width: fit-content; margin-bottom: 8px; }
-        
-        h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 10px; line-height: 1.2; }
-        
-        .price-tag { font-size: 1.6rem; font-weight: 800; color: var(--text); margin-bottom: 15px; }
-        
-        .summary-box { background: rgba(100,116,139,0.04); border-radius: 14px; padding: 14px; font-size: 0.88rem; color: #475569; line-height: 1.5; margin-bottom: 20px; border-left: 4px solid var(--accent); }
-        
-        .meta-list { list-style: none; font-size: 0.8rem; color: #64748b; margin-bottom: 20px; display: flex; flex-direction: column; gap: 6px; }
-        .meta-list li strong { color: var(--text); }
+        .thumbnails-container { display: flex; gap: 8px; overflow-x: auto; }
+        .thumb-box { width: 60px; height: 60px; border-radius: 8px; border: 2px solid var(--border); overflow: hidden; cursor: pointer; flex-shrink: 0; }
+        .thumb-box.active { border-color: var(--accent); }
+        .thumb-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        .btn-buy { width: 100%; background: #0f172a; color: white; border: none; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: transform 0.2s var(--ios-ease); display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-buy:active { transform: scale(0.96); }
+        .info-panel { display: flex; flex-direction: column; gap: 16px; }
+        .badge { display: inline-block; background: rgba(37, 99, 235, 0.08); color: var(--accent); font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; width: fit-content; }
+        
+        h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; }
+        .price-tag { font-size: 1.8rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .discount-pill { background: #ef4444; color: white; font-size: 0.8rem; padding: 2px 8px; border-radius: 6px; font-weight: 700; }
 
-        @media (max-width: 640px) {
-            .detail-layout { grid-template-columns: 1fr; gap: 16px; padding: 16px; }
-            h1 { font-size: 1.3rem; }
-        }
+        .summary-box { background: rgba(100,116,139,0.03); border-radius: 14px; padding: 16px; font-size: 0.88rem; color: #475569; line-height: 1.5; border-left: 4px solid var(--accent); }
+        
+        .specs-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
+        .specs-table tr { border-bottom: 1px solid rgba(226, 232, 240, 0.5); }
+        .specs-table td { padding: 8px 4px; }
+        .specs-table td.label { font-weight: 700; color: var(--text); width: 35%; }
+        .specs-table td.value { color: #475569; }
+
+        .btn-buy { width: 100%; background: #0f172a; color: white; border: none; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: auto; }
+        @media (max-width: 768px) { .detail-layout { grid-template-columns: 1fr; gap: 20px; padding: 16px; } }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <a href="/" class="back-btn">⬅ Regresar a la Tienda</a>
+        <a href="/" class="back-btn">⬅ Volver a la Tienda</a>
         
         <div class="detail-layout">
-            <div class="image-gallery">
-                <img src="{{ p.img }}" alt="{{ p.nombre }}">
+            <div class="image-section">
+                <div class="main-image-box"><img id="current-main-img" src="{{ p.img }}" alt="{{ p.nombre }}"></div>
+                <div class="thumbnails-container">
+                    <div class="thumb-box active" onclick="changeImage('{{ p.img }}', this)"><img src="{{ p.img }}"></div>
+                    <div class="thumb-box" onclick="changeImage('https://images.unsplash.com/photo-1544816155-12df9643f363?w=500', this)"><img src="https://images.unsplash.com/photo-1544816155-12df9643f363?w=500"></div>
+                    <div class="thumb-box" onclick="changeImage('https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=500', this)"><img src="https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=500"></div>
+                </div>
             </div>
             
             <div class="info-panel">
                 <div>
-                    {% if p.criterio %}
-                    <span class="badge">{{ p.criterio }}</span>
-                    {% endif %}
+                    {% if p.criterio %} <span class="badge">{{ p.criterio }}</span> {% endif %}
                     <h1>{{ p.nombre }}</h1>
-                    <div class="price-tag">$ {{ p.precio_f }}</div>
-                    
-                    <div class="summary-box">
-                        <strong>Descripción General:</strong><br>
-                        {{ p.descripcion }}
+                    <div class="price-tag">
+                        $ {{ p.precio_f }}
+                        {% if p.criterio and 'Descuento' in p.criterio %} <span class="discount-pill">-25%</span> {% endif %}
                     </div>
                     
-                    <ul class="meta-list">
-                        <li><strong>Distribuidor:</strong> {{ p.prov }}</li>
-                        <li><strong>Categoría:</strong> {{ p.cat.upper() }}</li>
-                        <li><strong>Disponibilidad inmediata:</strong> {{ p.stock }} unidades</li>
-                    </ul>
+                    <div class="summary-box">
+                        <strong>Descripción del Producto:</strong><br>
+                        {{ p.descripcion }}
+                    </div>
+
+                    <h3 style="font-size: 0.9rem; font-weight: 800; border-bottom: 2px solid var(--text); padding-bottom: 4px; margin-top: 15px;">Detalles Técnicos</h3>
+                    <table class="specs-table">
+                        <tr><td class="label">Proveedor</td><td class="value">{{ p.prov }}</td></tr>
+                        <tr><td class="label">Categoría</td><td class="value" style="text-transform: capitalize;">{{ p.cat }}</td></tr>
+                        <tr><td class="label">Disponibles</td><td class="value">{{ p.stock }} unidades</td></tr>
+                        <tr><td class="label">Estado</td><td class="value">Original Oficial</td></tr>
+                    </table>
                 </div>
                 
-                <button class="btn-buy" onclick="agregarYRegresar()">
-                    🛒 Agregar a la Bolsa
-                </button>
+                <button class="btn-buy" onclick="inyectarAlCarritoYRegresar()">📥 Agregar a la Bolsa de Compras</button>
             </div>
         </div>
     </div>
 
     <script>
-        function agregarYRegresar() {
-            alert("¡Producto listo, mano! Volvamos a la tienda principal para configurar los datos de entrega en tu bolsa.");
+        function changeImage(src, element) {
+            document.getElementById('current-main-img').src = src;
+            document.querySelectorAll('.thumb-box').forEach(b => b.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        function inyectarAlCarritoYRegresar() {
+            const cola = { id: "{{ p.id }}", nombre: "{{ p.nombre }}", precio: parseInt("{{ p.precio }}") };
+            localStorage.setItem('pending_item_to_cart', JSON.stringify(cola));
+            alert("¡Añadido con éxito, mano! Volvamos al inicio.");
             window.location.href = "/";
         }
     </script>
