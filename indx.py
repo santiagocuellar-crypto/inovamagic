@@ -9,7 +9,7 @@ configuracion = {
     "whatsapp_admin": "573123456789"
 }
 
-# 📦 Catálogo GIGANTE de Insumos Escolares (18 Productos)
+# 📦 Catálogo completo de Insumos Escolares (18 Productos)
 catalogo_productos = [
     # --- CATEGORÍA: UNIFORMES ---
     {
@@ -51,13 +51,13 @@ catalogo_productos = [
         "descripcion": "Morral ultra resistente con compartimento acolchado para tablet o portátil, bolsillos laterales para botellas de agua y costuras reforzadas."
     },
     {
-        "id": "7", "nombre": "Kit Escolar (Lápiz, Borrador, Sacapuntas)", "precio": 3500, "precio_f": "3.500", 
+        "id": "7", "nombre": "Kit Escolar Completo", "precio": 3500, "precio_f": "3.500", 
         "img": "https://images.unsplash.com/photo-1568252542512-9fe8fe9c87bb?w=500", "cat": "escolar", 
         "prov": "Distribuidora Cali", "stock": 100,
         "descripcion": "El combo infaltable para el día a día. Incluye dos lápices negros No.2, un borrador de nata de alta limpieza y un sacapuntas con depósito."
     },
 
-    # --- CATEGORÍA: BELLEZA / CUIDADO PERSONAL ---
+    # --- CATEGORÍA: BELLEZA ---
     {
         "id": "8", "nombre": "Brillo Labial Humectante", "precio": 6000, "precio_f": "6.000", 
         "img": "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=500", "cat": "belleza", 
@@ -77,7 +77,7 @@ catalogo_productos = [
         "descripcion": "Gel desinfectante con aloe vera que elimina el 99.9% de las bacterias sin resecar las manos. Viene con gancho para colgar en el morral."
     },
 
-    # --- CATEGORÍA: TÉCNICOS / CONSTRUCCIÓN ---
+    # --- CATEGORÍA: TÉCNICOS ---
     {
         "id": "11", "nombre": "Kit Reglas Técnicas", "precio": 12000, "precio_f": "12.000", 
         "img": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500", "cat": "construccion", 
@@ -97,10 +97,10 @@ catalogo_productos = [
         "descripcion": "Herramienta de medición electrónica compacta. Ideal para estudiantes de la especialidad técnica en electricidad y mantenimiento de sistemas."
     },
     {
-        "id": "14", "nombre": "Calibrador Pie de Rey Plástico", "precio": 9000, "precio_f": "9.000", 
+        "id": "14", "nombre": "Calibrador Pie de Rey", "precio": 9000, "precio_f": "9.000", 
         "img": "https://images.unsplash.com/photo-1503694978374-8a2fa6e6963a?w=500", "cat": "construccion", 
         "prov": "Tecno-Insumos", "stock": 10, "especialidades": ["Mecánica", "Dibujo"],
-        "descripcion": "Instrumento de precisión para medir dimensiones internas, externas y profundidades en proyectos de metalmecánica o diseño técnico."
+        "descripcion": "Instrumento de precisión para medir dimensiones internas, externas y profundidades en proyectos de diseño técnico."
     },
 
     # --- CATEGORÍA: DEPORTES ---
@@ -117,10 +117,10 @@ catalogo_productos = [
         "descripcion": "Caramañola plástica libre de BPA con boquilla de seguridad. Mantiene tu hidratación al máximo durante los recreos o torneos del colegio."
     },
     {
-        "id": "17", "nombre": "Cuerda para Saltar Alta Velocidad", "precio": 8500, "precio_f": "8.500", 
+        "id": "17", "nombre": "Cuerda para Saltar Velocidad", "precio": 8500, "precio_f": "8.500", 
         "img": "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=500", "cat": "deportes", 
         "prov": "Fitness Club", "stock": 15,
-        "descripcion": "Cuerda de velocidad ajustable con mangos ligeros, ideal para calentamientos, entrenamiento físico y mejorar la coordinación."
+        "descripcion": "Cuerda de velocidad ajustable con mangos ligeros, ideal para entrenamientos físicos y mejorar la coordinación."
     },
     {
         "id": "18", "nombre": "Gorra Institucional Deportiva", "precio": 16000, "precio_f": "16.000", 
@@ -130,13 +130,11 @@ catalogo_productos = [
     }
 ]
 
-# Variable global simulada para la barra de presupuesto de la caja mayor
 ventas_reales = 450000
 meta_financiera = 2000000
 
 @app.route('/')
 def home():
-    # Filtra automáticamente los productos que tengan un criterio asignado para el Carrusel
     productos_carrusel = [p for p in catalogo_productos if "criterio" in p][:5]
     return render_template(
         'index.html', 
@@ -147,9 +145,11 @@ def home():
         meta=meta_financiera
     )
 
-@app.route('/producto/<id>')
+# 🚨 CAMBIO DE SEGURIDAD: Obligamos a Flask a que acepte el ID con string estricto
+@app.route('/producto/<string:id>')
 def detalle_producto(id):
-    producto = next((p for p in catalogo_productos if p["id"] == id), None)
+    # Forzamos la comparación limpia eliminando espacios raros
+    producto = next((p for p in catalogo_productos if str(p["id"]) == str(id).strip()), None)
     if not producto:
         abort(404)
     return render_template('producto.html', p=producto, config=configuracion, ventas_reales=ventas_reales, meta=meta_financiera)
