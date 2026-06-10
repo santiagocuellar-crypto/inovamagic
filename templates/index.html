@@ -43,14 +43,9 @@
         .live-pulse { width: 6px; height: 6px; background: #ef4444; border-radius: 50%; animation: pulseRing 1.4s infinite alternate var(--ios-ease); }
         @keyframes pulseRing { from { transform: scale(0.85); opacity: 0.6; } to { transform: scale(1.25); opacity: 1; } }
 
-        /* Estilos del Avatar de Usuario en Header */
-        .user-profile-trigger { display: flex; align-items: center; gap: 8px; background: rgba(100,116,139,0.06); border: 1px solid var(--border); padding: 6px 12px; border-radius: 14px; cursor: pointer; position: relative; }
-        .avatar-circle { width: 28px; height: 28px; background: var(--accent); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; }
-
-        /* Menú Flotante del Perfil */
-        .profile-dropdown { display: none; position: absolute; top: 55px; right: 0; background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; width: 280px; padding: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 2100; flex-direction: column; gap: 14px; }
-        .profile-dropdown.active { display: flex; animation: slideDown 0.25s var(--ios-ease); }
-        @keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        /* Estilos del Trigger de Perfil en Header */
+        .user-profile-trigger { display: flex; align-items: center; gap: 8px; background: rgba(100,116,139,0.06); border: 1px solid var(--border); padding: 6px 12px; border-radius: 14px; cursor: pointer; }
+        .avatar-circle { width: 28px; height: 28px; background: var(--accent); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; }
 
         .main-layout { display: flex; flex: 1; overflow: hidden; position: relative; z-index: 10; }
         .sidebar { width: 280px; background: var(--sidebar-bg); backdrop-filter: var(--glass-blur); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; }
@@ -60,6 +55,23 @@
 
         .content-area { flex: 1; padding: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 
+        /* 📊 APARTADO DEDICADO DEL PERFIL (SECCIÓN DE MI CUENTA) */
+        .profile-section-container { display: none; max-width: 600px; margin: 0 auto; flex-direction: column; gap: 20px; animation: fadeIn 0.35s var(--ios-ease); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .student-card { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 25px; border-radius: 24px; position: relative; box-shadow: 0 15px 30px rgba(37, 99, 235, 0.2); overflow: hidden; }
+        .student-card::before { content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; }
+        
+        .avatar-selector-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 10px; }
+        .avatar-option { font-size: 1.6rem; padding: 8px; text-align: center; background: var(--bg); border: 2px solid var(--border); border-radius: 12px; cursor: pointer; transition: transform 0.2s; }
+        .avatar-option:hover { transform: scale(1.15); }
+        .avatar-option.selected { border-color: var(--accent); background: var(--accent-glow); }
+
+        .profile-input-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+        .profile-input-group label { font-size: 0.72rem; font-weight: 800; color: #64748b; text-transform: uppercase; }
+        .profile-input-group input, .profile-input-group select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); font-weight: 600; outline: none; }
+
+        /* Estilos del catálogo normal */
         .promo-carousel-container { width: 100%; overflow-x: auto; display: flex; gap: 16px; margin-bottom: 25px; padding-bottom: 10px; scroll-snap-type: x mandatory; scrollbar-width: none; }
         .promo-carousel-container::-webkit-scrollbar { display: none; }
         .promo-banner { flex: 0 0 85%; max-width: 600px; background: linear-gradient(135deg, #1e3a8a, #2563eb); border-radius: 20px; min-height: 160px; color: white; display: flex; align-items: center; justify-content: space-between; padding: 20px; scroll-snap-align: start; position: relative; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15); cursor: pointer; }
@@ -111,7 +123,6 @@
 
         .live-toast { position: fixed; bottom: 90px; left: 20px; background: rgba(15, 23, 42, 0.9); color: white; padding: 12px 18px; border-radius: 16px; font-size: 0.82rem; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transform: translateY(150px); opacity: 0; transition: transform 0.5s var(--ios-ease), opacity 0.5s; z-index: 999; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); max-width: 320px; }
         .live-toast.show { transform: translateY(0); opacity: 1; }
-        [data-theme="dark"] .live-toast { background: rgba(255,255,255,0.95); color: #0f172a; }
 
         .tech-selector-container { margin-bottom: 20px; background: var(--card-bg); border: 1px solid var(--border); padding: 14px; border-radius: 16px; }
         .tech-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
@@ -144,9 +155,7 @@
 
             <div style="display: flex; flex-direction: column; gap: 12px;">
                 <input type="text" id="reg-name" placeholder="Tu Nombre Completo" style="display: none; width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none;">
-                
                 <input type="email" id="login-email" placeholder="Correo Institucional" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none;">
-                
                 <input type="password" id="login-pass" placeholder="Contraseña de Acceso" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none;">
                 
                 <div id="reg-tech-box" style="display: none; flex-direction: column; gap: 4px;">
@@ -174,7 +183,7 @@
     </div>
 
     <header>
-        <div style="font-weight: 800; color: var(--text);">INNOVALOGIC CORE 🚀</div>
+        <div style="font-weight: 800; color: var(--text); cursor: pointer;" onclick="irASeccion('mercado')">INNOVALOGIC CORE 🚀</div>
         <div class="search-container">
             🔍 <input type="text" id="search-input" placeholder="Buscar insumos..." onkeyup="filterProducts(this.value)">
         </div>
@@ -182,22 +191,9 @@
             <div class="live-counter"><div class="live-pulse"></div><span>🔥 14 activos</span></div>
             <button class="dark-toggle" onclick="toggleTheme()">🌙</button>
             
-            <div class="user-profile-trigger" onclick="toggleProfileDropdown(event)">
-                <div class="avatar-circle" id="user-avatar-letters">U</div>
+            <div class="user-profile-trigger" onclick="irASeccion('perfil')">
+                <div class="avatar-circle" id="header-avatar-emoji">💻</div>
                 <span id="user-display-name" style="font-size: 0.82rem; font-weight: 700; color: var(--text);">Perfil</span>
-                
-                <div class="profile-dropdown" id="my-profile-box" onclick="event.stopPropagation()">
-                    <div style="text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
-                        <div style="width: 50px; height: 50px; background: var(--text); color: var(--bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin: 0 auto 8px auto; font-weight: 800;" id="dropdown-avatar-circle">U</div>
-                        <h4 id="profile-card-name" style="font-weight: 800; font-size: 1rem;">Estudiante</h4>
-                        <span id="profile-card-badge" style="background: var(--accent); color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.68rem; font-weight: 700; display: inline-block; margin-top: 4px;">General</span>
-                    </div>
-                    <div style="font-size: 0.8rem; display: flex; flex-direction: column; gap: 8px; color: #64748b;">
-                        <div><b>Email:</b> <span id="profile-card-email" style="color: var(--text);">-</span></div>
-                        <div><b>Entidad:</b> <span style="color: var(--text);">I.E. Evaristo García</span></div>
-                    </div>
-                    <button onclick="cerrarSesionCompleta()" style="width: 100%; background: #ef4444; color: white; border: none; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 6px;">🚪 Cerrar Sesión</button>
-                </div>
             </div>
         </div>
     </header>
@@ -205,102 +201,155 @@
     <div class="main-layout">
         <aside class="sidebar">
             <div class="categories-group">
-                <button class="cat-btn active" onclick="filterByCategory('todos', this)">📂 Todos</button>
-                <button class="cat-btn" onclick="filterByCategory('uniformes', this)">👕 Uniformes</button>
-                <button class="cat-btn" onclick="filterByCategory('escolar', this)">📚 Escolar</button>
-                <button class="cat-btn" onclick="filterByCategory('belleza', this)">💄 Belleza</button>
-                <button class="cat-btn" onclick="filterByCategory('construccion', this)">🎨 Técnicos</button>
-                <button class="cat-btn" onclick="filterByCategory('deportes', this)">⚽ Deportes</button>
-                <button class="cat-btn" onclick="filterByCategory('favoritos', this)" style="color: #ef4444;">❤️ Favoritos</button>
+                <button class="cat-btn active" id="side-btn-todos" onclick="filterByCategory('todos', this)">📂 Mercado</button>
+                <button class="cat-btn" id="side-btn-uniformes" onclick="filterByCategory('uniformes', this)">👕 Uniformes</button>
+                <button class="cat-btn" id="side-btn-escolar" onclick="filterByCategory('escolar', this)">📚 Escolar</button>
+                <button class="cat-btn" id="side-btn-belleza" onclick="filterByCategory('belleza', this)">💄 Belleza</button>
+                <button class="cat-btn" id="side-btn-construccion" onclick="filterByCategory('construccion', this)">🎨 Técnicos</button>
+                <button class="cat-btn" id="side-btn-deportes" onclick="filterByCategory('deportes', this)">⚽ Deportes</button>
+                <button class="cat-btn" id="side-btn-favoritos" onclick="filterByCategory('favoritos', this)" style="color: #ef4444;">❤️ Favoritos</button>
+                <hr style="border: none; border-top: 1px solid var(--border); margin: 10px 0;">
+                <button class="cat-btn" id="side-btn-perfil" onclick="irASeccion('perfil')" style="color: var(--accent);">👤 Mi Perfil</button>
             </div>
         </aside>
 
         <main class="content-area">
             
-            <div class="tech-selector-container">
-                <div class="selector-label">🎯 Filtrar por tu Modalidad Técnica:</div>
-                <div class="tech-grid">
-                    <div class="tech-chip active" id="tech-chip-todas" onclick="filtrarPorModalidad('todas', this)">Todas</div>
-                    <div class="tech-chip" id="tech-chip-Sistemas" onclick="filtrarPorModalidad('Sistemas', this)">💻 Sistemas</div>
-                    <div class="tech-chip" id="tech-chip-Dibujo" onclick="filtrarPorModalidad('Dibujo', this)">📐 Dibujo</div>
-                    <div class="tech-chip" id="tech-chip-Electricidad" onclick="filtrarPorModalidad('Electricidad', this)">⚡ Electricidad</div>
-                </div>
-            </div>
-
-            <div class="promo-carousel-container" id="promo-carousel">
-                {% for b in carrusel %}
-                <div class="promo-banner" onclick="window.location.href='/producto/{{ b.id }}'">
-                    <span class="promo-badge">{{ b.criterio }}</span>
-                    <div style="max-width: 60%;">
-                        <h2 style="font-size: 1.2rem; font-weight: 800;">{{ b.nombre }}</h2>
-                        <span style="background: white; color: black; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; display: inline-block; margin-top: 10px;">Ver Ficha</span>
+            <div id="market-view-wrapper">
+                <div class="tech-selector-container">
+                    <div class="selector-label">🎯 Filtrar por tu Modalidad Técnica:</div>
+                    <div class="tech-grid">
+                        <div class="tech-chip active" id="tech-chip-todas" onclick="filtrarPorModalidad('todas', this)">Todas</div>
+                        <div class="tech-chip" id="tech-chip-Sistemas" onclick="filtrarPorModalidad('Sistemas', this)">💻 Sistemas</div>
+                        <div class="tech-chip" id="tech-chip-Dibujo" onclick="filtrarPorModalidad('Dibujo', this)">📐 Dibujo</div>
+                        <div class="tech-chip" id="tech-chip-Electricidad" onclick="filtrarPorModalidad('Electricidad', this)">⚡ Electricidad</div>
                     </div>
-                    <div class="promo-img-box"><img src="{{ b.img }}"></div>
                 </div>
-                {% endfor %}
-            </div>
 
-            <div class="grid skeleton-wrapper active" id="skeleton-grid">
-                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line"></div></div>
-                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line"></div></div>
-            </div>
-
-            <div class="grid" id="main-grid" style="display: none;">
-                {% for p in catalogo %}
-                <div class="card" 
-                     data-name="{{ p.nombre.lower() }}" 
-                     data-cat="{{ p.cat }}" 
-                     data-specs="{{ p.especialidades | join(',') if p.especialidades else '' }}"
-                     id="prod-card-{{ p.id }}">
-                    
-                    {% if p.stock <= 3 %}
-                    <span class="stock-badge stock-low">⚠️ {{ p.stock }} Disp</span>
-                    {% else %}
-                    <span class="stock-badge stock-high">✔ Stock: {{ p.stock }}</span>
-                    {% endif %}
-
-                    <div class="action-container">
-                        <button class="action-circle-btn" id="fav-{{ p.id }}" onclick="toggleFavorito('{{ p.id }}')">🤍</button>
+                <div class="promo-carousel-container" id="promo-carousel">
+                    {% for b in carrusel %}
+                    <div class="promo-banner" onclick="window.location.href='/producto/{{ b.id }}'">
+                        <span class="promo-badge">{{ b.criterio }}</span>
+                        <div style="max-width: 60%;">
+                            <h2 style="font-size: 1.2rem; font-weight: 800;">{{ b.nombre }}</h2>
+                            <span style="background: white; color: black; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; display: inline-block; margin-top: 10px;">Ver Ficha</span>
+                        </div>
+                        <div class="promo-img-box"><img src="{{ b.img }}"></div>
                     </div>
+                    {% endfor %}
+                </div>
 
-                    <div class="img-box" onclick="window.location.href='/producto/{{ p.id }}'"><img src="{{ p.img }}" loading="lazy"></div>
-                    
-                    <div class="content">
-                        <h3 onclick="window.location.href='/producto/{{ p.id }}'" style="font-size:0.88rem; font-weight: 700; cursor: pointer;">{{ p.nombre }}</h3>
-                        
-                        <div>
-                            {% if p.tallas %}
-                            <div style="margin-bottom: 6px;">
-                                <div class="selector-label">Talla:</div>
-                                <div class="inline-selector-row" id="talla-row-{{ p.id }}">
-                                    {% for t in p.tallas %}
-                                    <div class="size-chip" onclick="selectChip('{{ p.id }}', 'talla', '{{ t }}', this)">{{ t }}</div>
-                                    {% endfor %}
+                <div class="grid skeleton-wrapper active" id="skeleton-grid">
+                    <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line"></div></div>
+                    <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line"></div></div>
+                </div>
+
+                <div class="grid" id="main-grid" style="display: none;">
+                    {% for p in catalogo %}
+                    <div class="card" data-name="{{ p.nombre.lower() }}" data-cat="{{ p.cat }}" data-specs="{{ p.especialidades | join(',') if p.especialidades else '' }}" id="prod-card-{{ p.id }}">
+                        {% if p.stock <= 3 %}
+                        <span class="stock-badge stock-low">⚠️ {{ p.stock }} Disp</span>
+                        {% else %}
+                        <span class="stock-badge stock-high">✔ Stock: {{ p.stock }}</span>
+                        {% endif %}
+                        <div class="action-container"><button class="action-circle-btn" id="fav-{{ p.id }}" onclick="toggleFavorito('{{ p.id }}')">🤍</button></div>
+                        <div class="img-box" onclick="window.location.href='/producto/{{ p.id }}'"><img src="{{ p.img }}" loading="lazy"></div>
+                        <div class="content">
+                            <h3 onclick="window.location.href='/producto/{{ p.id }}'" style="font-size:0.88rem; font-weight: 700; cursor: pointer;">{{ p.nombre }}</h3>
+                            <div>
+                                {% if p.tallas %}
+                                <div style="margin-bottom: 6px;">
+                                    <div class="selector-label">Talla:</div>
+                                    <div class="inline-selector-row" id="talla-row-{{ p.id }}">
+                                        {% for t in p.tallas %}
+                                        <div class="size-chip" onclick="selectChip('{{ p.id }}', 'talla', '{{ t }}', this)">{{ t }}</div>
+                                        {% endfor %}
+                                    </div>
                                 </div>
-                            </div>
-                            {% endif %}
-
-                            {% if p.especialidades %}
-                            <div style="margin-bottom: 6px;">
-                                <div class="selector-label">Especialidad:</div>
-                                <div class="inline-selector-row" id="esp-row-{{ p.id }}">
-                                    {% for e in p.especialidades %}
-                                    <div class="size-chip" onclick="selectChip('{{ p.id }}', 'esp', '{{ e }}', this)">{{ e }}</div>
-                                    {% endfor %}
+                                {% endif %}
+                                {% if p.especialidades %}
+                                <div style="margin-bottom: 6px;">
+                                    <div class="selector-label">Especialidad:</div>
+                                    <div class="inline-selector-row" id="esp-row-{{ p.id }}">
+                                        {% for e in p.especialidades %}
+                                        <div class="size-chip" onclick="selectChip('{{ p.id }}', 'esp', '{{ e }}', this)">{{ e }}</div>
+                                        {% endfor %}
+                                    </div>
                                 </div>
-                            </div>
-                            {% endif %}
-
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-                                <div class="price">$ {{ p.precio_f }}</div>
-                                <button class="add-btn" onclick="cart.add('{{ p.nombre }}', {{ p.precio }}, '{{ p.id }}')" style="width: 36px; height: 36px;">🛒</button>
+                                {% endif %}
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                                    <div class="price">$ {{ p.precio_f }}</div>
+                                    <button class="add-btn" onclick="cart.add('{{ p.nombre }}', {{ p.precio }}, '{{ p.id }}')" style="width: 36px; height: 36px;">🛒</button>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
+                <div id="no-favs-message" style="display:none; text-align:center; padding:40px; color:#64748b;">No tienes favoritos agregados. ❤️</div>
             </div>
-            <div id="no-favs-message" style="display:none; text-align:center; padding:40px; color:#64748b;">No tienes favoritos agregados. ❤️</div>
+
+            <div id="profile-view-wrapper" class="profile-section-container">
+                
+                <div class="student-card" id="student-digital-badge">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div style="font-size: 3rem; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 50%; width: 75px; height: 75px; display: flex; align-items: center; justify-content: center;" id="card-avatar-placeholder">💻</div>
+                        <div>
+                            <h3 style="font-weight: 800; font-size: 1.3rem;" id="card-student-name">Santiago Cuellar</h3>
+                            <p style="font-size: 0.8rem; opacity: 0.9;" id="card-student-email">correo@institucion.com</p>
+                            <span style="background: rgba(255,255,255,0.25); font-size: 0.68rem; padding: 3px 10px; border-radius: 12px; font-weight: 800; display: inline-block; margin-top: 6px; text-transform: uppercase;" id="card-student-tech">Especialidad: Sistemas</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 10px; display: flex; justify-content: space-between; font-size: 0.75rem; opacity: 0.85;">
+                        <div><b>Colegio:</b> I.E. Evaristo García</div>
+                        <div><b>Jornada:</b> <span id="card-student-jornada">Mañana</span></div>
+                    </div>
+                </div>
+
+                <div style="background: var(--card-bg); border: 1px solid var(--border); padding: 24px; border-radius: 24px; display: flex; flex-direction: column; gap: 14px;">
+                    <h3 style="font-weight: 800; font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;">⚙️ Personalizar mis Datos</h3>
+                    
+                    <div class="profile-input-group">
+                        <label>1. Elige tu Ícono de Avatar:</label>
+                        <div class="avatar-selector-grid">
+                            <div class="avatar-option" onclick="cambiarEmojiAvatar('💻', this)">💻</div>
+                            <div class="avatar-option" onclick="cambiarEmojiAvatar('📐', this)">📐</div>
+                            <div class="avatar-option" onclick="cambiarEmojiAvatar('⚡', this)">⚡</div>
+                            <div class="avatar-option" onclick="cambiarEmojiAvatar('🎨', this)">🎨</div>
+                            <div class="avatar-option" onclick="cambiarEmojiAvatar('⚽', this)">⚽</div>
+                            <div class="avatar-option" onclick="cambiarEmojiAvatar('🥋', this)">🥋</div>
+                        </div>
+                    </div>
+
+                    <div class="profile-input-group">
+                        <label>Nombre en Plataforma:</label>
+                        <input type="text" id="edit-profile-name" oninput="sincronizarCamposEdicion()">
+                    </div>
+
+                    <div class="profile-input-group">
+                        <label>Especialidad Técnica:</label>
+                        <select id="edit-profile-tech" onchange="sincronizarCamposEdicion()">
+                            <option value="Sistemas">💻 Sistemas</option>
+                            <option value="Dibujo">📐 Dibujo Técnico</option>
+                            <option value="Electricidad">⚡ Electricidad</option>
+                        </select>
+                    </div>
+
+                    <div class="profile-input-group">
+                        <label>Jornada Escolar:</label>
+                        <select id="edit-profile-jornada" onchange="sincronizarCamposEdicion()">
+                            <option value="Mañana">☀️ Mañana</option>
+                            <option value="Tarde">🌤️ Tarde</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button onclick="guardarCambiosPerfil()" style="flex: 2; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer;">💾 Guardar Cambios</button>
+                        <button onclick="cerrarSesionCompleta()" style="flex: 1; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer;">🚪 Salir</button>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
@@ -342,9 +391,31 @@
         let selectedSelections = {};
         let currentCategoryFilter = 'todos';
         let currentTechFilter = 'todas';
-        let authMode = 'login'; // Puede ser 'login' o 'register'
+        let authMode = 'login';
+        let selectedAvatarEmoji = '💻';
 
-        // 🔄 INTERRUPTOR DE MODO (INGRESAR / REGISTRARSE)
+        // 🔀 ENRUTAMIENTO DE PESTAÑAS (MERCADO VS PERFIL)
+        function irASeccion(seccion) {
+            const marketView = document.getElementById('market-view-wrapper');
+            const profileView = document.getElementById('profile-view-wrapper');
+            
+            // Remover actives de barra lateral
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+
+            if (seccion === 'perfil') {
+                marketView.style.display = 'none';
+                profileView.style.display = 'flex';
+                document.getElementById('side-btn-perfil').classList.add('active');
+                cargarCamposDesdeStorage();
+            } else {
+                marketView.style.display = 'block';
+                profileView.style.display = 'none';
+                document.getElementById('side-btn-todos').classList.add('active');
+                currentCategoryFilter = 'todos';
+                applyFilters();
+            }
+        }
+
         function toggleAuthMode() {
             const title = document.getElementById('auth-title');
             const subtitle = document.getElementById('auth-subtitle');
@@ -375,7 +446,6 @@
             }
         }
 
-        // 👤 CONTROL DE CONTROL DE ACCESO INTEGRADO
         function procesarAutenticacion() {
             const email = document.getElementById('login-email').value.trim();
             const pass = document.getElementById('login-pass').value.trim();
@@ -386,14 +456,16 @@
 
             if (authMode === 'register') {
                 if(!name) return alert("Por favor escribe tu nombre para armar el perfil.");
-                // Guardamos los nuevos datos creados
                 localStorage.setItem('user_name', name);
                 localStorage.setItem('user_tech', tech);
+                localStorage.setItem('user_avatar', '💻');
+                localStorage.setItem('user_jornada', 'Mañana');
             } else {
-                // Si entra por login normal y no hay un nombre previo, le inventamos uno basado en su correo
                 if(!localStorage.getItem('user_name')) {
                     localStorage.setItem('user_name', email.split('@')[0]);
-                    localStorage.setItem('user_tech', 'Sistemas'); // Default técnico
+                    localStorage.setItem('user_tech', 'Sistemas');
+                    localStorage.setItem('user_avatar', '💻');
+                    localStorage.setItem('user_jornada', 'Mañana');
                 }
             }
             
@@ -402,53 +474,88 @@
             localStorage.setItem('saved_password', pass);
             
             document.getElementById('login-screen').style.display = 'none';
-            renderizarDatosPerfil();
+            aplicarPreferenciasVisualesPerfil();
             
-            // Auto-aplicar el filtro de la especialidad técnica que tiene el usuario registrado
-            const userTech = localStorage.getItem('user_tech');
-            const targetChip = document.getElementById('tech-chip-' + userTech);
-            if(targetChip) filtrarPorModalidad(userTech, targetChip);
-
             alert(`¡Ingreso exitoso! Hola, ${localStorage.getItem('user_name')}. 👋`);
         }
 
-        // 🖼️ CARGAR DATOS EN LA INTERFAZ Y RECUADRO DE PERFIL
-        function renderizarDatosPerfil() {
-            const name = localStorage.getItem('user_name') || "Estudiante";
-            const email = localStorage.getItem('saved_email') || "-";
-            const tech = localStorage.getItem('user_tech') || "General";
-            const inicial = name.charAt(0).toUpperCase();
-
-            // Sincronizar elementos del Header
-            document.getElementById('user-display-name').innerText = name.split(' ')[0];
-            document.getElementById('user-avatar-letters').innerText = inicial;
-
-            // Sincronizar elementos de la Tarjeta Flotante
-            document.getElementById('profile-card-name').innerText = name;
-            document.getElementById('profile-card-email').innerText = email;
-            document.getElementById('profile-card-badge').innerText = '💻 Técnico en ' + tech;
-            document.getElementById('dropdown-avatar-circle').innerText = inicial;
+        // 🎨 SISTEMA DE PERSONALIZACIÓN Y RENDERIZADO
+        function cambiarEmojiAvatar(emoji, element) {
+            document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('selected'));
+            if(element) element.classList.add('selected');
+            selectedAvatarEmoji = emoji;
+            document.getElementById('card-avatar-placeholder').innerText = emoji;
         }
 
-        // 🚪 CERRAR SESIÓN DE RAÍZ (BORRAR LOCALSTORAGE DE SESIÓN)
+        function sincronizarCamposEdicion() {
+            // Permite ver los cambios reflejados en el carné en tiempo real mientras escribe
+            document.getElementById('card-student-name').innerText = document.getElementById('edit-profile-name').value || "Estudiante";
+            document.getElementById('card-student-tech').innerText = "Especialidad: " + document.getElementById('edit-profile-tech').value;
+            document.getElementById('card-student-jornada').innerText = document.getElementById('edit-profile-jornada').value;
+            
+            // Cambiar dinámicamente el gradiente del carné según la especialidad
+            const card = document.getElementById('student-digital-badge');
+            const tech = document.getElementById('edit-profile-tech').value;
+            if(tech === 'Sistemas') card.style.background = "linear-gradient(135deg, #1e3a8a, #3b82f6)";
+            if(tech === 'Dibujo') card.style.background = "linear-gradient(135deg, #15803d, #22c55e)";
+            if(tech === 'Electricidad') card.style.background = "linear-gradient(135deg, #b45309, #eab308)";
+        }
+
+        function cargarCamposDesdeStorage() {
+            document.getElementById('edit-profile-name').value = localStorage.getItem('user_name') || "";
+            document.getElementById('edit-profile-tech').value = localStorage.getItem('user_tech') || "Sistemas";
+            document.getElementById('edit-profile-jornada').value = localStorage.getItem('user_jornada') || "Mañana";
+            selectedAvatarEmoji = localStorage.getItem('user_avatar') || '💻';
+            
+            // Seleccionar emoji correcto en la grilla
+            document.querySelectorAll('.avatar-option').forEach(o => {
+                if(o.innerText === selectedAvatarEmoji) o.classList.add('selected');
+                else o.classList.remove('selected');
+            });
+            
+            sincronizarCamposEdicion();
+            cambiarEmojiAvatar(selectedAvatarEmoji, null);
+        }
+
+        function guardarCambiosPerfil() {
+            const nuevoNombre = document.getElementById('edit-profile-name').value.trim();
+            const nuevaTech = document.getElementById('edit-profile-tech').value;
+            const nuevaJornada = document.getElementById('edit-profile-jornada').value;
+
+            if(!nuevoNombre) return alert("El nombre no puede quedar vacío, mano.");
+
+            localStorage.setItem('user_name', nuevoNombre);
+            localStorage.setItem('user_tech', nuevaTech);
+            localStorage.setItem('user_jornada', nuevaJornada);
+            localStorage.setItem('user_avatar', selectedAvatarEmoji);
+
+            aplicarPreferenciasVisualesPerfil();
+            alert("¡Perfil personalizado y guardado correctamente, mano! 💾");
+            irASeccion('mercado');
+        }
+
+        function aplicarPreferenciasVisualesPerfil() {
+            const name = localStorage.getItem('user_name') || "Estudiante";
+            const emoji = localStorage.getItem('user_avatar') || "💻";
+            const tech = localStorage.getItem('user_tech') || "todas";
+
+            document.getElementById('user-display-name').innerText = name.split(' ')[0];
+            document.getElementById('header-avatar-emoji').innerText = emoji;
+
+            // Sincronizar correo en carné
+            document.getElementById('card-student-email').innerText = localStorage.getItem('saved_email') || "";
+
+            // Filtrar catálogo automáticamente según su técnica guardada
+            const targetChip = document.getElementById('tech-chip-' + tech);
+            if(targetChip) filtrarPorModalidad(tech, targetChip);
+        }
+
         function cerrarSesionCompleta() {
             localStorage.removeItem('session_active');
-            // Dejamos correo y contraseña por comodidad por si quiere re-entrar rápido
-            document.getElementById('my-profile-box').classList.remove('active');
+            irASeccion('mercado');
             document.getElementById('login-screen').style.display = 'flex';
-            alert("Sesión cerrada. ¡Vuelve pronto, mano! 🚀");
+            alert("Sesión destruida. ¡Vuelve pronto, mano! 🚀");
         }
-
-        // Desplegar menú de perfil
-        function toggleProfileDropdown(event) {
-            event.stopPropagation();
-            document.getElementById('my-profile-box').classList.toggle('active');
-        }
-
-        // Cerrar menú al hacer clic en el fondo de la pantalla
-        document.addEventListener('click', () => {
-            document.getElementById('my-profile-box').classList.remove('active');
-        });
 
         function selectChip(productId, type, value, element) {
             element.parentElement.querySelectorAll('.size-chip').forEach(c => c.classList.remove('selected'));
@@ -470,12 +577,13 @@
 
         function filtrarPorModalidad(modalidad, element) {
             document.querySelectorAll('.tech-chip').forEach(chip => chip.classList.remove('active'));
-            element.classList.add('active');
+            if(element) element.classList.add('active');
             currentTechFilter = modalidad;
             applyFilters();
         }
 
         function filterByCategory(cat, btn) {
+            irASeccion('mercado');
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentCategoryFilter = cat;
@@ -514,14 +622,11 @@
                 "acaba de comprar una Caja de Colores 🎨",
                 "añadió un Camibuso de Diario a la bolsa 👕",
                 "compró un Cuaderno Cuadriculado 📚",
-                "adquirió un Kit de Reglas Técnicas 📐",
-                "reclamó un Termo Deportivo en el bloque B ⚽",
-                "compró un Brillo Labial Humectante ✨"
+                "adquirió un Kit de Reglas Técnicas 📐"
             ];
 
             setInterval(() => {
                 if (document.getElementById('modal-recibo').classList.contains('active')) return;
-
                 const rNombre = nombres[Math.floor(Math.random() * nombres.length)];
                 const rGrado = grados[Math.floor(Math.random() * grados.length)];
                 const rAccion = acciones[Math.floor(Math.random() * acciones.length)];
@@ -531,12 +636,11 @@
 
                 const toast = document.getElementById('live-alert');
                 toast.classList.add('show');
-
                 setTimeout(() => { toast.classList.remove('show'); }, 4500);
             }, 12000);
         }
 
-        // 📥 CARGA INICIAL CONTROLADA
+        // 📥 CONTROL DE ENTRADA PRINCIPAL
         window.onload = function() {
             const sesionActiva = localStorage.getItem('session_active');
             const correoGuardado = localStorage.getItem('saved_email');
@@ -544,12 +648,7 @@
 
             if (sesionActiva === 'true') {
                 document.getElementById('login-screen').style.display = 'none';
-                renderizarDatosPerfil();
-                
-                // Si la sesión ya existía, filtramos automáticamente por su especialidad
-                const userTech = localStorage.getItem('user_tech') || 'todas';
-                const targetChip = document.getElementById('tech-chip-' + userTech);
-                if(targetChip) filtrarPorModalidad(userTech, targetChip);
+                aplicarPreferenciasVisualesPerfil();
             } else if (correoGuardado && passGuardada) {
                 document.getElementById('login-email').value = correoGuardado;
                 document.getElementById('login-pass').value = passGuardada;
@@ -562,14 +661,6 @@
 
             actualizarBarraPresupuesto(ventasAcumuladas);
             
-            const itemPendiente = localStorage.getItem('pending_item_to_cart');
-            if(itemPendiente) {
-                const p = JSON.parse(itemPendiente);
-                cart.items.push({name: p.nombre, price: p.precio, d: "Añadido desde detalles"});
-                cart.update();
-                localStorage.removeItem('pending_item_to_cart');
-            }
-
             setTimeout(() => {
                 document.getElementById('skeleton-grid').classList.remove('active');
                 document.getElementById('main-grid').style.display = 'grid';
@@ -582,7 +673,7 @@
             const txt = document.getElementById('tiempo-entrega-txt');
             if(!b) return txt.innerText = "";
             let m = b === 'A' ? 5 : (b === 'B' ? 8 : 12);
-            txt.innerText = `🚀 Llega al Bloque ${b} en ${m} minutes.`;
+            txt.innerText = `🚀 Llega al Bloque ${b} en ${m} minutos.`;
             cart.bloqueEntrega = b;
         }
 
@@ -599,7 +690,6 @@
         function filterProducts(q) {
             const query = q.toLowerCase();
             document.querySelectorAll('.card').forEach(c => c.style.display = c.dataset.name.includes(query) ? 'flex' : 'none');
-            document.getElementById('promo-carousel').style.display = query === "" ? "flex" : "none";
         }
 
         function cerrarRecibo() { document.getElementById('modal-recibo').classList.remove('active'); }
