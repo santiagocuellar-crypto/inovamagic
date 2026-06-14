@@ -728,7 +728,7 @@
             <button class="dark-toggle" onclick="toggleTheme()">🌙</button>
             
             <div class="user-profile-trigger" onclick="irASeccion('perfil')">
-                <div class="avatar-circle" id="header-avatar-emoji">💻</div>
+                <div class="header-avatar-emoji" id="header-avatar-emoji">💻</div>
                 <span id="user-display-name" style="font-size: 0.82rem; font-weight: 700; color: var(--text);">Perfil</span>
             </div>
         </div>
@@ -827,6 +827,19 @@
 
             <div id="profile-view-wrapper" class="profile-section-container">
                 
+                <div style="background: var(--card-bg); border: 1px solid var(--border); padding: 16px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px var(--accent-glow);">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.5rem;">🎛️</span>
+                        <div>
+                            <h4 style="font-weight: 800; font-size: 0.9rem; margin: 0;">Panel de Control Core</h4>
+                            <p style="font-size: 0.7rem; color: #64748b; margin: 0;">Estadísticas del Evaristo García</p>
+                        </div>
+                    </div>
+                    <button onclick="document.getElementById('admin-chart-box').scrollIntoView({ behavior: 'smooth' })" style="background: var(--accent); color: white; border: none; padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 0.78rem; cursor: pointer;">
+                        Abrir Panel →
+                    </button>
+                </div>
+
                 <div class="student-card" id="student-digital-badge">
                     <div style="display: flex; align-items: center; gap: 16px;">
                         <div style="font-size: 3rem; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 50%; width: 75px; height: 75px; display: flex; align-items: center; justify-content: center;" id="card-avatar-placeholder">💻</div>
@@ -842,7 +855,7 @@
                     </div>
                 </div>
 
-                <div style="background: var(--card-bg); border: 1px solid var(--border); padding: 24px; border-radius: 24px;">
+                <div id="admin-chart-box" style="background: var(--card-bg); border: 1px solid var(--border); padding: 24px; border-radius: 24px;">
                     <h3 style="font-weight: 800; font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 15px;">📊 Panel de Control Administrativo (Simulación IA)</h3>
                     <div style="width: 100%; max-height: 240px; position: relative;">
                         <canvas id="adminChart"></canvas>
@@ -939,4 +952,429 @@
         let selectedAvatarEmoji = '💻';
         let adminChartInstance = null;
 
-        /* 📡 LOGIC 1: CONT
+        /* 📡 LOGIC 1: CONTROLLER SERVICE WORKER ASYNC (PWA) */
+        let deferredPrompt;
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+            .then(() => console.log("Service Worker Activo."))
+            .catch(err => console.log("Error de Registro Worker: ", err));
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installBtn = document.getElementById('pwa-install-btn');
+            if(installBtn) installBtn.style.display = 'block'; 
+        });
+
+        document.getElementById('pwa-install-btn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('App instalada por el usuario.');
+                }
+                deferredPrompt = null;
+                document.getElementById('pwa-install-btn').style.display = 'none';
+            }
+        });
+
+        /* 📊 LOGIC 2: ENGINE RENDER CHART.JS ENGINE */
+        function inicializarGraficaAdmin() {
+            const ctx = document.getElementById('adminChart').getContext('2d');
+            adminChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['💻 Sistemas', '📐 Dibujo', '⚡ Electricidad', '🎒 Otros'],
+                    datasets: [{
+                        label: 'Insumos Solicitados',
+                        data: [42, 19, 28, 15], 
+                        backgroundColor: ['#2563eb', '#10b981', '#b45309', '#64748b'],
+                        borderWidth: 0,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        /* 🔄 LOGIC 3: ROUTING INTERNO DE VISTAS (SPA STYLE) */
+        function irASeccion(seccion) {
+            const marketView = document.getElementById('market-view-wrapper');
+            const profileView = document.getElementById('profile-view-wrapper');
+            
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+
+            if (seccion === 'perfil') {
+                marketView.style.display = 'none';
+                profileView.style.display = 'flex';
+                document.getElementById('side-btn-perfil').classList.add('active');
+                cargarCamposDesdeStorage();
+                
+                setTimeout(() => {
+                    if(!adminChartInstance) inicializarGraficaAdmin();
+                }, 150);
+            } else {
+                marketView.style.display = 'block';
+                profileView.style.display = 'none';
+                document.getElementById('side-btn-todos').classList.add('active');
+                currentCategoryFilter = 'todos';
+                applyFilters();
+            }
+        }
+
+        /* 🔐 LOGIC 4: CONTROL DE ACCESO (AUTENTICACIÓN ENGINE) */
+        function toggleAuthMode() {
+            const title = document.getElementById('auth-title');
+            const subtitle = document.getElementById('auth-subtitle');
+            const mainBtn = document.getElementById('auth-main-btn');
+            const switchText = document.getElementById('auth-switch-text');
+            const switchLink = document.getElementById('auth-switch-link');
+            const nameInput = document.getElementById('reg-name');
+            const techBox = document.getElementById('reg-tech-box');
+
+            if (authMode === 'login') {
+                authMode = 'register';
+                title.innerText = "Crear una Cuenta";
+                subtitle.innerText = "Regístrate para guardar tu perfil, mano";
+                mainBtn.innerText = "Registrarse y Entrar";
+                switchText.innerText = "¿Ya tienes un perfil?";
+                switchLink.innerText = "Inicia sesión aquí";
+                nameInput.style.display = 'block';
+                techBox.style.display = 'flex';
+            } else {
+                authMode = 'login';
+                title.innerText = "Ingresar a la Plataforma";
+                subtitle.innerText = "Bienvenido de nuevo, mano";
+                mainBtn.innerText = "Entrar a Inovamagic";
+                switchText.innerText = "¿No tienes una cuenta aún?";
+                switchLink.innerText = "Regístrate aquí";
+                nameInput.style.display = 'none';
+                techBox.style.display = 'none';
+            }
+        }
+
+        function procesarAutenticacion() {
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
+            const pass = document.getElementById('login-pass').value.trim();
+            const name = document.getElementById('reg-name').value.trim();
+            const tech = document.getElementById('reg-tech').value;
+            
+            if (!email || !pass) {
+                alert("Completa los campos principales, mano. ❌");
+                return;
+            }
+
+            if (authMode === 'register') {
+                if (!name) {
+                    alert("Por favor escribe tu nombre para armar el perfil. 👤");
+                    return;
+                }
+                
+                localStorage.setItem('saved_email', email);
+                localStorage.setItem('saved_password', pass);
+                localStorage.setItem('user_name', name);
+                localStorage.setItem('user_tech', tech);
+                localStorage.setItem('user_avatar', '💻');
+                localStorage.setItem('user_jornada', 'Mañana');
+                localStorage.setItem('session_active', 'true');
+                
+                document.getElementById('login-screen').style.display = 'none';
+                aplicarPreferenciasVisualesPerfil();
+                alert(`¡Cuenta creada con éxito! Bienvenido a Inovamagic, ${name}. 🎉`);
+                
+            } else {
+                const emailRegistrado = localStorage.getItem('saved_email');
+                const passwordRegistrada = localStorage.getItem('saved_password');
+
+                if (!emailRegistrado) {
+                    alert("Este correo no está registrado, mano. Crea tu cuenta primero. 📋");
+                    return;
+                }
+
+                if (email === emailRegistrado && pass === passwordRegistrada) {
+                    localStorage.setItem('session_active', 'true');
+                    document.getElementById('login-screen').style.display = 'none';
+                    aplicarPreferenciasVisualesPerfil();
+                    alert(`¡Ingreso exitoso! Qué bueno verte, ${localStorage.getItem('user_name') || 'mano'}. 👋`);
+                } else {
+                    alert("❌ ¡Contraseña o correo incorrectos, mano!");
+                    return;
+                }
+            }
+        }
+
+        /* ⚙️ LOGIC 5: PROFILE MANAGER ENGINE */
+        function cambiarEmojiAvatar(emoji, element) {
+            document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('selected'));
+            if(element) element.classList.add('selected');
+            selectedAvatarEmoji = emoji;
+            document.getElementById('card-avatar-placeholder').innerText = emoji;
+        }
+
+        document.querySelectorAll('.avatar-option').forEach(o => {
+            o.addEventListener('click', function() {
+                cambiarEmojiAvatar(this.innerText, this);
+            });
+        });
+
+        function sincronizarCamposEdicion() {
+            document.getElementById('card-student-name').innerText = document.getElementById('edit-profile-name').value || "Estudiante";
+            document.getElementById('card-student-tech').innerText = "Especialidad: " + document.getElementById('edit-profile-tech').value;
+            document.getElementById('card-student-jornada').innerText = document.getElementById('edit-profile-jornada').value;
+            
+            const card = document.getElementById('student-digital-badge');
+            const tech = document.getElementById('edit-profile-tech').value;
+            if(tech === 'Sistemas') card.style.background = "linear-gradient(135deg, #1e3a8a, #3b82f6)";
+            if(tech === 'Dibujo') card.style.background = "linear-gradient(135deg, #15803d, #22c55e)";
+            if(tech === 'Electricidad') card.style.background = "linear-gradient(135deg, #b45309, #eab308)";
+        }
+
+        function cargarCamposDesdeStorage() {
+            document.getElementById('edit-profile-name').value = localStorage.getItem('user_name') || "";
+            document.getElementById('edit-profile-tech').value = localStorage.getItem('user_tech') || "Sistemas";
+            document.getElementById('edit-profile-jornada').value = localStorage.getItem('user_jornada') || "Mañana";
+            selectedAvatarEmoji = localStorage.getItem('user_avatar') || '💻';
+            
+            document.querySelectorAll('.avatar-option').forEach(o => {
+                if(o.innerText === selectedAvatarEmoji) o.classList.add('selected');
+                else o.classList.remove('selected');
+            });
+            
+            sincronizarCamposEdicion();
+            cambiarEmojiAvatar(selectedAvatarEmoji, null);
+        }
+
+        function guardarCambiosPerfil() {
+            const nuevoNombre = document.getElementById('edit-profile-name').value.trim();
+            const nuevaTech = document.getElementById('edit-profile-tech').value;
+            const nuevaJornada = document.getElementById('edit-profile-jornada').value;
+
+            if(!nuevoNombre) return alert("El nombre no puede quedar vacío, mano.");
+
+            localStorage.setItem('user_name', nuevoNombre);
+            localStorage.setItem('user_tech', nuevaTech);
+            localStorage.setItem('user_jornada', nuevaJornada);
+            localStorage.setItem('user_avatar', selectedAvatarEmoji);
+
+            aplicarPreferenciasVisualesPerfil();
+            alert("¡Perfil personalizado y guardado correctamente, mano! 💾");
+            irASeccion('mercado');
+        }
+
+        function aplicarPreferenciasVisualesPerfil() {
+            const name = localStorage.getItem('user_name') || "Estudiante";
+            const emoji = localStorage.getItem('user_avatar') || "💻";
+            const tech = localStorage.getItem('user_tech') || "todas";
+
+            document.getElementById('user-display-name').innerText = name.split(' ')[0];
+            document.getElementById('header-avatar-emoji').innerText = emoji;
+            document.getElementById('card-student-email').innerText = localStorage.getItem('saved_email') || "";
+
+            const targetChip = document.getElementById('tech-chip-' + tech);
+            if(targetChip) filtrarPorModalidad(tech, targetChip);
+        }
+
+        function cerrarSesionCompleta() {
+            localStorage.removeItem('session_active');
+            irASeccion('mercado');
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('login-email').value = "";
+            document.getElementById('login-pass').value = "";
+            alert("Sesión cerrada, mano! 🚀");
+        }
+
+        /* 🛍️ LOGIC 6: FILTRADO INTELIGENTE DE PRODUCTOS */
+        function selectChip(productId, type, value, element) {
+            element.parentElement.querySelectorAll('.size-chip').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            if (!selectedSelections[productId]) selectedSelections[productId] = {};
+            selectedSelections[productId][type] = value;
+        }
+
+        function toggleFavorito(id) {
+            const btn = document.getElementById('fav-'+id);
+            btn.classList.toggle('fav-active');
+            if(btn.classList.contains('fav-active')) {
+                btn.innerText = "❤️"; localStorage.setItem('fav-'+id, 'true');
+            } else {
+                btn.innerText = "🤍"; localStorage.removeItem('fav-'+id);
+            }
+            if(currentCategoryFilter === 'favoritos') applyFilters();
+        }
+
+        function filtrarPorModalidad(modalidad, element) {
+            document.querySelectorAll('.tech-chip').forEach(chip => chip.classList.remove('active'));
+            if(element) element.classList.add('active');
+            currentTechFilter = modalidad;
+            applyFilters();
+        }
+
+        function filterByCategory(cat, btn) {
+            irASeccion('mercado');
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentCategoryFilter = cat;
+            applyFilters();
+            document.getElementById('promo-carousel').style.display = cat === "todos" ? "flex" : "none";
+        }
+
+        function applyFilters() {
+            let count = 0;
+            document.querySelectorAll('.card').forEach(c => {
+                const id = c.id.replace('prod-card-', '');
+                const matchesCategory = (currentCategoryFilter === 'todos' || c.dataset.cat === currentCategoryFilter);
+                const isFav = localStorage.getItem('fav-'+id) === 'true';
+                
+                const productSpecs = c.dataset.specs ? c.dataset.specs.split(',') : [];
+                const matchesTech = (currentTechFilter === 'todas' || productSpecs.includes(currentTechFilter));
+
+                let finalDisplay = false;
+                if (currentCategoryFilter === 'favoritos') {
+                    finalDisplay = isFav && matchesTech;
+                } else {
+                    finalDisplay = matchesCategory && matchesTech;
+                }
+
+                c.style.display = finalDisplay ? 'flex' : 'none';
+                if(finalDisplay && currentCategoryFilter === 'favoritos') count++;
+            });
+
+            document.getElementById('no-favs-message').style.display = (currentCategoryFilter === 'favoritos' && count === 0) ? 'block' : 'none';
+        }
+
+        /* 🔔 LOGIC 7: SIMULADOR DE NOTIFICACIONES ASÍNCRONAS EN TIEMPO REAL */
+        function iniciarNotificacionesSimuladas() {
+            const nombres = ["Mateo", "Valentina", "Juan Camilo", "Isabella", "Andrés", "Mariana", "Samuel", "Gabriela"];
+            const grados = ["10-1", "10-2", "11-1", "11-2"];
+            const acciones = [
+                "acaba de comprar una Caja de Colores 🎨",
+                "añadió un Camibuso de Diario a la bolsa 👕",
+                "compró un Cuaderno Cuadriculado 📚",
+                "adquirió un Kit de Reglas Técnicas 📐"
+            ];
+
+            setInterval(() => {
+                if (document.getElementById('modal-recibo').classList.contains('active')) return;
+                const rNombre = nombres[Math.floor(Math.random() * nombres.length)];
+                const rGrado = grados[Math.floor(Math.random() * grados.length)];
+                const rAccion = acciones[Math.floor(Math.random() * acciones.length)];
+
+                const txt = document.getElementById('live-alert-text');
+                txt.innerHTML = `<b>${rNombre} (${rGrado})</b> ${rAccion}`;
+
+                const toast = document.getElementById('live-alert');
+                toast.classList.add('show');
+                setTimeout(() => { toast.classList.remove('show'); }, 4500);
+            }, 12000);
+        }
+
+        /* 🏁 WINDOWS INITIALIZER */
+        window.onload = function() {
+            const sesionActiva = localStorage.getItem('session_active');
+
+            if (sesionActiva === 'true') {
+                document.getElementById('login-screen').style.display = 'none';
+                aplicarPreferenciasVisualesPerfil();
+            }
+
+            document.querySelectorAll('.action-circle-btn[id^="fav-"]').forEach(btn => {
+                const id = btn.id.split('-')[1];
+                if(localStorage.getItem('fav-'+id) === 'true') { btn.classList.add('fav-active'); btn.innerText = "❤️"; }
+            });
+
+            actualizarBarraPresupuesto(ventasAcumuladas);
+            
+            setTimeout(() => {
+                document.getElementById('skeleton-grid').classList.remove('active');
+                document.getElementById('main-grid').style.display = 'grid';
+                iniciarNotificacionesSimuladas();
+            }, 400);
+        };
+
+        function calcularTiempoEntrega() {
+            const b = document.getElementById('logistica-bloque').value;
+            const txt = document.getElementById('tiempo-entrega-txt');
+            if(!b) return txt.innerText = "";
+            let m = b === 'A' ? 5 : (b === 'B' ? 8 : 12);
+            txt.innerText = `🚀 Llega al Bloque ${b} en ${m} minutos.`;
+            cart.bloqueEntrega = b;
+        }
+
+        function toggleTheme() {
+            const t = document.documentElement.getAttribute('data-theme');
+            document.documentElement.setAttribute('data-theme', t === 'dark' ? 'light' : 'dark');
+        }
+
+        function actualizarBarraPresupuesto(total) {
+            document.getElementById('budget-bar-fill').style.width = Math.min((total / metaFinanciera) * 100, 100) + "%";
+            document.getElementById('budget-txt').innerText = "$ " + total.toLocaleString('es-CO');
+        }
+
+        function filterProducts(q) {
+            const query = q.toLowerCase();
+            document.querySelectorAll('.card').forEach(c => c.style.display = c.dataset.name.includes(query) ? 'flex' : 'none');
+        }
+
+        function cerrarRecibo() { document.getElementById('modal-recibo').classList.remove('active'); }
+
+        /* ==========================================================================
+           🛒 LOGIC 8: MOTOR DEL CARRITO DE COMPRAS (FINANCIAL ENGINE)
+           ========================================================================== */
+        const cart = {
+            items: [], total: 0, bloqueEntrega: "",
+            add(name, price, id) {
+                const s = selectedSelections[id] || {};
+                if(document.getElementById('talla-row-'+id) && !s.talla) return alert("Selecciona una talla, mano.");
+                if(document.getElementById('esp-row-'+id) && !s.esp) return alert("Selecciona la especialidad.");
+                let desc = (s.talla ? "Talla " + s.talla : "") + (s.esp ? " " + s.esp : "");
+                this.items.push({name, price, d: desc}); this.update();
+            },
+            update() {
+                this.total = this.items.reduce((s, i) => s + i.price, 0);
+                document.getElementById('count').innerText = this.items.length;
+                document.getElementById('total').innerText = "$ " + this.total.toLocaleString('es-CO');
+            },
+            showDatos() {
+                if(this.items.length === 0) return alert("Bolsa vacía, mano.");
+                let html = `<b>Tus productos:</b><br>`;
+                this.items.forEach(i => html += `• ${i.name} ${i.d}<br>`);
+                html += `<br><b style="color:#2563eb;">Total Orden: $${this.total.toLocaleString('es-CO')}</b>`;
+                document.getElementById('nequi-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Inovamagic_${this.total}`;
+                document.getElementById('recibo-info').innerHTML = html;
+                document.getElementById('modal-recibo').classList.add('active');
+            },
+            abrirNequiReal() { window.location.href = `nequi://transfer?phone={{ config.nequi_numero }}&amount=${this.total}`; },
+            send() {
+                if(!this.bloqueEntrega) return alert("Elige dónde te entregamos el producto.");
+                let msg = `*NUEVO PEDIDO INOVAMAGIC*\n*Lugar de Entrega:* Bloque ${this.bloqueEntrega}\n`;
+                this.items.forEach(i => msg += `- ${i.name} ${i.d}\n`);
+                msg += `*TOTAL NETO: $${this.total.toLocaleString('es-CO')}*`;
+                
+                fetch('/api/registrar-venta', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ total: this.total }) })
+                .then(res => res.json())
+                .then(data => {
+                    actualizarBarraPresupuesto(data.nuevas_ventas);
+                    
+                    /* 📊 ACTUALIZACIÓN EN VIVO DE LA GRÁFICA AL HACER LA COMPRA */
+                    if(adminChartInstance) {
+                        const currentTech = localStorage.getItem('user_tech') || 'Sistemas';
+                        if(currentTech === 'Sistemas') adminChartInstance.data.datasets[0].data[0] += 1;
+                        if(currentTech === 'Dibujo') adminChartInstance.data.datasets[0].data[1] += 1;
+                        if(currentTech === 'Electricidad') adminChartInstance.data.datasets[0].data[2] += 1;
+                        adminChartInstance.update();
+                    }
+
+                    window.open(`https://wa.me/{{ config.whatsapp_admin }}?text=${encodeURIComponent(msg)}`, '_blank');
+                    this.items = []; this.update(); cerrarRecibo();
+                });
+            }
+        };
+    </script>
+</body>
+</html>
