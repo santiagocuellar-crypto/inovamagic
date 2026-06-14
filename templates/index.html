@@ -2,817 +2,381 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Inovamagic | {{ config.colegio }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inovamagic Core - Sistema Administrativo Escolar</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { 
-            --accent: #2563eb; 
-            --accent-glow: rgba(37, 99, 235, 0.12);
-            --text: #0f172a; 
-            --bg: #f8fafc; 
-            --white: rgba(255, 255, 255, 0.85); 
-            --nequi: #7d3291; 
-            --success: #10b981; 
-            --border: rgba(226, 232, 240, 0.8);
-            --card-bg: #ffffff;
-            --sidebar-bg: rgba(255, 255, 255, 0.65);
-            --glass-blur: blur(20px);
-            --ios-ease: cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        [data-theme="dark"] {
-            --text: #f8fafc;
-            --bg: #070b13;
-            --white: rgba(30, 41, 59, 0.75);
-            --border: rgba(51, 65, 85, 0.4);
-            --card-bg: #1e293b;
-            --sidebar-bg: rgba(15, 23, 42, 0.55);
-            --accent-glow: rgba(59, 130, 246, 0.2);
-        }
-
-        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; position: relative; transition: background 0.4s var(--ios-ease); }
-
-        header { background: var(--white); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); padding: 12px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 100; position: relative; }
-        .search-container { flex: 1; max-width: 450px; background: rgba(100,116,139,0.06); border-radius: 14px; padding: 10px 16px; margin: 0 15px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); }
-        .search-container input { border: none; background: transparent; width: 100%; outline: none; color: var(--text); font-size: 0.9rem; }
-
-        .dark-toggle { background: rgba(100,116,139,0.06); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; }
-        .live-counter { background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.15); color: #ef4444; font-size: 0.75rem; font-weight: 700; padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px; }
-        .live-pulse { width: 6px; height: 6px; background: #ef4444; border-radius: 50%; animation: pulseRing 1.4s infinite alternate var(--ios-ease); }
-        @keyframes pulseRing { from { transform: scale(0.85); opacity: 0.6; } to { transform: scale(1.25); opacity: 1; } }
-
-        .user-profile-trigger { display: flex; align-items: center; gap: 8px; background: rgba(100,116,139,0.06); border: 1px solid var(--border); padding: 6px 12px; border-radius: 14px; cursor: pointer; }
-        .avatar-circle { width: 28px; height: 28px; background: var(--accent); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; }
-
-        .main-layout { display: flex; flex: 1; overflow: hidden; position: relative; z-index: 10; }
-        .sidebar { width: 280px; background: var(--sidebar-bg); backdrop-filter: var(--glass-blur); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; }
-        .categories-group { display: flex; flex-direction: column; gap: 6px; }
-        .cat-btn { background: transparent; border: 1px solid transparent; padding: 10px 14px; text-align: left; border-radius: 12px; cursor: pointer; font-weight: 600; color: var(--text); font-size: 0.9rem; transition: background 0.2s, color 0.2s; }
-        .cat-btn:hover, .cat-btn.active { background: rgba(37, 99, 235, 0.08); color: var(--accent); }
-
-        .content-area { flex: 1; padding: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-
-        .profile-section-container { display: none; max-width: 600px; margin: 0 auto; flex-direction: column; gap: 20px; animation: fadeIn 0.35s var(--ios-ease); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .student-card { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 25px; border-radius: 24px; position: relative; box-shadow: 0 15px 30px rgba(37, 99, 235, 0.2); overflow: hidden; }
-        .student-card::before { content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; }
-        
-        .avatar-selector-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 10px; }
-        .avatar-option { font-size: 1.6rem; padding: 8px; text-align: center; background: var(--bg); border: 2px solid var(--border); border-radius: 12px; cursor: pointer; transition: transform 0.2s; }
-        .avatar-option:hover { transform: scale(1.15); }
-        .avatar-option.selected { border-color: var(--accent); background: var(--accent-glow); }
-
-        .profile-input-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
-        .profile-input-group label { font-size: 0.72rem; font-weight: 800; color: #64748b; text-transform: uppercase; }
-        .profile-input-group input, .profile-input-group select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); font-weight: 600; outline: none; }
-
-        .promo-carousel-container { width: 100%; overflow-x: auto; display: flex; gap: 16px; margin-bottom: 25px; padding-bottom: 10px; scroll-snap-type: x mandatory; scrollbar-width: none; }
-        .promo-carousel-container::-webkit-scrollbar { display: none; }
-        .promo-banner { flex: 0 0 85%; max-width: 600px; background: linear-gradient(135deg, #1e3a8a, #2563eb); border-radius: 20px; min-height: 160px; color: white; display: flex; align-items: center; justify-content: space-between; padding: 20px; scroll-snap-align: start; position: relative; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15); cursor: pointer; }
-        .promo-banner:nth-child(even) { background: linear-gradient(135deg, #581c87, #7d3291); }
-        .promo-banner:nth-child(3n) { background: linear-gradient(135deg, #064e3b, #10b981); }
-        .promo-badge { position: absolute; top: 12px; left: 12px; background: rgba(255,255,255,0.25); backdrop-filter: blur(5px); padding: 4px 10px; border-radius: 20px; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; }
-        .promo-img-box { width: 110px; height: 110px; border-radius: 14px; background: white; overflow: hidden; }
-        .promo-img-box img { width: 100%; height: 100%; object-fit: cover; }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
-        .card { background: var(--card-bg); border-radius: 18px; border: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; position: relative; transition: transform 0.3s var(--ios-ease), box-shadow 0.3s; }
-        .card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px var(--accent-glow); }
-        
-        .stock-badge { position: absolute; top: 10px; left: 10px; padding: 4px 8px; border-radius: 8px; font-size: 0.65rem; font-weight: 800; color: white; z-index: 10; }
-        .stock-high { background: var(--success); }
-        .stock-low { background: #ef4444; }
-
-        .action-container { position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 6px; z-index: 20; }
-        .action-circle-btn { width: 34px; height: 34px; background: rgba(255,255,255,0.9); border-radius: 50%; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.95rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        .fav-active { color: #ef4444 !important; transform: scale(1.1); }
-
-        .img-box { width: 100%; aspect-ratio: 1/1; background: #f1f5f9; overflow: hidden; cursor: pointer; }
-        .img-box img { width: 100%; height: 100%; object-fit: cover; }
-        .content { padding: 14px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; }
-        .price { font-size: 1.2rem; font-weight: 800; color: var(--text); }
-        
-        .selector-label { font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
-        .inline-selector-row { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0; scrollbar-width: none; }
-        .inline-selector-row::-webkit-scrollbar { display: none; }
-        .size-chip { min-width: 34px; height: 34px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 0.78rem; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .size-chip.selected { background: var(--text); color: var(--bg); border-color: var(--text); }
-
-        .add-btn { background: #0f172a; color: white; border: none; cursor: pointer; border-radius: 10px; font-weight: 700; }
-        [data-theme="dark"] .add-btn { background: var(--accent); }
-
-        .skeleton-wrapper { display: none; }
-        .skeleton-wrapper.active { display: grid; }
-        .skeleton-card { background: var(--card-bg); border-radius: 18px; height: 320px; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
-        .skeleton-img { width: 100%; aspect-ratio: 1/1; background: rgba(100,116,139,0.08); border-radius: 12px; }
-        .skeleton-line { height: 12px; background: rgba(100,116,139,0.08); border-radius: 4px; }
-
-        .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.3); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(12px); }
-        .modal.active { display: flex; }
-        .modal-box { background: var(--card-bg); padding: 25px; border-radius: 24px; width: 100%; max-width: 400px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.12); }
-
-        .bottom-bar { background: var(--white); backdrop-filter: var(--glass-blur); padding: 14px 24px; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; gap: 15px; z-index: 90; position: relative; }
-        .budget-container { width: 100%; background: rgba(100,116,139,0.12); height: 8px; border-radius: 10px; overflow: hidden; }
-        .budget-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.8s var(--ios-ease); }
-
-        .live-toast { position: fixed; bottom: 90px; left: 20px; background: rgba(15, 23, 42, 0.9); color: white; padding: 12px 18px; border-radius: 16px; font-size: 0.82rem; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transform: translateY(150px); opacity: 0; transition: transform 0.5s var(--ios-ease), opacity 0.5s; z-index: 999; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); max-width: 320px; }
-        .live-toast.show { transform: translateY(0); opacity: 1; }
-
-        .tech-selector-container { margin-bottom: 20px; background: var(--card-bg); border: 1px solid var(--border); padding: 14px; border-radius: 16px; }
-        .tech-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
-        .tech-chip { background: var(--bg); border: 1px solid var(--border); padding: 8px; text-align: center; border-radius: 10px; font-size: 0.78rem; font-weight: 700; cursor: pointer; color: var(--text); transition: all 0.2s; }
-        .tech-chip.active { background: var(--accent); color: white; border-color: var(--accent); }
-
-        @media (max-width: 768px) {
-            header { flex-direction: column; gap: 8px; }
-            .search-container { max-width: 100%; width: 100%; margin: 0; }
-            .main-layout { flex-direction: column; }
-            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); padding: 10px 16px; flex-direction: row; overflow-x: auto; }
-            .categories-group { flex-direction: row; }
-            .promo-banner { flex: 0 0 92%; }
-            .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .bottom-bar { grid-template-columns: 1fr; text-align: center; }
-            .tech-grid { grid-template-columns: repeat(2, 1fr); }
-            .live-toast { left: 10px; right: 10px; max-width: calc(100% - 20px); bottom: 140px; }
-        }
+        .pestaña-activa { background-color: #2563eb !important; color: white !important; border-color: #2563eb !important; }
+        .modal-fondo { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.75); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 font-sans antialiased text-slate-800">
 
-    <div id="login-screen" style="position: fixed; inset: 0; background: var(--bg); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 16px;">
-        <div style="background: var(--card-bg); border: 1px solid var(--border); padding: 30px; border-radius: 24px; width: 100%; max-width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.08);">
-            <div style="text-align: center; margin-bottom: 16px;">
-                <div style="font-size: 2.5rem;">🚀</div>
-                <h2 id="auth-title" style="font-weight: 800; color: var(--text); text-transform: uppercase;">Ingresar a la Plataforma</h2>
-                <p id="auth-subtitle" style="color: #64748b; font-size: 0.8rem;">Bienvenido de nuevo, mano</p>
+    <header class="bg-blue-600 text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3.5 flex justify-between items-center max-w-6xl">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">✨</span>
+                <h1 class="text-xl font-extrabold tracking-tight">Inovamagic <span class="text-blue-200 text-xs font-normal">Core v2.5</span></h1>
             </div>
-
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                <input type="text" id="reg-name" placeholder="Tu Nombre Completo" style="display: none; width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none;">
-                <input type="email" id="login-email" placeholder="Correo Institucional" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none;">
-                <input type="password" id="login-pass" placeholder="Contraseña de Acceso" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none;">
-                
-                <div id="reg-tech-box" style="display: none; flex-direction: column; gap: 4px;">
-                    <label style="font-size: 0.7rem; font-weight: 700; color: #64748b;">SELECCIONA TU MODALIDAD TÉCNICA:</label>
-                    <select id="reg-tech" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none; font-weight: 600;">
-                        <option value="Sistemas">💻 Sistemas</option>
-                        <option value="Dibujo">📐 Dibujo Técnico</option>
-                        <option value="Electricidad">⚡ Electricidad</option>
-                    </select>
-                </div>
-
-                <button id="auth-main-btn" onclick="procesarAutenticacion()" style="width: 100%; background: var(--text); color: var(--bg); border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 8px;">Entrar a Inovamagic</button>
-            </div>
-
-            <div style="text-align: center; margin-top: 20px; font-size: 0.82rem;">
-                <span id="auth-switch-text" style="color: #64748b;">¿No tienes una cuenta aún?</span>
-                <span id="auth-switch-link" onclick="toggleAuthMode()" style="color: var(--accent); font-weight: 700; cursor: pointer; margin-left: 4px;">Regístrate aquí</span>
-            </div>
-        </div>
-    </div>
-
-    <div id="live-alert" class="live-toast">
-        <span style="font-size: 1.2rem;">🛒</span>
-        <div id="live-alert-text">Alguien acaba de comprar un insumo.</div>
-    </div>
-
-    <header>
-        <div style="font-weight: 800; color: var(--text); cursor: pointer;" onclick="irASeccion('mercado')">INOVAMAGIC CORE 🚀</div>
-        <div class="search-container">
-            🔍 <input type="text" id="search-input" placeholder="Buscar insumos..." onkeyup="filterProducts(this.value)">
-        </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <button id="pwa-install-btn" style="display:none; background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 12px; font-weight: 700; font-size: 0.8rem; cursor: pointer; animation: pulseRing 1.5s infinite alternate;">📥 Descargar App</button>
-            
-            <div class="live-counter"><div class="live-pulse"></div><span>🔥 14 activos</span></div>
-            <button class="dark-toggle" onclick="toggleTheme()">🌙</button>
-            
-            <div class="user-profile-trigger" onclick="irASeccion('perfil')">
-                <div class="avatar-circle" id="header-avatar-emoji">💻</div>
-                <span id="user-display-name" style="font-size: 0.82rem; font-weight: 700; color: var(--text);">Perfil</span>
-            </div>
+            <nav class="flex gap-6 items-center font-medium text-sm">
+                <button onclick="cambiarSeccion('mercado')" class="hover:text-blue-200 transition-colors cursor-pointer">Mercado</button>
+                <button onclick="cambiarSeccion('perfil')" class="hover:text-blue-200 transition-colors cursor-pointer">Mi Perfil</button>
+                <button onclick="abrirCarrito()" class="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-xl flex items-center gap-2 relative cursor-pointer transition-all shadow-sm">
+                    🛒 Bolsa
+                    <span id="contador-carrito" class="bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full absolute -top-2 -right-2 font-bold hidden border-2 border-blue-600">0</span>
+                </button>
+            </nav>
         </div>
     </header>
 
-    <div class="main-layout">
-        <aside class="sidebar">
-            <div class="categories-group">
-                <button class="cat-btn active" id="side-btn-todos" onclick="filterByCategory('todos', this)">📂 Mercado</button>
-                <button class="cat-btn" id="side-btn-uniformes" onclick="filterByCategory('uniformes', this)">👕 Uniformes</button>
-                <button class="cat-btn" id="side-btn-escolar" onclick="filterByCategory('escolar', this)">📚 Escolar</button>
-                <button class="cat-btn" id="side-btn-belleza" onclick="filterByCategory('belleza', this)">💄 Belleza</button>
-                <button class="cat-btn" id="side-btn-construccion" onclick="filterByCategory('construccion', this)">🎨 Técnicos</button>
-                <button class="cat-btn" id="side-btn-deportes" onclick="filterByCategory('deportes', this)">⚽ Deportes</button>
-                <button class="cat-btn" id="side-btn-favoritos" onclick="filterByCategory('favoritos', this)" style="color: #ef4444;">❤️ Favoritos</button>
-                <hr style="border: none; border-top: 1px solid var(--border); margin: 10px 0;">
-                <button class="cat-btn" id="side-btn-perfil" onclick="irASeccion('perfil')" style="color: var(--accent);">👤 Mi Perfil</button>
+    <section class="bg-white border-b border-slate-200 py-4 shadow-sm">
+        <div class="container mx-auto px-4 max-w-xl text-center">
+            <div class="flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                <span>Caja Mayor Acumulada</span>
+                <span class="text-green-600 font-extrabold">Meta del Proyecto</span>
             </div>
-        </aside>
-
-        <main class="content-area">
-            
-            <div id="market-view-wrapper">
-                <div class="tech-selector-container">
-                    <div class="selector-label">🎯 Filtrar por tu Modalidad Técnico:</div>
-                    <div class="tech-grid">
-                        <div class="tech-chip active" id="tech-chip-todas" onclick="filtrarPorModalidad('todas', this)">Todas</div>
-                        <div class="tech-chip" id="tech-chip-Sistemas" onclick="filtrarPorModalidad('Sistemas', this)">💻 Sistemas</div>
-                        <div class="tech-chip" id="tech-chip-Dibujo" onclick="filtrarPorModalidad('Dibujo', this)">📐 Dibujo</div>
-                        <div class="tech-chip" id="tech-chip-Electricidad" onclick="filtrarPorModalidad('Electricidad', this)">⚡ Electricidad</div>
-                    </div>
-                </div>
-
-                <div class="promo-carousel-container" id="promo-carousel">
-                    {% for b in carrusel %}
-                    <div class="promo-banner" onclick="window.location.href='/producto/{{ b.id }}'">
-                        <span class="promo-badge">{{ b.criterio }}</span>
-                        <div style="max-width: 60%;">
-                            <h2 style="font-size: 1.2rem; font-weight: 800;">{{ b.nombre }}</h2>
-                            <span style="background: white; color: black; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; display: inline-block; margin-top: 10px;">Ver Ficha</span>
-                        </div>
-                        <div class="promo-img-box"><img src="{{ b.img }}"></div>
-                    </div>
-                    {% endfor %}
-                </div>
-
-                <div class="grid skeleton-wrapper active" id="skeleton-grid">
-                    <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line"></div></div>
-                    <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line"></div></div>
-                </div>
-
-                <div class="grid" id="main-grid" style="display: none;">
-                    {% for p in catalogo %}
-                    <div class="card" data-name="{{ p.nombre.lower() }}" data-cat="{{ p.cat }}" data-specs="{{ p.especialidades | join(',') if p.especialidades else '' }}" id="prod-card-{{ p.id }}">
-                        {% if p.stock <= 3 %}
-                        <span class="stock-badge stock-low">⚠️ {{ p.stock }} Disp</span>
-                        {% else %}
-                        <span class="stock-badge stock-high">✔ Stock: {{ p.stock }}</span>
-                        {% endif %}
-                        <div class="action-container"><button class="action-circle-btn" id="fav-{{ p.id }}" onclick="toggleFavorito('{{ p.id }}')">🤍</button></div>
-                        <div class="img-box" onclick="window.location.href='/producto/{{ p.id }}'"><img src="{{ p.img }}" loading="lazy"></div>
-                        <div class="content">
-                            <h3 onclick="window.location.href='/producto/{{ p.id }}'" style="font-size:0.88rem; font-weight: 700; cursor: pointer;">{{ p.nombre }}</h3>
-                            <div>
-                                {% if p.tallas %}
-                                <div style="margin-bottom: 6px;">
-                                    <div class="selector-label">Talla:</div>
-                                    <div class="inline-selector-row" id="talla-row-{{ p.id }}">
-                                        {% for t in p.tallas %}
-                                        <div class="size-chip" onclick="selectChip('{{ p.id }}', 'talla', '{{ t }}', this)">{{ t }}</div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                                {% endif %}
-                                {% if p.especialidades %}
-                                <div style="margin-bottom: 6px;">
-                                    <div class="selector-label">Especialidad:</div>
-                                    <div class="inline-selector-row" id="esp-row-{{ p.id }}">
-                                        {% for e in p.especialidades %}
-                                        <div class="size-chip" onclick="selectChip('{{ p.id }}', 'esp', '{{ e }}', this)">{{ e }}</div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                                {% endif %}
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-                                    <div class="price">$ {{ p.precio_f }}</div>
-                                    <button class="add-btn" onclick="cart.add('{{ p.nombre }}', {{ p.precio }}, '{{ p.id }}')" style="width: 36px; height: 36px;">🛒</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                <div id="no-favs-message" style="display:none; text-align:center; padding:40px; color:#64748b;">No tienes favoritos agregados. ❤️</div>
+            <div class="w-full bg-slate-100 rounded-full h-5 p-0.5 border border-slate-200 overflow-hidden mb-1">
+                <div id="barra-progreso" class="bg-gradient-to-r from-emerald-400 to-green-500 h-full rounded-full transition-all duration-700 shadow-inner" style="width: 22.5%;"></div>
             </div>
-
-            <div id="profile-view-wrapper" class="profile-section-container">
-                <div class="student-card" id="student-digital-badge">
-                    <div style="display: flex; align-items: center; gap: 16px;">
-                        <div style="font-size: 3rem; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 50%; width: 75px; height: 75px; display: flex; align-items: center; justify-content: center;" id="card-avatar-placeholder">💻</div>
-                        <div>
-                            <h3 style="font-weight: 800; font-size: 1.3rem;" id="card-student-name">Estudiante</h3>
-                            <p style="font-size: 0.8rem; opacity: 0.9;" id="card-student-email">correo@institucion.com</p>
-                            <span style="background: rgba(255,255,255,0.25); font-size: 0.68rem; padding: 3px 10px; border-radius: 12px; font-weight: 800; display: inline-block; margin-top: 6px; text-transform: uppercase;" id="card-student-tech">Especialidad: Sistemas</span>
-                        </div>
-                    </div>
-                    <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 10px; display: flex; justify-content: space-between; font-size: 0.75rem; opacity: 0.85;">
-                        <div><b>Colegio:</b> I.E. Evaristo García</div>
-                        <div><b>Jornada:</b> <span id="card-student-jornada">Mañana</span></div>
-                    </div>
-                </div>
-
-                <div style="background: var(--card-bg); border: 1px solid var(--border); padding: 24px; border-radius: 24px;">
-                    <h3 style="font-weight: 800; font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 15px;">📊 Panel de Control Administrativo (Simulación IA)</h3>
-                    <div style="width: 100%; max-height: 240px; position: relative;">
-                        <canvas id="adminChart"></canvas>
-                    </div>
-                    <p style="font-size: 0.72rem; color:#64748b; margin-top: 10px; text-align: center;">Muestra estadística en tiempo real de insumos despachados por modalidad técnica.</p>
-                </div>
-
-                <div style="background: var(--card-bg); border: 1px solid var(--border); padding: 24px; border-radius: 24px; display: flex; flex-direction: column; gap: 14px;">
-                    <h3 style="font-weight: 800; font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;">⚙️ Personalizar mis Datos</h3>
-                    
-                    <div class="profile-input-group">
-                        <label>1. Elige tu Ícono de Avatar:</label>
-                        <div class="avatar-selector-grid">
-                            <div class="avatar-option" onclick="cambiarEmojiAvatar('💻', this)">💻</div>
-                            <div class="avatar-option" onclick="cambiarEmojiAvatar('📐', this)">📐</div>
-                            <div class="avatar-option" onclick="cambiarEmojiAvatar('⚡', this)">⚡</div>
-                            <div class="avatar-option" onclick="cambiarEmojiAvatar('🎨', this)">🎨</div>
-                            <div class="avatar-option" onclick="cambiarEmojiAvatar('⚽', this)">⚽</div>
-                            <div class="avatar-option" onclick="cambiarEmojiAvatar('🥋', this)">🥋</div>
-                        </div>
-                    </div>
-
-                    <div class="profile-input-group">
-                        <label>Nombre en Plataforma:</label>
-                        <input type="text" id="edit-profile-name" oninput="sincronizarCamposEdicion()">
-                    </div>
-
-                    <div class="profile-input-group">
-                        <label>Especialidad Técnica:</label>
-                        <select id="edit-profile-tech" onchange="sincronizarCamposEdicion()">
-                            <option value="Sistemas">💻 Sistemas</option>
-                            <option value="Dibujo">📐 Dibujo Técnico</option>
-                            <option value="Electricidad">⚡ Electricidad</option>
-                        </select>
-                    </div>
-
-                    <div class="profile-input-group">
-                        <label>Jornada Escolar:</label>
-                        <select id="edit-profile-jornada" onchange="sincronizarCamposEdicion()">
-                            <option value="Mañana">☀️ Mañana</option>
-                            <option value="Tarde">🌤️ Tarde</option>
-                        </select>
-                    </div>
-
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button onclick="guardarCambiosPerfil()" style="flex: 2; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer;">💾 Guardar Cambios</button>
-                        <button onclick="cerrarSesionCompleta()" style="flex: 1; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer;">🚪 Salir</button>
-                    </div>
-                </div>
-            </div>
-
-        </main>
-    </div>
-
-    <div class="bottom-bar">
-        <div onclick="cart.showDatos()" style="cursor:pointer; font-weight:700;">🛒 Bolsa: <span id="count">0</span> items</div>
-        <div style="display: flex; flex-direction: column; align-items: center;">
-            <span style="font-size: 0.7rem; font-weight: bold;">Caja Mayor: <span id="budget-txt">$ 0</span> / $ {{ "{:,.0f}".format(meta).replace(",", ".") }}</span>
-            <div class="budget-container"><div class="budget-bar" id="budget-bar-fill"></div></div>
+            <p class="text-sm text-slate-600 font-semibold">
+                Recaudado Real: <span class="text-slate-900 font-extrabold">$<span id="txt-ventas">450.000</span></span> / <span class="text-slate-400">$2.000.000</span>
+            </p>
         </div>
-        <div id="total" style="font-size: 1.1rem; font-weight:800; color:var(--accent); text-align: right;">$ 0</div>
-    </div>
+    </section>
 
-    <div id="modal-recibo" class="modal">
-        <div class="modal-box">
-            <button onclick="cerrarRecibo()" style="position: absolute; top: 12px; right: 12px; background: #ef4444; border: none; color: white; border-radius: 50%; width: 24px; height: 24px; cursor: pointer;">✕</button>
-            <h3 style="text-align:center; color:var(--nequi); font-weight: 800;">PASARELA DIRECTA NEQUI</h3>
-            <div id="recibo-info" style="margin: 12px 0; font-size: 0.85rem; border-top: 1px dashed #cbd5e1; padding-top: 10px;"></div>
+    <main id="seccion-mercado" class="container mx-auto px-4 py-8 max-w-6xl">
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 md:p-8 text-white mb-8 shadow-md flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="max-w-xl">
+                <span class="bg-blue-500 text-white text-[10px] px-3 py-1 rounded-full font-extrabold uppercase tracking-widest shadow-sm">Módulo Logístico</span>
+                <h2 class="text-2xl md:text-3xl font-black mt-3 leading-tight">Gestión e Insumos Oficiales de la Institución</h2>
+                <p class="text-sm text-blue-100 mt-2 font-medium">Plataforma centralizada para uniformes de diario, educación física y herramientas avanzadas por especialidades técnicas.</p>
+            </div>
+            <div class="w-32 h-32 md:w-40 md:h-40 bg-white/10 rounded-2xl flex items-center justify-center text-6xl shadow-inner backdrop-blur-sm">📦</div>
+        </div>
+
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 text-center md:text-left">Filtrar por Categoría</h3>
+        <div class="flex flex-wrap gap-2 mb-8 justify-center md:justify-start">
+            <button onclick="filtrarCatalogo('todos')" id="btn-cat-todos" class="pestaña-activa px-5 py-2.5 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 cursor-pointer shadow-sm transition-all">Todos</button>
+            <button onclick="filtrarCatalogo('uniformes')" id="btn-cat-uniformes" class="px-5 py-2.5 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 cursor-pointer shadow-sm transition-all">Uniformes</button>
+            <button onclick="filtrarCatalogo('escolar')" id="btn-cat-escolar" class="px-5 py-2.5 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 cursor-pointer shadow-sm transition-all">Papelería</button>
+            <button onclick="filtrarCatalogo('belleza')" id="btn-cat-belleza" class="px-5 py-2.5 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 cursor-pointer shadow-sm transition-all">Belleza</button>
+            <button onclick="filtrarCatalogo('construccion')" id="btn-cat-construccion" class="px-5 py-2.5 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 cursor-pointer shadow-sm transition-all">Especialidades</button>
+            <button onclick="filtrarCatalogo('deportes')" id="btn-cat-deportes" class="px-5 py-2.5 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 cursor-pointer shadow-sm transition-all">Deportes</button>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {% for p in catalogo %}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col item-producto transition-all hover:shadow-md hover:border-slate-300" data-categoria="{{ p.cat }}">
+                <div class="relative bg-slate-100 h-40 overflow-hidden">
+                    <img src="{{ p.img }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" alt="{{ p.nombre }}">
+                    <span class="absolute top-2 left-2 bg-white/95 text-slate-800 text-[9px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wider shadow-sm backdrop-blur-xs">{{ p.cat }}</span>
+                </div>
+                <div class="p-4 flex flex-col flex-grow">
+                    <h4 class="font-bold text-sm text-slate-800 line-clamp-2 leading-snug mb-2 flex-grow">{{ p.nombre }}</h4>
+                    
+                    {% if p.especialidades %}
+                    <div class="flex flex-wrap gap-1 mb-3">
+                        {% for esp in p.especialidades %}
+                        <span class="bg-indigo-50 text-indigo-600 text-[9px] px-2 py-0.5 rounded-md font-extrabold uppercase tracking-wide border border-indigo-100/50">Técnico {{ esp }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-2 flex items-center justify-between pt-2 border-t border-slate-100">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-slate-400 font-bold uppercase">Precio</span>
+                            <span class="text-base font-black text-slate-900">${{ p.precio_f }}</span>
+                        </div>
+                        <button onclick="agregarAlCarrito('{{ p.id }}', '{{ p.nombre }}', {{ p.precio }})" class="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all shadow-sm">
+                            ➕ Añadir
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <main id="seccion-perfil" class="container mx-auto px-4 py-12 max-w-6xl hidden">
+        <div class="bg-white rounded-3xl shadow-xl p-6 md:p-8 max-w-md mx-auto border border-slate-200 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2.5 bg-blue-600"></div>
             
-            <div style="margin-bottom: 12px;">
-                <label style="font-size: 0.7rem; font-weight: bold;">📍 Bloque de Entrega:</label>
-                <select id="logistica-bloque" onchange="calcularTiempoEntrega()" style="width: 100%; padding: 8px; border-radius: 8px; background: var(--bg); color: var(--text); border: 1px solid var(--border);">
-                    <option value="">Seleccionar...</option>
-                    <option value="A">Bloque A (Sistemas)</option>
-                    <option value="B">Bloque B (Talleres)</option>
-                    <option value="C">Bloque C (Aulas)</option>
-                </select>
-                <div id="tiempo-entrega-txt" style="font-size: 0.7rem; color: var(--accent); margin-top: 2px; font-weight: bold;"></div>
+            <div class="text-center mb-6">
+                <div class="w-24 h-24 rounded-full mx-auto p-1 bg-slate-100 border border-slate-200">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" class="w-full h-full object-cover rounded-full" alt="Avatar Student">
+                </div>
+                <h2 class="text-xl font-extrabold text-slate-800 mt-3">Santiago Cuellar Herrera</h2>
+                <span class="bg-blue-50 text-blue-600 text-[10px] px-3 py-1 rounded-full font-black uppercase tracking-wider mt-1.5 inline-block border border-blue-100">Estudiante Regular</span>
+            </div>
+            
+            <div class="space-y-3.5 text-xs font-medium text-slate-600 border-t border-b border-slate-100 py-5 my-5">
+                <div class="flex justify-between"><span class="text-slate-400 font-bold uppercase">🏫 Institución:</span> <span class="text-slate-800 font-bold">{{ config.colegio }}</span></div>
+                <div class="flex justify-between"><span class="text-slate-400 font-bold uppercase">🔑 Estado Matricula:</span> <span class="text-emerald-600 font-bold">Activo / Al Día</span></div>
+                <div class="flex justify-between"><span class="text-slate-400 font-bold uppercase">📦 Servidor Base:</span> <span class="bg-green-500 text-white text-[9px] px-2 py-0.5 rounded font-black tracking-wide uppercase">Online</span></div>
             </div>
 
-            <div style="text-align:center; margin: 10px 0;"><img id="nequi-qr" style="width:120px; height:120px; border-radius:10px;"></div>
-            <button class="add-btn" style="background:var(--nequi); color: white; width: 100%; padding: 10px; margin-bottom: 6px;" onclick="cart.abrirNequiReal()">💳 Abrir Nequi App</button>
-            <button class="add-btn" style="background:#10b981; color: white; width: 100%; padding: 10px;" onclick="cart.send()">Confirmar Transacción</button>
+            <div class="mt-2">
+                <button onclick="abrirModalAdmin()" class="w-full bg-red-500 hover:bg-red-600 text-white font-extrabold py-3.5 px-4 rounded-xl shadow-md cursor-pointer transition-all text-center text-xs uppercase tracking-wider">
+                    ⚙️ Control General (Pedir Clave)
+                </button>
+            </div>
+        </div>
+
+        <div id="panelAdminOculto" class="max-w-2xl mx-auto mt-10 bg-slate-900 p-6 md:p-8 rounded-3xl text-white shadow-2xl border border-slate-800 hidden">
+            <div class="flex flex-col md:flex-row items-center justify-between border-b border-slate-800 pb-4 mb-6 gap-2">
+                <div class="text-center md:text-left">
+                    <h3 class="text-xl font-black text-blue-400 tracking-tight">📊 Dashboard Administrativo</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Estadísticas avanzadas e indicadores por especialidades técnicas</p>
+                </div>
+                <span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Modo Root Activo</span>
+            </div>
+            
+            <div class="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 shadow-inner">
+                <canvas id="graficaAdmin"></canvas>
+            </div>
+            <div class="flex justify-between items-center text-[10px] text-slate-500 mt-6 pt-4 border-t border-slate-800">
+                <span>Inovamagic Engine v2.5</span>
+                <span>I.E. Evaristo García • 2026</span>
+            </div>
+        </div>
+    </main>
+
+    <div id="modal-carrito" class="modal-fondo">
+        <div class="bg-white rounded-3xl w-full max-w-md p-6 m-4 flex flex-col max-h-[85vh] shadow-2xl border border-slate-200">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="text-lg font-black text-slate-800 flex items-center gap-2">🛒 Bolsa de Compras</h3>
+                <button onclick="cerrarCarrito()" class="text-slate-400 hover:text-slate-600 text-lg font-bold cursor-pointer transition-colors">✕</button>
+            </div>
+            
+            <div id="items-carrito" class="overflow-y-auto py-4 flex-grow space-y-3 min-h-[150px]">
+                <p class="text-center text-slate-400 text-xs py-12">La bolsa está vacía, mano.</p>
+            </div>
+
+            <div class="border-t border-slate-100 pt-4">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="font-bold text-slate-500 text-xs uppercase tracking-wider">Valor Acumulado</span>
+                    <span id="total-carrito" class="text-2xl font-black text-blue-600">$0</span>
+                </div>
+                
+                <div class="mb-4 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <label class="block text-[10px] font-black text-slate-400 mb-1.5 uppercase tracking-wider">Asignar Compra a Especialidad:</label>
+                    <select id="select-modalidad" class="w-full border border-slate-200 p-2 rounded-lg text-xs bg-white font-bold text-slate-700 focus:outline-blue-500">
+                        <option value="Sistemas">Sistemas</option>
+                        <option value="Dibujo">Dibujo</option>
+                        <option value="Electricidad">Electricidad</option>
+                    </select>
+                </div>
+
+                <button onclick="procesarPagoNequi()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold py-3.5 rounded-xl transition-all cursor-pointer text-center text-xs uppercase tracking-wider shadow-md">
+                    📱 Validar Transacción por Nequi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalPasswordAdmin" class="modal-fondo">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-xs text-center shadow-2xl border border-slate-100 m-4">
+            <div class="w-12 h-12 bg-red-50 text-red-500 text-xl flex items-center justify-center rounded-full mx-auto mb-3">🔒</div>
+            <h4 class="text-sm font-black text-slate-800 uppercase tracking-wider mb-1">Capa de Seguridad</h4>
+            <p class="text-xs text-slate-400 mb-4 px-2">Ingresa las credenciales de administrador para liberar la analítica:</p>
+            
+            <input type="password" id="inputClaveAdmin" placeholder="Contraseña Admin" class="w-full border border-slate-200 p-2.5 rounded-xl mb-4 text-center text-sm font-bold tracking-widest bg-slate-50 focus:bg-white focus:outline-blue-500 transition-all">
+            
+            <div class="flex gap-2 text-xs font-extrabold">
+                <button onclick="cerrarModalAdmin()" class="flex-1 bg-slate-100 text-slate-500 py-3 rounded-xl hover:bg-slate-200 cursor-pointer transition-colors">Cerrar</button>
+                <button onclick="verificarPasswordAdmin()" class="flex-1 bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 cursor-pointer transition-colors shadow-sm">Ingresar</button>
+            </div>
         </div>
     </div>
 
     <script>
-        let ventasAcumuladas = parseInt("{{ ventas_reales }}") || 0;
-        const metaFinanciera = parseInt("{{ meta }}") || 2000000;
-        let selectedSelections = {};
-        let currentCategoryFilter = 'todos';
-        let currentTechFilter = 'todas';
-        let authMode = 'login';
-        let selectedAvatarEmoji = '💻';
-        let adminChartInstance = null;
+        let carrito = [];
+        let miGraficaAdmin = null;
 
-        // 📲 SCRIPT DE REGISTRO PARA HACER LA WEB DESCARGABLE (PWA)
-        let deferredPrompt;
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-            .then(() => console.log("Service Worker Registrado Fino, mano."))
-            .catch(err => console.log("Falla en Service Worker", err));
+        // 1. Manejo del Enrutamiento Local (Pestañas)
+        function cambiarSeccion(seccion) {
+            if (seccion === 'mercado') {
+                document.getElementById('seccion-mercado').classList.remove('hidden');
+                document.getElementById('seccion-perfil').classList.add('hidden');
+            } else {
+                document.getElementById('seccion-mercado').classList.add('hidden');
+                document.getElementById('seccion-perfil').classList.remove('hidden');
+            }
         }
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            const installBtn = document.getElementById('pwa-install-btn');
-            if(installBtn) installBtn.style.display = 'block'; // Muestra el botón si la app se puede descargar
-        });
+        // 2. Filtros Dinámicos de Productos en el Frontend
+        function filtrarCatalogo(categoria) {
+            const botones = document.querySelectorAll('[id^="btn-cat-"]');
+            botones.forEach(btn => btn.classList.remove('pestaña-activa'));
+            document.getElementById(`btn-cat-${categoria}`).classList.add('pestaña-activa');
 
-        document.getElementById('pwa-install-btn').addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('El usuario instaló Inovamagic en su celular 🚀');
+            const items = document.querySelectorAll('.item-producto');
+            items.forEach(item => {
+                if (categoria === 'todos' || item.getAttribute('data-categoria') === categoria) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
                 }
-                deferredPrompt = null;
-                document.getElementById('pwa-install-btn').style.display = 'none';
-            }
-        });
+            });
+        }
 
-        // 📊 CONFIGURACIÓN DE LA GRÁFICA EN VIVO PARA EL JURADO
-        function inicializarGraficaAdmin() {
-            const ctx = document.getElementById('adminChart').getContext('2d');
-            adminChartInstance = new Chart(ctx, {
+        // 3. Sistema de Control de la Bolsa (Carrito)
+        function abrirCarrito() { document.getElementById('modal-carrito').style.display = 'flex'; }
+        function cerrarCarrito() { document.getElementById('modal-carrito').style.display = 'none'; }
+
+        function agregarAlCarrito(id, nombre, precio) {
+            carrito.push({ id, nombre, precio });
+            actualizarInterfazCarrito();
+        }
+
+        function eliminarDelCarrito(index) {
+            carrito.splice(index, 1);
+            actualizarInterfazCarrito();
+        }
+
+        function actualizarInterfazCarrito() {
+            const contador = document.getElementById('contador-carrito');
+            const contenedor = document.getElementById('items-carrito');
+            const txtTotal = document.getElementById('total-carrito');
+
+            contador.innerText = carrito.length;
+            if(carrito.length > 0) contador.classList.remove('hidden');
+            else contador.classList.add('hidden');
+
+            if (carrito.length === 0) {
+                contenedor.innerHTML = `<p class="text-center text-slate-400 text-xs py-12">La bolsa está vacía, mano.</p>`;
+                txtTotal.innerText = "$0";
+                return;
+            }
+
+            let html = "";
+            let total = 0;
+            carrito.forEach((item, index) => {
+                total += item.precio;
+                html += `
+                    <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl text-xs border border-slate-100">
+                        <div class="flex-grow pr-2">
+                            <p class="font-bold text-slate-800 line-clamp-1">${item.nombre}</p>
+                            <p class="text-blue-600 font-bold mt-0.5">$${item.precio.toLocaleString('es-CO')}</p>
+                        </div>
+                        <button onclick="eliminarDelCarrito(${index})" class="text-red-400 hover:text-red-600 font-bold p-1 cursor-pointer transition-colors">🗑️</button>
+                    </div>
+                `;
+            });
+            contenedor.innerHTML = html;
+            txtTotal.innerText = `$${total.toLocaleString('es-CO')}`;
+        }
+
+        // 4. API: Comunicación asíncrona con app.py para guardar ventas
+        function procesarPagoNequi() {
+            if (carrito.length === 0) {
+                alert('La bolsa está vacía, mano.');
+                return;
+            }
+
+            let totalCompra = carrito.reduce((sum, item) => sum + item.precio, 0);
+            let modalidadSeleccionada = document.getElementById('select-modalidad').value;
+
+            // Enviamos los datos en formato JSON a Flask mediante fetch
+            fetch('/api/registrar-venta', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ total: totalCompra, modalidad: modalidadSeleccionada })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('¡Transacción simulada en Nequi correctamente! Dinero sumado a la caja mayor.');
+                    
+                    // Actualizar indicadores globales del UI
+                    document.getElementById('txt-ventas').innerText = data.nuevas_ventas.toLocaleString('es-CO');
+                    let porcentaje = Math.min((data.nuevas_ventas / 2000000) * 100, 100);
+                    document.getElementById('barra-progreso').style.width = `${porcentaje}%`;
+                    
+                    // Resetear bolsa
+                    carrito = [];
+                    actualizarInterfazCarrito();
+                    cerrarCarrito();
+                }
+            })
+            .catch(err => alert('Fallo de conexión con app.py backend.'));
+        }
+
+        // 5. Capa de Seguridad (Manejo del Modal de Contraseña)
+        function abrirModalAdmin() {
+            document.getElementById('modalPasswordAdmin').style.display = 'flex';
+            document.getElementById('inputClaveAdmin').value = '';
+            document.getElementById('inputClaveAdmin').focus();
+        }
+
+        function cerrarModalAdmin() {
+            document.getElementById('modalPasswordAdmin').style.display = 'none';
+        }
+
+        function verificarPasswordAdmin() {
+            const password = document.getElementById('inputClaveAdmin').value;
+
+            // Hacemos una petición segura al backend enviando la contraseña
+            fetch('/api/login-admin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: password })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Incorrecto');
+                return response.json();
+            })
+            .then(data => {
+                cerrarModalAdmin();
+                
+                // Si la clave es válida, el backend responde success y mostramos el panel
+                const panel = document.getElementById('panelAdminOculto');
+                panel.classList.remove('hidden');
+                panel.scrollIntoView({ behavior: 'smooth' });
+                
+                // Dibujamos la gráfica pasándole las estadísticas reales del servidor
+                renderizarGraficaAdmin(data.datos_grafica);
+            })
+            .catch(error => {
+                alert('¡Contraseña incorrecta, mano! Intente de nuevo.');
+            });
+        }
+
+        // 6. Configuración Estética de Chart.js
+        function renderizarGraficaAdmin(datos) {
+            const ctx = document.getElementById('graficaAdmin').getContext('2d');
+            
+            // Si la gráfica ya existía de un intento previo, la destruimos para evitar parpadeos
+            if (miGraficaAdmin) {
+                miGraficaAdmin.destroy();
+            }
+
+            // Instanciamos un nuevo objeto de Chart.js
+            miGraficaAdmin = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['💻 Sistemas', '📐 Dibujo', '⚡ Electricidad', '🎒 Otros'],
+                    labels: Object.keys(datos), // ['Sistemas', 'Dibujo', 'Electricidad']
                     datasets: [{
-                        label: 'Insumos Solicitados',
-                        data: [42, 19, 28, 15], // Datos base ficticios listos para defender
-                        backgroundColor: ['#2563eb', '#15803d', '#b45309', '#64748b'],
+                        label: 'Artículos Comprados',
+                        data: Object.values(datos), // [14, 9, 6]
+                        backgroundColor: ['#38bdf8', '#4ade80', '#fbbf24'],
                         borderWidth: 0,
                         borderRadius: 8
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
-        }
-
-        function irASeccion(seccion) {
-            const marketView = document.getElementById('market-view-wrapper');
-            const profileView = document.getElementById('profile-view-wrapper');
-            
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-
-            if (seccion === 'perfil') {
-                marketView.style.display = 'none';
-                profileView.style.display = 'flex';
-                document.getElementById('side-btn-perfil').classList.add('active');
-                cargarCamposDesdeStorage();
-                
-                // Inicializar o renderizar de nuevo la gráfica para evitar bugs visuales
-                setTimeout(() => {
-                    if(!adminChartInstance) inicializarGraficaAdmin();
-                }, 150);
-            } else {
-                marketView.style.display = 'block';
-                profileView.style.display = 'none';
-                document.getElementById('side-btn-todos').classList.add('active');
-                currentCategoryFilter = 'todos';
-                applyFilters();
-            }
-        }
-
-        function toggleAuthMode() {
-            const title = document.getElementById('auth-title');
-            const subtitle = document.getElementById('auth-subtitle');
-            const mainBtn = document.getElementById('auth-main-btn');
-            const switchText = document.getElementById('auth-switch-text');
-            const switchLink = document.getElementById('auth-switch-link');
-            const nameInput = document.getElementById('reg-name');
-            const techBox = document.getElementById('reg-tech-box');
-
-            if (authMode === 'login') {
-                authMode = 'register';
-                title.innerText = "Crear una Cuenta";
-                subtitle.innerText = "Regístrate para guardar tu perfil, mano";
-                mainBtn.innerText = "Registrarse y Entrar";
-                switchText.innerText = "¿Ya tienes un perfil?";
-                switchLink.innerText = "Inicia sesión aquí";
-                nameInput.style.display = 'block';
-                techBox.style.display = 'flex';
-            } else {
-                authMode = 'login';
-                title.innerText = "Ingresar a la Plataforma";
-                subtitle.innerText = "Bienvenido de nuevo, mano";
-                mainBtn.innerText = "Entrar a Inovamagic";
-                switchText.innerText = "¿No tienes una cuenta aún?";
-                switchLink.innerText = "Regístrate aquí";
-                nameInput.style.display = 'none';
-                techBox.style.display = 'none';
-            }
-        }
-
-        function procesarAutenticacion() {
-            const email = document.getElementById('login-email').value.trim().toLowerCase();
-            const pass = document.getElementById('login-pass').value.trim();
-            const name = document.getElementById('reg-name').value.trim();
-            const tech = document.getElementById('reg-tech').value;
-            
-            if (!email || !pass) {
-                alert("Completa los campos principales, mano. ❌");
-                return;
-            }
-
-            if (authMode === 'register') {
-                if (!name) {
-                    alert("Por favor escribe tu nombre para armar el perfil. 👤");
-                    return;
-                }
-                
-                localStorage.setItem('saved_email', email);
-                localStorage.setItem('saved_password', pass);
-                localStorage.setItem('user_name', name);
-                localStorage.setItem('user_tech', tech);
-                localStorage.setItem('user_avatar', '💻');
-                localStorage.setItem('user_jornada', 'Mañana');
-                localStorage.setItem('session_active', 'true');
-                
-                document.getElementById('login-screen').style.display = 'none';
-                aplicarPreferenciasVisualesPerfil();
-                alert(`¡Cuenta creada con éxito! Bienvenido a Inovamagic, ${name}. 🎉`);
-                
-            } else {
-                const emailRegistrado = localStorage.getItem('saved_email');
-                const passwordRegistrada = localStorage.getItem('saved_password');
-
-                if (!emailRegistrado) {
-                    alert("Este correo no está registrado, mano. Dale abajo en 'Regístrate aquí' para crear tu cuenta primero. 📋");
-                    return;
-                }
-
-                if (email === emailRegistrado && pass === passwordRegistrada) {
-                    localStorage.setItem('session_active', 'true');
-                    document.getElementById('login-screen').style.display = 'none';
-                    aplicarPreferenciasVisualesPerfil();
-                    alert(`¡Ingreso exitoso! Qué bueno verte de nuevo, ${localStorage.getItem('user_name') || 'mano'}. 👋`);
-                } else {
-                    alert("❌ ¡Contraseña o correo incorrectos, mano! Acceso denegado.");
-                    return;
-                }
-            }
-        }
-
-        function cambiarEmojiAvatar(emoji, element) {
-            document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('selected'));
-            if(element) element.classList.add('selected');
-            selectedAvatarEmoji = emoji;
-            document.getElementById('card-avatar-placeholder').innerText = emoji;
-        }
-
-        function sincronizarCamposEdicion() {
-            document.getElementById('card-student-name').innerText = document.getElementById('edit-profile-name').value || "Estudiante";
-            document.getElementById('card-student-tech').innerText = "Especialidad: " + document.getElementById('edit-profile-tech').value;
-            document.getElementById('card-student-jornada').innerText = document.getElementById('edit-profile-jornada').value;
-            
-            const card = document.getElementById('student-digital-badge');
-            const tech = document.getElementById('edit-profile-tech').value;
-            if(tech === 'Sistemas') card.style.background = "linear-gradient(135deg, #1e3a8a, #3b82f6)";
-            if(tech === 'Dibujo') card.style.background = "linear-gradient(135deg, #15803d, #22c55e)";
-            if(tech === 'Electricidad') card.style.background = "linear-gradient(135deg, #b45309, #eab308)";
-        }
-
-        function cargarCamposDesdeStorage() {
-            document.getElementById('edit-profile-name').value = localStorage.getItem('user_name') || "";
-            document.getElementById('edit-profile-tech').value = localStorage.getItem('user_tech') || "Sistemas";
-            document.getElementById('edit-profile-jornada').value = localStorage.getItem('user_jornada') || "Mañana";
-            selectedAvatarEmoji = localStorage.getItem('user_avatar') || '💻';
-            
-            document.querySelectorAll('.avatar-option').forEach(o => {
-                if(o.innerText === selectedAvatarEmoji) o.classList.add('selected');
-                else o.classList.remove('selected');
-            });
-            
-            sincronizarCamposEdicion();
-            cambiarEmojiAvatar(selectedAvatarEmoji, null);
-        }
-
-        function guardarCambiosPerfil() {
-            const nuevoNombre = document.getElementById('edit-profile-name').value.trim();
-            const nuevaTech = document.getElementById('edit-profile-tech').value;
-            const nuevaJornada = document.getElementById('edit-profile-jornada').value;
-
-            if(!nuevoNombre) return alert("El nombre no puede quedar vacío, mano.");
-
-            localStorage.setItem('user_name', nuevoNombre);
-            localStorage.setItem('user_tech', nuevaTech);
-            localStorage.setItem('user_jornada', nuevaJornada);
-            localStorage.setItem('user_avatar', selectedAvatarEmoji);
-
-            aplicarPreferenciasVisualesPerfil();
-            alert("¡Perfil personalizado y guardado correctamente, mano! 💾");
-            irASeccion('mercado');
-        }
-
-        function aplicarPreferenciasVisualesPerfil() {
-            const name = localStorage.getItem('user_name') || "Estudiante";
-            const emoji = localStorage.getItem('user_avatar') || "💻";
-            const tech = localStorage.getItem('user_tech') || "todas";
-
-            document.getElementById('user-display-name').innerText = name.split(' ')[0];
-            document.getElementById('header-avatar-emoji').innerText = emoji;
-            document.getElementById('card-student-email').innerText = localStorage.getItem('saved_email') || "";
-
-            const targetChip = document.getElementById('tech-chip-' + tech);
-            if(targetChip) filtrarPorModalidad(tech, targetChip);
-        }
-
-        function cerrarSesionCompleta() {
-            localStorage.removeItem('session_active');
-            irASeccion('mercado');
-            document.getElementById('login-screen').style.display = 'flex';
-            document.getElementById('login-email').value = "";
-            document.getElementById('login-pass').value = "";
-            alert("Sesión destruida. ¡Vuelve pronto, mano! 🚀");
-        }
-
-        function selectChip(productId, type, value, element) {
-            element.parentElement.querySelectorAll('.size-chip').forEach(c => c.classList.remove('selected'));
-            element.classList.add('selected');
-            if (!selectedSelections[productId]) selectedSelections[productId] = {};
-            selectedSelections[productId][type] = value;
-        }
-
-        function toggleFavorito(id) {
-            const btn = document.getElementById('fav-'+id);
-            btn.classList.toggle('fav-active');
-            if(btn.classList.contains('fav-active')) {
-                btn.innerText = "❤️"; localStorage.setItem('fav-'+id, 'true');
-            } else {
-                btn.innerText = "🤍"; localStorage.removeItem('fav-'+id);
-            }
-            if(currentCategoryFilter === 'favoritos') applyFilters();
-        }
-
-        function filtrarPorModalidad(modalidad, element) {
-            document.querySelectorAll('.tech-chip').forEach(chip => chip.classList.remove('active'));
-            if(element) element.classList.add('active');
-            currentTechFilter = modalidad;
-            applyFilters();
-        }
-
-        function filterByCategory(cat, btn) {
-            irASeccion('mercado');
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentCategoryFilter = cat;
-            applyFilters();
-            document.getElementById('promo-carousel').style.display = cat === "todos" ? "flex" : "none";
-        }
-
-        function applyFilters() {
-            let count = 0;
-            document.querySelectorAll('.card').forEach(c => {
-                const id = c.id.replace('prod-card-', '');
-                const matchesCategory = (currentCategoryFilter === 'todos' || c.dataset.cat === currentCategoryFilter);
-                const isFav = localStorage.getItem('fav-'+id) === 'true';
-                
-                const productSpecs = c.dataset.specs ? c.dataset.specs.split(',') : [];
-                const matchesTech = (currentTechFilter === 'todas' || productSpecs.includes(currentTechFilter));
-
-                let finalDisplay = false;
-                if (currentCategoryFilter === 'favoritos') {
-                    finalDisplay = isFav && matchesTech;
-                } else {
-                    finalDisplay = matchesCategory && matchesTech;
-                }
-
-                c.style.display = finalDisplay ? 'flex' : 'none';
-                if(finalDisplay && currentCategoryFilter === 'favoritos') count++;
-            });
-
-            document.getElementById('no-favs-message').style.display = (currentCategoryFilter === 'favoritos' && count === 0) ? 'block' : 'none';
-        }
-
-        function iniciarNotificacionesSimuladas() {
-            const nombres = ["Mateo", "Valentina", "Juan Camilo", "Isabella", "Andrés", "Mariana", "Samuel", "Gabriela"];
-            const grados = ["10-1", "10-2", "11-1", "11-2"];
-            const acciones = [
-                "acaba de comprar una Caja de Colores 🎨",
-                "añadió un Camibuso de Diario a la bolsa 👕",
-                "compró un Cuaderno Cuadriculado 📚",
-                "adquirió un Kit de Reglas Técnicas 📐"
-            ];
-
-            setInterval(() => {
-                if (document.getElementById('modal-recibo').classList.contains('active')) return;
-                const rNombre = nombres[Math.floor(Math.random() * nombres.length)];
-                const rGrado = grados[Math.floor(Math.random() * grados.length)];
-                const rAccion = acciones[Math.floor(Math.random() * acciones.length)];
-
-                const txt = document.getElementById('live-alert-text');
-                txt.innerHTML = `<b>${rNombre} (${rGrado})</b> ${rAccion}`;
-
-                const toast = document.getElementById('live-alert');
-                toast.classList.add('show');
-                setTimeout(() => { toast.classList.remove('show'); }, 4500);
-            }, 12000);
-        }
-
-        window.onload = function() {
-            const sesionActiva = localStorage.getItem('session_active');
-
-            if (sesionActiva === 'true') {
-                document.getElementById('login-screen').style.display = 'none';
-                aplicarPreferenciasVisualesPerfil();
-            }
-
-            document.querySelectorAll('.action-circle-btn[id^="fav-"]').forEach(btn => {
-                const id = btn.id.split('-')[1];
-                if(localStorage.getItem('fav-'+id) === 'true') { btn.classList.add('fav-active'); btn.innerText = "❤️"; }
-            });
-
-            actualizarBarraPresupuesto(ventasAcumuladas);
-            
-            setTimeout(() => {
-                document.getElementById('skeleton-grid').classList.remove('active');
-                document.getElementById('main-grid').style.display = 'grid';
-                iniciarNotificacionesSimuladas();
-            }, 400);
-        };
-
-        function calcularTiempoEntrega() {
-            const b = document.getElementById('logistica-bloque').value;
-            const txt = document.getElementById('tiempo-entrega-txt');
-            if(!b) return txt.innerText = "";
-            let m = b === 'A' ? 5 : (b === 'B' ? 8 : 12);
-            txt.innerText = `🚀 Llega al Bloque ${b} en ${m} minutos.`;
-            cart.bloqueEntrega = b;
-        }
-
-        function toggleTheme() {
-            const t = document.documentElement.getAttribute('data-theme');
-            document.documentElement.setAttribute('data-theme', t === 'dark' ? 'light' : 'dark');
-        }
-
-        function actualizarBarraPresupuesto(total) {
-            document.getElementById('budget-bar-fill').style.width = Math.min((total / metaFinanciera) * 100, 100) + "%";
-            document.getElementById('budget-txt').innerText = "$ " + total.toLocaleString('es-CO');
-        }
-
-        function filterProducts(q) {
-            const query = q.toLowerCase();
-            document.querySelectorAll('.card').forEach(c => c.style.display = c.dataset.name.includes(query) ? 'flex' : 'none');
-        }
-
-        function cerrarRecibo() { document.getElementById('modal-recibo').classList.remove('active'); }
-
-        const cart = {
-            items: [], total: 0, bloqueEntrega: "",
-            add(name, price, id) {
-                const s = selectedSelections[id] || {};
-                if(document.getElementById('talla-row-'+id) && !s.talla) return alert("Selecciona una talla, mano.");
-                if(document.getElementById('esp-row-'+id) && !s.esp) return alert("Selecciona la especialidad.");
-                let desc = (s.talla ? "Talla " + s.talla : "") + (s.esp ? " " + s.esp : "");
-                this.items.push({name, price, d: desc}); this.update();
-            },
-            update() {
-                this.total = this.items.reduce((s, i) => s + i.price, 0);
-                document.getElementById('count').innerText = this.items.length;
-                document.getElementById('total').innerText = "$ " + this.total.toLocaleString('es-CO');
-            },
-            showDatos() {
-                if(this.items.length === 0) return alert("Bolsa vacía, mano.");
-                let html = `<b>Tus productos:</b><br>`;
-                this.items.forEach(i => html += `• ${i.name} ${i.d}<br>`);
-                html += `<br><b style="color:#2563eb;">Total Orden: $${this.total.toLocaleString('es-CO')}</b>`;
-                document.getElementById('nequi-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Inovamagic_${this.total}`;
-                document.getElementById('recibo-info').innerHTML = html;
-                document.getElementById('modal-recibo').classList.add('active');
-            },
-            abrirNequiReal() { window.location.href = `nequi://transfer?phone={{ config.nequi_numero }}&amount=${this.total}`; },
-            send() {
-                if(!this.bloqueEntrega) return alert("Elige dónde te entregamos el producto.");
-                let msg = `*NUEVO PEDIDO INOVAMAGIC*\n*Lugar de Entrega:* Bloque ${this.bloqueEntrega}\n`;
-                this.items.forEach(i => msg += `- ${i.name} ${i.d}\n`);
-                msg += `*TOTAL NETO: $${this.total.toLocaleString('es-CO')}*`;
-                
-                fetch('/api/registrar-venta', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ total: this.total }) })
-                .then(res => res.json())
-                .then(data => {
-                    actualizarBarraPresupuesto(data.nuevas_ventas);
-                    
-                    // Actualizar dinámicamente la gráfica administrativa al confirmar la compra
-                    if(adminChartInstance) {
-                        const currentTech = localStorage.getItem('user_tech') || 'Sistemas';
-                        if(currentTech === 'Sistemas') adminChartInstance.data.datasets[0].data[0] += 1;
-                        if(currentTech === 'Dibujo') adminChartInstance.data.datasets[0].data[1] += 1;
-                        if(currentTech === 'Electricidad') adminChartInstance.data.datasets[0].data[2] += 1;
-                        adminChartInstance.update();
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { weight: 'bold' } } },
+                        x: { grid: { display: false }, ticks: { color: '#fff', font: { weight: 'bold' } } }
+                    },
+                    plugins: {
+                        legend: { display: false }
                     }
-
-                    window.open(`https://wa.me/{{ config.whatsapp_admin }}?text=${encodeURIComponent(msg)}`, '_blank');
-                    this.items = []; this.update(); cerrarRecibo();
-                });
-            }
-        };
+                }
+            });
+        }
     </script>
 </body>
 </html>
