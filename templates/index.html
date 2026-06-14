@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Innovalogic | {{ config.colegio }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>Inovamagic | {{ config.colegio }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { 
             --accent: #2563eb; 
@@ -164,7 +167,7 @@
                     </select>
                 </div>
 
-                <button id="auth-main-btn" onclick="procesarAutenticacion()" style="width: 100%; background: var(--text); color: var(--bg); border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 8px;">Entrar a Innovalogic</button>
+                <button id="auth-main-btn" onclick="procesarAutenticacion()" style="width: 100%; background: var(--text); color: var(--bg); border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 8px;">Entrar a Inovamagic</button>
             </div>
 
             <div style="text-align: center; margin-top: 20px; font-size: 0.82rem;">
@@ -180,11 +183,13 @@
     </div>
 
     <header>
-        <div style="font-weight: 800; color: var(--text); cursor: pointer;" onclick="irASeccion('mercado')">INNOVALOGIC CORE 🚀</div>
+        <div style="font-weight: 800; color: var(--text); cursor: pointer;" onclick="irASeccion('mercado')">INOVAMAGIC CORE 🚀</div>
         <div class="search-container">
             🔍 <input type="text" id="search-input" placeholder="Buscar insumos..." onkeyup="filterProducts(this.value)">
         </div>
         <div style="display: flex; align-items: center; gap: 12px;">
+            <button id="pwa-install-btn" style="display:none; background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 12px; font-weight: 700; font-size: 0.8rem; cursor: pointer; animation: pulseRing 1.5s infinite alternate;">📥 Descargar App</button>
+            
             <div class="live-counter"><div class="live-pulse"></div><span>🔥 14 activos</span></div>
             <button class="dark-toggle" onclick="toggleTheme()">🌙</button>
             
@@ -302,6 +307,14 @@
                     </div>
                 </div>
 
+                <div style="background: var(--card-bg); border: 1px solid var(--border); padding: 24px; border-radius: 24px;">
+                    <h3 style="font-weight: 800; font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 15px;">📊 Panel de Control Administrativo (Simulación IA)</h3>
+                    <div style="width: 100%; max-height: 240px; position: relative;">
+                        <canvas id="adminChart"></canvas>
+                    </div>
+                    <p style="font-size: 0.72rem; color:#64748b; margin-top: 10px; text-align: center;">Muestra estadística en tiempo real de insumos despachados por modalidad técnica.</p>
+                </div>
+
                 <div style="background: var(--card-bg); border: 1px solid var(--border); padding: 24px; border-radius: 24px; display: flex; flex-direction: column; gap: 14px;">
                     <h3 style="font-weight: 800; font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;">⚙️ Personalizar mis Datos</h3>
                     
@@ -389,6 +402,58 @@
         let currentTechFilter = 'todas';
         let authMode = 'login';
         let selectedAvatarEmoji = '💻';
+        let adminChartInstance = null;
+
+        // 📲 SCRIPT DE REGISTRO PARA HACER LA WEB DESCARGABLE (PWA)
+        let deferredPrompt;
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+            .then(() => console.log("Service Worker Registrado Fino, mano."))
+            .catch(err => console.log("Falla en Service Worker", err));
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installBtn = document.getElementById('pwa-install-btn');
+            if(installBtn) installBtn.style.display = 'block'; // Muestra el botón si la app se puede descargar
+        });
+
+        document.getElementById('pwa-install-btn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('El usuario instaló Inovamagic en su celular 🚀');
+                }
+                deferredPrompt = null;
+                document.getElementById('pwa-install-btn').style.display = 'none';
+            }
+        });
+
+        // 📊 CONFIGURACIÓN DE LA GRÁFICA EN VIVO PARA EL JURADO
+        function inicializarGraficaAdmin() {
+            const ctx = document.getElementById('adminChart').getContext('2d');
+            adminChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['💻 Sistemas', '📐 Dibujo', '⚡ Electricidad', '🎒 Otros'],
+                    datasets: [{
+                        label: 'Insumos Solicitados',
+                        data: [42, 19, 28, 15], // Datos base ficticios listos para defender
+                        backgroundColor: ['#2563eb', '#15803d', '#b45309', '#64748b'],
+                        borderWidth: 0,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
 
         function irASeccion(seccion) {
             const marketView = document.getElementById('market-view-wrapper');
@@ -401,6 +466,11 @@
                 profileView.style.display = 'flex';
                 document.getElementById('side-btn-perfil').classList.add('active');
                 cargarCamposDesdeStorage();
+                
+                // Inicializar o renderizar de nuevo la gráfica para evitar bugs visuales
+                setTimeout(() => {
+                    if(!adminChartInstance) inicializarGraficaAdmin();
+                }, 150);
             } else {
                 marketView.style.display = 'block';
                 profileView.style.display = 'none';
@@ -432,7 +502,7 @@
                 authMode = 'login';
                 title.innerText = "Ingresar a la Plataforma";
                 subtitle.innerText = "Bienvenido de nuevo, mano";
-                mainBtn.innerText = "Entrar a Innovalogic";
+                mainBtn.innerText = "Entrar a Inovamagic";
                 switchText.innerText = "¿No tienes una cuenta aún?";
                 switchLink.innerText = "Regístrate aquí";
                 nameInput.style.display = 'none';
@@ -440,7 +510,6 @@
             }
         }
 
-        // 🔐 SISTEMA DE AUTENTICACIÓN REPARADO - BLOQUEO ESTRICTO CONTRA CLAVE ERRÓNEA
         function procesarAutenticacion() {
             const email = document.getElementById('login-email').value.trim().toLowerCase();
             const pass = document.getElementById('login-pass').value.trim();
@@ -449,7 +518,7 @@
             
             if (!email || !pass) {
                 alert("Completa los campos principales, mano. ❌");
-                return; // Frena por completo la ejecución
+                return;
             }
 
             if (authMode === 'register') {
@@ -468,28 +537,25 @@
                 
                 document.getElementById('login-screen').style.display = 'none';
                 aplicarPreferenciasVisualesPerfil();
-                alert(`¡Cuenta creada con éxito! Bienvenido a Innovalogic, ${name}. 🎉`);
+                alert(`¡Cuenta creada con éxito! Bienvenido a Inovamagic, ${name}. 🎉`);
                 
             } else {
-                // MODO LOGIN: Validación y parada de flujo real
                 const emailRegistrado = localStorage.getItem('saved_email');
                 const passwordRegistrada = localStorage.getItem('saved_password');
 
                 if (!emailRegistrado) {
                     alert("Este correo no está registrado, mano. Dale abajo en 'Regístrate aquí' para crear tu cuenta primero. 📋");
-                    return; // Frena el login si el correo no existe
+                    return;
                 }
 
-                // VALIDACIÓN ESTRICTA DE CORREO Y CONTRASEÑA
                 if (email === emailRegistrado && pass === passwordRegistrada) {
                     localStorage.setItem('session_active', 'true');
                     document.getElementById('login-screen').style.display = 'none';
                     aplicarPreferenciasVisualesPerfil();
                     alert(`¡Ingreso exitoso! Qué bueno verte de nuevo, ${localStorage.getItem('user_name') || 'mano'}. 👋`);
                 } else {
-                    // SI ESTÁ INCORRECTA: Muestra la advertencia y BAJO NINGÚN MOTIVO lo deja pasar
                     alert("❌ ¡Contraseña o correo incorrectos, mano! Acceso denegado.");
-                    return; // ESTE RETURN ES EL QUE BLOQUEA QUE SE QUITEN LAS PANTALLAS
+                    return;
                 }
             }
         }
@@ -562,7 +628,6 @@
             localStorage.removeItem('session_active');
             irASeccion('mercado');
             document.getElementById('login-screen').style.display = 'flex';
-            // Reseteamos campos visuales de entrada para mayor seguridad
             document.getElementById('login-email').value = "";
             document.getElementById('login-pass').value = "";
             alert("Sesión destruida. ¡Vuelve pronto, mano! 🚀");
@@ -718,14 +783,14 @@
                 let html = `<b>Tus productos:</b><br>`;
                 this.items.forEach(i => html += `• ${i.name} ${i.d}<br>`);
                 html += `<br><b style="color:#2563eb;">Total Orden: $${this.total.toLocaleString('es-CO')}</b>`;
-                document.getElementById('nequi-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Innovalogic_${this.total}`;
+                document.getElementById('nequi-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Inovamagic_${this.total}`;
                 document.getElementById('recibo-info').innerHTML = html;
                 document.getElementById('modal-recibo').classList.add('active');
             },
             abrirNequiReal() { window.location.href = `nequi://transfer?phone={{ config.nequi_numero }}&amount=${this.total}`; },
             send() {
                 if(!this.bloqueEntrega) return alert("Elige dónde te entregamos el producto.");
-                let msg = `*NUEVO PEDIDO INNOVALOGIC*\n*Lugar de Entrega:* Bloque ${this.bloqueEntrega}\n`;
+                let msg = `*NUEVO PEDIDO INOVAMAGIC*\n*Lugar de Entrega:* Bloque ${this.bloqueEntrega}\n`;
                 this.items.forEach(i => msg += `- ${i.name} ${i.d}\n`);
                 msg += `*TOTAL NETO: $${this.total.toLocaleString('es-CO')}*`;
                 
@@ -733,6 +798,16 @@
                 .then(res => res.json())
                 .then(data => {
                     actualizarBarraPresupuesto(data.nuevas_ventas);
+                    
+                    // Actualizar dinámicamente la gráfica administrativa al confirmar la compra
+                    if(adminChartInstance) {
+                        const currentTech = localStorage.getItem('user_tech') || 'Sistemas';
+                        if(currentTech === 'Sistemas') adminChartInstance.data.datasets[0].data[0] += 1;
+                        if(currentTech === 'Dibujo') adminChartInstance.data.datasets[0].data[1] += 1;
+                        if(currentTech === 'Electricidad') adminChartInstance.data.datasets[0].data[2] += 1;
+                        adminChartInstance.update();
+                    }
+
                     window.open(`https://wa.me/{{ config.whatsapp_admin }}?text=${encodeURIComponent(msg)}`, '_blank');
                     this.items = []; this.update(); cerrarRecibo();
                 });

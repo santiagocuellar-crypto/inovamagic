@@ -1,166 +1,260 @@
-from flask import Flask, render_template, jsonify, request, abort
+from flask import Flask, render_template, jsonify, request, send_from_directory
 
 app = Flask(__name__)
 
-# Configuración Global de la Institución
+# ==========================================
+# 📊 CONFIGURACIÓN DE DATOS DEL PROYECTO
+# ==========================================
 configuracion = {
-    "colegio": "Institución Educativa Evaristo García",
-    "nequi_numero": "3123456789",
-    "whatsapp_admin": "573123456789"
+    "colegio": "I.E. Evaristo García",
+    "whatsapp_admin": "573000000000",  # Cambialo por tu número real de WhatsApp
+    "nequi_numero": "3000000000"       # Cambialo por tu número real de Nequi
 }
 
-# 📦 Catálogo completo de Insumos Escolares (18 Productos)
-catalogo_productos = [
-    # --- CATEGORÍA: UNIFORMES ---
-    {
-        "id": "1", "nombre": "Camibuso Diario Uniforme", "precio": 35000, "precio_f": "35.000", 
-        "img": "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500", "cat": "uniformes", 
-        "prov": "Confecciones Evaristo", "stock": 12, "tallas": ["S", "M", "L", "XL"],
-        "criterio": "Más Vendido 🔥", "descripcion": "Camibuso oficial de diario para la Institución Educativa Evaristo García. Tela piqué de alta resistencia, fresca y garantizada para el uso diario estudiantil."
-    },
-    {
-        "id": "2", "nombre": "Chaqueta de la Institución", "precio": 65000, "precio_f": "65.000", 
-        "img": "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500", "cat": "uniformes", 
-        "prov": "Confecciones Evaristo", "stock": 5, "tallas": ["M", "L"],
-        "descripcion": "Chaqueta oficial del uniforme de gala y educación física. Forro térmico interno, bolsillos con cremallera y escudo bordado de alta definición."
-    },
-    {
-        "id": "3", "nombre": "Sudadera de Educación Física", "precio": 40000, "precio_f": "40.000", 
-        "img": "https://images.unsplash.com/photo-1483721310020-03333e577078?w=500", "cat": "uniformes", 
-        "prov": "Textiles del Valle", "stock": 8, "tallas": ["S", "M", "L"],
-        "descripcion": "Pantalón de sudadera cómodo y elástico para las clases de educación física y eventos deportivos de la institución."
-    },
+# Base de datos ficticia de las ventas acumuladas del colegio
+ventas_totales = 450000
+meta_financiera = 2000000
 
-    # --- CATEGORÍA: ESCOLAR ---
+# Carrusel de promociones destacadas
+banners_carrusel = [
     {
-        "id": "4", "nombre": "Cuaderno Cuadriculado 100 Hojas", "precio": 4500, "precio_f": "4.500", 
-        "img": "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=500", "cat": "escolar", 
-        "prov": "Distribuidora Cali", "stock": 50,
-        "criterio": "Mejor Descuento 🏷️", "descripcion": "Cuaderno cosido de 100 hojas cuadriculadas con pasta semirrígida protectora. Ideal para matemáticas, física y dibujo técnico."
+        "id": "u1",
+        "nombre": "Camibuso de Diario Oficial",
+        "criterio": "Más Vendido",
+        "img": "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500"
     },
     {
-        "id": "5", "nombre": "Caja de Colores x24 Lapiceros", "precio": 18000, "precio_f": "18.000", 
-        "img": "https://images.unsplash.com/photo-1519751138087-5bf79df62d5b?w=500", "cat": "escolar", 
-        "prov": "Librería del Centro", "stock": 15,
-        "descripcion": "Caja de colores premium con 24 tonos vivos. Minas suaves y resistentes a los impactos, perfectos para las clases de artes."
-    },
-    {
-        "id": "6", "nombre": "Morral Escolar Ergonómico", "precio": 75000, "precio_f": "75.000", 
-        "img": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500", "cat": "escolar", 
-        "prov": "Totto Mayorista", "stock": 6,
-        "descripcion": "Morral ultra resistente con compartimento acolchado para tablet o portátil, bolsillos laterales para botellas de agua y costuras reforzadas."
-    },
-    {
-        "id": "7", "nombre": "Kit Escolar Completo", "precio": 3500, "precio_f": "3.500", 
-        "img": "https://images.unsplash.com/photo-1568252542512-9fe8fe9c87bb?w=500", "cat": "escolar", 
-        "prov": "Distribuidora Cali", "stock": 100,
-        "descripcion": "El combo infaltable para el día a día. Incluye dos lápices negros No.2, un borrador de nata de alta limpieza y un sacapuntas con depósito."
-    },
-
-    # --- CATEGORÍA: BELLEZA ---
-    {
-        "id": "8", "nombre": "Brillo Labial Humectante", "precio": 6000, "precio_f": "6.000", 
-        "img": "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=500", "cat": "belleza", 
-        "prov": "Variedades Express", "stock": 2, "especialidades": ["Fresa", "Menta", "Vainilla"],
-        "criterio": "Más Viral ✨", "descripcion": "Brillo mágico e hidratante de larga duración. Perfecto para llevar en la cartuchera y mantener los labios protegidos del clima."
-    },
-    {
-        "id": "9", "nombre": "Loción Corporal Refrescante", "precio": 15000, "precio_f": "15.000", 
-        "img": "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=500", "cat": "belleza", 
-        "prov": "Variedades Express", "stock": 7, "especialidades": ["Lavanda", "Frutos Rojos"],
-        "descripcion": "Splash refrescante ideal para usar después de la clase de educación física y mantener un aroma limpio durante toda la jornada escolar."
-    },
-    {
-        "id": "10", "nombre": "Gel Antibacterial Portátil", "precio": 2500, "precio_f": "2.500", 
-        "img": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500", "cat": "belleza", 
-        "prov": "Salud Total", "stock": 45,
-        "descripcion": "Gel desinfectante con aloe vera que elimina el 99.9% de las bacterias sin resecar las manos. Viene con gancho para colgar en el morral."
-    },
-
-    # --- CATEGORÍA: TÉCNICOS ---
-    {
-        "id": "11", "nombre": "Kit Reglas Técnicas", "precio": 12000, "precio_f": "12.000", 
-        "img": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500", "cat": "construccion", 
-        "prov": "Librería del Centro", "stock": 8, "especialidades": ["Sistemas", "Dibujo"],
-        "criterio": "Top Recomendado ⭐", "descripcion": "Juego geométrico profesional que incluye escuadras de 45° y 60°, regla de 30cm y transportador. Indispensable para las modalidades técnicas."
-    },
-    {
-        "id": "12", "nombre": "Bata Blanca para Laboratorio", "precio": 28000, "precio_f": "28.000", 
-        "img": "https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=500", "cat": "construccion", 
-        "prov": "Dotaciones Cali", "stock": 14, "tallas": ["S", "M", "L"],
-        "descripcion": "Bata manga larga antifluido obligatoria para las prácticas de laboratorio de química, física y talleres técnicos."
-    },
-    {
-        "id": "13", "nombre": "Multímetro Digital Escolar", "precio": 35000, "precio_f": "35.000", 
-        "img": "https://images.unsplash.com/photo-1517420164441-f549a180f24a?w=500", "cat": "construccion", 
-        "prov": "Tecno-Insumos", "stock": 4, "especialidades": ["Electricidad", "Sistemas"],
-        "descripcion": "Herramienta de medición electrónica compacta. Ideal para estudiantes de la especialidad técnica en electricidad y mantenimiento de sistemas."
-    },
-    {
-        "id": "14", "nombre": "Calibrador Pie de Rey", "precio": 9000, "precio_f": "9.000", 
-        "img": "https://images.unsplash.com/photo-1503694978374-8a2fa6e6963a?w=500", "cat": "construccion", 
-        "prov": "Tecno-Insumos", "stock": 10, "especialidades": ["Mecánica", "Dibujo"],
-        "descripcion": "Instrumento de precisión para medir dimensiones internas, externas y profundidades en proyectos de diseño técnico."
-    },
-
-    # --- CATEGORÍA: DEPORTES ---
-    {
-        "id": "15", "nombre": "Balón de Microfútbol Profesional", "precio": 48000, "precio_f": "48.000", 
-        "img": "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=500", "cat": "deportes", 
-        "prov": "Deportes Cali", "stock": 3,
-        "criterio": "Últimas Unidades 🚨", "descripcion": "Balón oficial con bote controlado ideal para las canchas de la institución. Cuero sintético cosido de alta duración."
-    },
-    {
-        "id": "16", "nombre": "Termo de Agua Deportivo", "precio": 12000, "precio_f": "12.000", 
-        "img": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500", "cat": "deportes", 
-        "prov": "Deportes Cali", "stock": 25,
-        "descripcion": "Caramañola plástica libre de BPA con boquilla de seguridad. Mantiene tu hidratación al máximo durante los recreos o torneos del colegio."
-    },
-    {
-        "id": "17", "nombre": "Cuerda para Saltar Velocidad", "precio": 8500, "precio_f": "8.500", 
-        "img": "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=500", "cat": "deportes", 
-        "prov": "Fitness Club", "stock": 15,
-        "descripcion": "Cuerda de velocidad ajustable con mangos ligeros, ideal para entrenamientos físicos y mejorar la coordinación."
-    },
-    {
-        "id": "18", "nombre": "Gorra Institucional Deportiva", "precio": 16000, "precio_f": "16.000", 
-        "img": "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500", "cat": "deportes", 
-        "prov": "Textiles del Valle", "stock": 9,
-        "descripcion": "Gorra con visera curva y ajuste regulable. Ideal para protegerse del sol de Cali durante las actividades físicas al aire libre."
+        "id": "t1",
+        "nombre": "Kit de Reglas para Dibujo Técnico",
+        "criterio": "Recomendado Especialidad",
+        "img": "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=500"
     }
 ]
 
-ventas_reales = 450000
-meta_financiera = 2000000
+# ==========================================
+# 📦 CATÁLOGO COMPLETO DE PRODUCTOS (TODAS LAS CATEGORÍAS)
+# ==========================================
+catalogo_productos = [
+    # --- UNIFORMES ---
+    {
+        "id": "1",
+        "nombre": "Camibuso de Diario",
+        "precio": 35000,
+        "precio_f": "35.000",
+        "stock": 12,
+        "cat": "uniformes",
+        "tallas": ["S", "M", "L", "XL"],
+        "img": "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500"
+    },
+    {
+        "id": "2",
+        "nombre": "Pantalón de Diario Azul",
+        "precio": 45000,
+        "precio_f": "45.000",
+        "stock": 2,
+        "cat": "uniformes",
+        "tallas": ["28", "30", "32", "34"],
+        "img": "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=500"
+    },
+    {
+        "id": "3",
+        "nombre": "Camibuso de Educación Física",
+        "precio": 32000,
+        "precio_f": "32.000",
+        "stock": 8,
+        "cat": "uniformes",
+        "tallas": ["S", "M", "L"],
+        "img": "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=500"
+    },
+    
+    # --- ESCOLAR ---
+    {
+        "id": "4",
+        "nombre": "Cuaderno Cuadriculado 100H",
+        "precio": 4500,
+        "precio_f": "4.500",
+        "stock": 25,
+        "cat": "escolar",
+        "img": "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=500"
+    },
+    {
+        "id": "5",
+        "nombre": "Caja de Colores x24 Norma",
+        "precio": 18000,
+        "precio_f": "18.000",
+        "stock": 14,
+        "cat": "escolar",
+        "img": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=500"
+    },
+    {
+        "id": "6",
+        "nombre": "Morral Escolar Impermeable",
+        "precio": 65000,
+        "precio_f": "65.000",
+        "stock": 4,
+        "cat": "escolar",
+        "img": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500"
+    },
+
+    # --- BELLEZA ---
+    {
+        "id": "7",
+        "nombre": "Brillo Labial Hidratante",
+        "precio": 6000,
+        "precio_f": "6.000",
+        "stock": 19,
+        "cat": "belleza",
+        "img": "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=500"
+    },
+    {
+        "id": "8",
+        "nombre": "Espejo de Bolsillo Inovamagic",
+        "precio": 3500,
+        "precio_f": "3.500",
+        "stock": 15,
+        "cat": "belleza",
+        "img": "https://images.unsplash.com/photo-1590156546946-ce55a12a63ee?w=500"
+    },
+    {
+        "id": "9",
+        "nombre": "Crema de Manos Antibacterial",
+        "precio": 8000,
+        "precio_f": "8.000",
+        "stock": 3,
+        "cat": "belleza",
+        "img": "https://images.unsplash.com/photo-1608248597481-496100c80836?w=500"
+    },
+
+    # --- TÉCNICOS / CONSTRUCCIÓN ---
+    {
+        "id": "10",
+        "nombre": "Kit Dibujo Técnico (Reglas + Portaminas)",
+        "precio": 18000,
+        "precio_f": "18.000",
+        "stock": 5,
+        "cat": "construccion",
+        "especialidades": ["Dibujo"],
+        "img": "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=500"
+    },
+    {
+        "id": "11",
+        "nombre": "Multímetro Digital Escolar",
+        "precio": 28000,
+        "precio_f": "28.000",
+        "stock": 3,
+        "cat": "construccion",
+        "especialidades": ["Electricidad", "Sistemas"],
+        "img": "https://images.unsplash.com/photo-1517420164441-1551e2763264?w=500"
+    },
+    {
+        "id": "12",
+        "nombre": "Ponchadora de Cable de Red RJ45",
+        "precio": 22000,
+        "precio_f": "22.000",
+        "stock": 8,
+        "cat": "construccion",
+        "especialidades": ["Sistemas"],
+        "img": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500"
+    },
+    {
+        "id": "13",
+        "nombre": "Pelacables Automático Industrial",
+        "precio": 32000,
+        "precio_f": "32.000",
+        "stock": 6,
+        "cat": "construccion",
+        "especialidades": ["Electricidad"],
+        "img": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=500"
+    },
+
+    # --- DEPORTES ---
+    {
+        "id": "14",
+        "nombre": "Balón de Fútbol N° 5 Golty",
+        "precio": 55000,
+        "precio_f": "55.000",
+        "stock": 4,
+        "cat": "deportes",
+        "img": "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=500"
+    },
+    {
+        "id": "15",
+        "nombre": "Lazo para Saltar de Alta Velocidad",
+        "precio": 12000,
+        "precio_f": "12.000",
+        "stock": 20,
+        "cat": "deportes",
+        "img": "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=500"
+    },
+    {
+        "id": "16",
+        "nombre": "Termo para Agua Deportivo 1L",
+        "precio": 15000,
+        "precio_f": "15.000",
+        "stock": 11,
+        "cat": "deportes",
+        "img": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500"
+    }
+]
+
+# ==========================================
+# 🌐 RUTAS DE LA PLATAFORMA WEB
+# ==========================================
 
 @app.route('/')
-def home():
-    productos_carrusel = [p for p in catalogo_productos if "criterio" in p][:5]
+def index():
+    """Ruta principal que renderiza la tienda e-commerce."""
     return render_template(
         'index.html', 
-        catalogo=catalogo_productos, 
-        carrusel=productos_carrusel,
-        config=configuracion,
-        ventas_reales=ventas_reales,
+        config=configuracion, 
+        carrusel=banners_carrusel, 
+        catalogo=catalogo_productos,
+        ventas_reales=ventas_totales,
         meta=meta_financiera
     )
 
-# 🚨 CAMBIO DE SEGURIDAD: Obligamos a Flask a que acepte el ID con string estricto
-@app.route('/producto/<string:id>')
-def detalle_producto(id):
-    # Forzamos la comparación limpia eliminando espacios raros
-    producto = next((p for p in catalogo_productos if str(p["id"]) == str(id).strip()), None)
-    if not producto:
-        abort(404)
-    return render_template('producto.html', p=producto, config=configuracion, ventas_reales=ventas_reales, meta=meta_financiera)
+@app.route('/producto/<id_producto>')
+def ver_producto(id_producto):
+    """Ruta dinámica por si en el futuro quieres meterle una vista detallada a cada insumo."""
+    producto = next((p for p in catalogo_productos if p["id"] == id_producto), None)
+    if producto:
+        return f"<h3>Detalle de {producto['nombre']} - Inovamagic Core</h3><p>Precio: ${producto['precio_f']}</p>"
+    return "Producto no encontrado, mano.", 404
+
+# ==========================================
+# 📲 RUTAS EXCLUSIVAS PARA LA DESCARGA (PWA)
+# ==========================================
+
+@app.route('/manifest.json')
+def serve_manifest():
+    """Sirve el archivo de configuración de la app para Android/iOS/PC."""
+    return send_from_directory('.', 'manifest.json')
+
+@app.route('/sw.js')
+def serve_sw():
+    """Sirve el Service Worker que permite que la app corra en segundo plano."""
+    return send_from_directory('.', 'sw.js')
+
+# ==========================================
+# 📊 API EN TIEMPO REAL (CAJA MAYOR Y GRÁFICAS)
+# ==========================================
 
 @app.route('/api/registrar-venta', methods=['POST'])
 def registrar_venta():
-    global ventas_reales
-    data = request.get_json()
-    total_pedido = data.get('total', 0)
-    ventas_reales += total_pedido
-    return jsonify({"nuevas_ventas": ventas_reales})
+    """Recibe el valor de la compra y actualiza la barra de presupuesto en vivo."""
+    global ventas_totales
+    datos = request.get_json()
+    valor_compra = datos.get('total', 0)
+    
+    ventas_totales += int(valor_compra)
+    
+    return jsonify({
+        "status": "success",
+        "nuevas_ventas": ventas_totales
+    })
 
+# ==========================================
+# 🚀 ARRANQUE DEL SERVIDOR LOCAL
+# ==========================================
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
