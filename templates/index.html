@@ -3,175 +3,434 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inovamagic Store</title>
+    <title>Inovamagic Store - El Imperio de la Innovación</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
+        /* ==========================================
+           1. VARIABLES DE DISEÑO (TEMA CLARO / OSCURO)
+           ========================================== */
         :root {
-            --bg-color: #ffffff;
-            --text-color: #111111;
-            --container-bg: #f5f5f7;
-            --border-color: #cccccc;
-        }
-        [data-theme="dark"] {
-            --bg-color: #111111;
-            --text-color: #ffffff;
-            --container-bg: #1c1c1e;
-            --border-color: #333333;
+            --bg-color: #f5f5f7;
+            --surface-color: #ffffff;
+            --text-main: #1d1d1f;
+            --text-secondary: #86868b;
+            --accent-color: #0071e3;
+            --accent-hover: #0077ed;
+            --border-color: #d2d2d7;
+            --card-shadow: rgba(0, 0, 0, 0.05);
+            --transition-speed: 0.3s;
         }
 
+        [data-theme="dark"] {
+            --bg-color: #000000;
+            --surface-color: #1d1d1f;
+            --text-main: #f5f5f7;
+            --text-secondary: #86868b;
+            --accent-color: #0071e3;
+            --accent-hover: #2997ff;
+            --border-color: #424245;
+            --card-shadow: rgba(255, 255, 255, 0.05);
+        }
+
+        /* ==========================================
+           2. ESTILOS GENERALES Y BASE
+           ========================================== */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
             margin: 0;
             padding: 0;
-            transition: background 0.3s, color 0.3s;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+            -webkit-font-smoothing: antialiased;
         }
 
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* CORRECCIÓN: Contenedor único de notificaciones en la parte SUPERIOR */
         #notification-container {
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 1000;
+            z-index: 9999;
             width: 90%;
-            max-width: 400px;
+            max-width: 420px;
+            pointer-events: none;
         }
+
         .notification {
-            background-color: #0071e3;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin-bottom: 10px;
+            background-color: var(--accent-color);
+            color: #ffffff;
+            padding: 14px 24px;
+            border-radius: 12px;
+            margin-bottom: 12px;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
             font-size: 14px;
+            font-weight: 500;
+            pointer-events: auto;
+            animation: slideDown 0.3s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .login-box {
-            max-width: 380px;
-            margin: 40px auto;
-            padding: 30px;
-            background: var(--container-bg);
-            border-radius: 18px;
-            border: 1px solid var(--border-color);
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* ==========================================
+           3. BARRA DE NAVEGACIÓN (NAVBAR)
+           ========================================== */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: background-color var(--transition-speed);
+        }
+
+        [data-theme="dark"] .navbar {
+            background-color: rgba(29, 29, 31, 0.8);
+        }
+
+        .navbar-container {
+            max-width: 1120px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 48px;
+            padding: 0 22px;
+        }
+
+        .navbar-brand {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar-item a {
+            color: var(--text-main);
+            font-size: 12px;
+            opacity: 0.8;
+            font-weight: 400;
+            transition: opacity 0.2s;
+        }
+
+        .navbar-item a:hover {
+            opacity: 1;
+            text-decoration: none;
+        }
+
+        /* ==========================================
+           4. SECCIÓN HERO / BIENVENIDA
+           ========================================== */
+        .hero-section {
             text-align: center;
+            padding: 60px 20px 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
-        .login-box h2 {
+        .hero-title {
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: -1.2px;
+            margin-bottom: 10px;
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: 21px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            letter-spacing: -0.2px;
+            margin-top: 0;
+            margin-bottom: 30px;
+        }
+
+        /* ==========================================
+           5. CONTENEDOR PRINCIPAL DEL LOGIN
+           ========================================== */
+        .auth-container {
+            max-width: 380px;
+            margin: 0 auto 60px auto;
+            padding: 40px 32px;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px var(--card-shadow);
+            transition: background-color var(--transition-speed), border-color var(--transition-speed);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .auth-header h2 {
             font-size: 24px;
             font-weight: 600;
-            margin-bottom: 25px;
+            margin: 0;
+            letter-spacing: -0.5px;
         }
 
-        .input-group {
-            margin-bottom: 15px;
+        .form-group {
+            margin-bottom: 18px;
+            position: relative;
         }
 
-        .input-group input {
+        .form-control {
             width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background: var(--bg-color);
-            color: var(--text-color);
             box-sizing: border-box;
+            padding: 14px 16px;
+            font-size: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.2s, background-color 0.2s;
         }
 
-        .btn-primary {
+        .form-control:focus {
+            border-color: var(--accent-color);
+            background-color: var(--surface-color);
+        }
+
+        .btn-submit {
             width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: none;
-            background-color: #0071e3;
-            color: white;
+            padding: 14px;
+            font-size: 15px;
             font-weight: 500;
+            border-radius: 12px;
+            border: none;
+            background-color: var(--accent-color);
+            color: #ffffff;
             cursor: pointer;
+            transition: background-color 0.2s;
         }
 
-        .divider {
-            margin: 20px 0;
+        .btn-submit:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Separador elegante */
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 24px 0;
+            color: var(--text-secondary);
             font-size: 12px;
-            color: #86868b;
         }
 
-        .social-login-btns {
+        .auth-divider::before, .auth-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .auth-divider:not(:empty)::before { margin-right: .5em; }
+        .auth-divider:not(:empty)::after { margin-left: .5em; }
+
+        /* NUEVOS BOTONES DE ACCESO RÁPIDO SOLICITADOS */
+        .social-auth-group {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 12px;
         }
 
-        .btn-social {
+        .btn-social-auth {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             width: 100%;
-            padding: 11px;
-            border-radius: 8px;
+            padding: 12px;
+            border-radius: 12px;
             border: 1px solid var(--border-color);
-            background: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--surface-color);
+            color: var(--text-main);
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
         }
 
-        /* DISEÑO DE LOS PRODUCTOS EN LA TIENDA */
-        .productos-container {
-            max-width: 1000px;
-            margin: 40px auto;
-            display: block;
-            padding: 0 20px;
+        .btn-social-auth:hover {
+            background-color: var(--bg-color);
+            border-color: var(--text-secondary);
         }
 
-        .grid-productos {
-            display: table;
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 20px;
-        }
-
-        .producto-card {
-            display: table-cell;
-            width: 25%;
-            background: var(--container-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 15px;
-            vertical-align: top;
-            text-align: center;
-        }
-
-        .producto-card img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .producto-card h3 {
+        .btn-social-auth i {
             font-size: 16px;
-            margin: 10px 0 5px 0;
         }
 
-        .producto-card .precio {
-            color: #0071e3;
-            font-weight: bold;
-            margin-bottom: 10px;
+        /* ==========================================
+           6. SECCIÓN DE PRODUCTOS (CARRUSEL / GRID)
+           ========================================== */
+        .showcase-container {
+            max-width: 1120px;
+            margin: 0 auto 80px auto;
+            padding: 0 22px;
         }
 
-        .theme-toggle-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 10px 15px;
-            border-radius: 20px;
+        .showcase-heading {
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.6px;
+            margin-bottom: 24px;
+        }
+
+        /* Estructura grid adaptable del catálogo */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 24px;
+        }
+
+        .product-card {
+            background-color: var(--surface-color);
             border: 1px solid var(--border-color);
-            background: var(--container-bg);
-            color: var(--text-color);
+            border-radius: 18px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px var(--card-shadow);
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 24px var(--card-shadow);
+        }
+
+        .product-image-wrapper {
+            width: 100%;
+            height: 180px;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #f5f5f7;
+            margin-bottom: 16px;
+        }
+
+        .product-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover .product-image-wrapper img {
+            transform: scale(1.04);
+        }
+
+        .product-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.2px;
+        }
+
+        .product-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin: 0 0 14px 0;
+            line-height: 1.4;
+            height: 38px;
+            overflow: hidden;
+        }
+
+        .product-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 16px;
+        }
+
+        .btn-action {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: #ffffff;
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 20px;
+            border: none;
             cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-action:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* ==========================================
+           7. BOTONES DE CONTROL FLOTANTES
+           ========================================== */
+        .theme-toggle-floating {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background-color: var(--surface-color);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 12px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color var(--transition-speed), border-color var(--transition-speed);
+        }
+
+        /* ==========================================
+           8. FOOTER / PIE DE PÁGINA
+           ========================================== */
+        .footer {
+            background-color: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+            padding: 40px 22px;
+            margin-top: 80px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            transition: background-color var(--transition-speed), border-top-color var(--transition-speed);
+        }
+
+        .footer-content {
+            max-width: 1120px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
     </style>
 </head>
@@ -179,68 +438,128 @@
 
     <div id="notification-container"></div>
 
-    <div class="login-box">
-        <h2>Inovamagic Store</h2>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <i class="fas fa-magic" style="color: var(--accent-color);"></i> Inovamagic
+            </div>
+            <ul class="navbar-menu">
+                <li class="navbar-item"><a href="#">Inicio</a></li>
+                <li class="navbar-item"><a href="#">Catálogo</a></li>
+                <li class="navbar-item"><a href="#">Soporte</a></li>
+                {% if session.get('usuario') %}
+                    <li class="navbar-item"><a href="/logout" style="color: #ff3b30;"><i class="fas fa-sign-out-alt"></i> Salir</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <header class="hero-section">
+        <h1 class="hero-title">Inovamagic Store</h1>
+        <p class="hero-subtitle">Descubre un ecosistema digital diseñado para redefinir tu experiencia.</p>
+    </header>
+
+    <main class="auth-container">
+        <div class="auth-header">
+            <h2>{{ 'Mi Cuenta' if session.get('usuario') else 'Iniciar Sesión' }}</h2>
+        </div>
+
+        {% if not session.get('usuario') %}
         <form action="/login" method="POST">
-            <div class="input-group">
-                <input type="email" name="email" placeholder="Correo electrónico" required>
+            <div class="form-group">
+                <input type="email" name="email" class="form-control" placeholder="Introduce tu correo" required>
             </div>
-            <div class="input-group">
-                <input type="password" name="password" placeholder="Contraseña" required>
+            <div class="form-group">
+                <input type="password" name="password" class="form-control" placeholder="Introduce tu contraseña" required>
             </div>
-            <button type="submit" class="btn-primary">Continuar</button>
+            <button type="submit" class="btn-submit">Continuar</button>
         </form>
 
-        <div class="divider">o continuar con</div>
+        <div class="auth-divider">o continuar con</div>
 
-        <div class="social-login-btns">
-            <button class="btn-social" onclick="showTopNotification('Iniciando sesión con Google...')">
-                <i class="fab fa-google" style="color: #db4437;"></i> Continuar con Google
+        <div class="social-auth-group">
+            <button type="button" class="btn-social-auth" onclick="showTopNotification('Enlazando con servicios de Google...')">
+                <i class="fab fa-google" style="color: #db4437;"></i> Google
             </button>
-            <button class="btn-social" onclick="showTopNotification('Iniciando sesión con Apple...')">
-                <i class="fab fa-apple"></i> Continuar con Apple
+            <button type="button" class="btn-social-auth" onclick="showTopNotification('Autenticando credenciales de Apple...')">
+                <i class="fab fa-apple"></i> Apple
             </button>
         </div>
-    </div>
+        
+        {% else %}
+        <div style="text-align: center; padding: 10px 0;">
+            <p style="margin: 0 0 15px 0; font-size: 15px;">Sesión activa como: <br><strong>{{ session.get('usuario') }}</strong></p>
+            <a href="/logout" class="btn-action" style="background-color: #ff3b30;">Cerrar sesión</a>
+        </div>
+        {% endif %}
+    </main>
 
-    <div class="productos-container">
-        <h2 style="text-align: center;">Nuestros Productos</h2>
-        <div class="grid-productos">
-            {% for p in productos %}
-            <div class="producto-card">
-                <img src="{{ p.imagen }}" alt="{{ p.nombre }}">
-                <h3>{{ p.nombre }}</h3>
-                <p class="precio">${{ "{:,.0f}".format(p.precio) }}</p>
-                <p style="font-size: 12px; color: #86868b;">{{ p.descripcion }}</p>
-            </div>
+    <section class="showcase-container">
+        <h2 class="showcase-heading">Productos Destacados</h2>
+        <div class="product-grid">
+            {% for producto in productos %}
+            <article class="product-card">
+                <div class="product-image-wrapper">
+                    <img src="{{ producto.imagen }}" alt="{{ producto.nombre }}">
+                </div>
+                <h3 class="product-title">{{ producto.nombre }}</h3>
+                <p class="product-desc">{{ producto.descripcion }}</p>
+                <div class="product-price">${{ "{:,.0f}".format(producto.precio) }}</div>
+                <button class="btn-action" onclick="showTopNotification('Añadido al carrito: {{ producto.nombre }}')">Ver detalles</button>
+            </article>
             {% endfor %}
         </div>
-    </div>
+    </section>
 
-    <button class="theme-toggle-btn" onclick="toggleTheme()">Cambiar Tema</button>
+    <button class="theme-toggle-floating" onclick="toggleTheme()">
+        <i class="fas fa-moon"></i> <span>Alternar Modo</span>
+    </button>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div>© 2026 Inovamagic Inc. Todos los derechos reservados.</div>
+            <div style="display: flex; gap: 16px;">
+                <a href="#" style="color: var(--text-secondary);">Privacidad</a>
+                <a href="#" style="color: var(--text-secondary);">Términos de uso</a>
+            </div>
+        </div>
+    </footer>
 
     <script>
+        // CORRECCIÓN: Despliegue de notificaciones únicamente arriba
         function showTopNotification(message) {
             const container = document.getElementById('notification-container');
-            const notif = document.createElement('div');
-            notif.className = 'notification';
-            notif.innerText = message;
-            container.appendChild(notif);
-            setTimeout(() => { notif.remove(); }, 3000);
+            const toast = document.createElement('div');
+            toast.className = 'notification';
+            toast.innerText = message;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = "slideDown 0.2s ease-in reverse";
+                setTimeout(() => { toast.remove(); }, 200);
+            }, 3000);
         }
 
+        // Lógica de alternancia e interconexión del tema con el back
         function toggleTheme() {
-            const html = document.documentElement;
-            let currentTheme = html.getAttribute('data-theme');
-            let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', newTheme);
+            const htmlNode = document.documentElement;
+            let currentTheme = htmlNode.getAttribute('data-theme');
+            let targetTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            htmlNode.setAttribute('data-theme', targetTheme);
 
             fetch('/save-theme', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ theme: newTheme })
+                body: JSON.stringify({ theme: targetTheme })
+            })
+            .then(res => res.json())
+            .then(data => {
+                showTopNotification(`Interfaz cambiada al modo ${data.theme === 'dark' ? 'oscuro' : 'claro'}`);
+            })
+            .catch(() => {
+                showTopNotification(`Modo establecido localmente: ${targetTheme}`);
             });
-            showTopNotification(`Modo ${newTheme === 'dark' ? 'oscuro' : 'claro'} activado`);
         }
     </script>
 </body>
