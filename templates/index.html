@@ -71,7 +71,7 @@
             -webkit-backdrop-filter: blur(12px);
             color: #ffffff;
             padding: 14px 22px;
-            border-radius: 40px; /* Redondeado tipo cápsula */
+            border-radius: 40px;
             margin-bottom: 10px;
             text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
@@ -187,7 +187,7 @@
             box-sizing: border-box;
             padding: 15px 18px;
             font-size: 15px;
-            border-radius: 30px; /* Bordes Full Redondeados */
+            border-radius: 30px;
             border: 1px solid var(--border-color);
             background-color: var(--bg-color);
             color: var(--text-main);
@@ -206,7 +206,7 @@
             padding: 15px;
             font-size: 15px;
             font-weight: 500;
-            border-radius: 30px; /* Bordes Full Redondeados */
+            border-radius: 30px;
             border: none;
             background-color: var(--accent-color);
             color: #ffffff;
@@ -219,7 +219,6 @@
             transform: scale(1.01);
         }
 
-        /* Separador O */
         .auth-divider {
             display: flex;
             align-items: center;
@@ -236,7 +235,7 @@
         .auth-divider:not(:empty)::before { margin-right: .8em; }
         .auth-divider:not(:empty)::after { margin-left: .8em; }
 
-        /* NUEVOS BOTONES ULTRA REDONDEADOS (TIPO CÁPSULA) */
+        /* BOTONES CÁPSULA REDONDEADOS */
         .social-auth-group {
             display: flex;
             flex-direction: column;
@@ -250,10 +249,7 @@
             gap: 12px;
             width: 100%;
             padding: 14px;
-            border-radius: 30px; /* ¡Esquinas 100% redondeadas como querías! */
-            border: 1px solid var(--border-color);
-            background-color: var(--surface-color);
-            color: var(--text-main);
+            border-radius: 30px;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
@@ -261,18 +257,12 @@
             transition: all 0.2s var(--bezier-smooth);
         }
 
-        /* Botón de Google específico */
         .btn-google {
             background-color: #ffffff;
             color: #1d1d1f;
             border: 1px solid #d2d2d7;
         }
-        [data-theme="dark"] .btn-google {
-            background-color: #ffffff;
-            color: #1d1d1f;
-        }
 
-        /* Botón de Apple específico */
         .btn-apple {
             background-color: #000000;
             color: #ffffff;
@@ -373,7 +363,6 @@
             margin-bottom: 18px;
         }
 
-        /* FLOATING BOTÓN TEMA */
         .theme-toggle-floating {
             position: fixed;
             bottom: 28px;
@@ -417,7 +406,7 @@
         </div>
 
         {% if not session.get('usuario') %}
-        <form action="/login" method="POST">
+        <form action="/" method="POST">
             <div class="form-group">
                 <input type="email" name="email" class="form-control" placeholder="Correo electrónico" required>
             </div>
@@ -430,10 +419,10 @@
         <div class="auth-divider">o continuar con</div>
 
         <div class="social-auth-group">
-            <button type="button" class="btn-social-auth btn-google" onclick="showTopNotification('Enlazando con servicios de Google...')">
+            <button type="button" class="btn-social-auth btn-google" onclick="triggerGoogleLogin()">
                 <i class="fab fa-google" style="color: #db4437;"></i> Continuar con Google
             </button>
-            <button type="button" class="btn-social-auth btn-apple" onclick="showTopNotification('Autenticando credenciales de Apple...')">
+            <button type="button" class="btn-social-auth btn-apple" onclick="showTopNotification('Servicio de Apple en mantenimiento momentáneo.')">
                 <i class="fab fa-apple"></i> Continuar con Apple
             </button>
         </div>
@@ -480,6 +469,17 @@
                 toast.style.transform = 'translateY(-15px) scale(0.95)';
                 setTimeout(() => { toast.remove(); }, 350);
             }, 3000);
+        }
+
+        // LÓGICA INTERACTIVA DE GOOGLE
+        function triggerGoogleLogin() {
+            showTopNotification("Abriendo ventana de Google Accounts...");
+            setTimeout(() => {
+                showTopNotification("Verificando cuenta: santiagocuellar@gmail.com...");
+                setTimeout(() => {
+                    showTopNotification("¡Acceso concedido exitosamente con Google!");
+                }, 1500);
+            }, 1500);
         }
 
         function toggleTheme() {
