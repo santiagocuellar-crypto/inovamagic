@@ -157,141 +157,151 @@
             text-align: center;
         }
 
-        .btn-logout-nav {
-            background-color: #ff3b30;
-            color: white;
-            border: none;
-            padding: 6px 14px;
-            font-size: 12.5px;
-            font-weight: 500;
-            border-radius: 20px;
-            text-decoration: none;
+        /* ==========================================
+           4. NUEVO MODAL DE PERFIL FLOTANTE (ESTILO INTERFAZ MODERNA)
+           ========================================== */
+        .profile-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
         }
 
-        /* ==========================================
-           4. NUEVO: APARTADO DE PERFIL PREMIUM (ESTILO MERCADO LIBRE / TEMU)
-           ========================================== */
-        .profile-container {
-            max-width: 800px;
-            margin: 30px auto;
-            padding: 30px;
+        .profile-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .profile-modal {
+            width: 90%;
+            max-width: 750px;
+            max-height: 85vh;
             background-color: var(--surface-color);
             border: 1px solid var(--border-color);
-            border-radius: 28px;
-            box-shadow: 0 8px 32px var(--card-shadow);
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
             display: grid;
             grid-template-columns: 220px 1fr;
-            gap: 30px;
-            animation: fadeInBody 0.5s var(--bezier-smooth);
+            overflow: hidden;
+            transform: scale(0.9);
+            transition: transform 0.3s var(--bezier-smooth);
         }
 
-        @media (max-width: 768px) {
-            .profile-container { grid-template-columns: 1fr; }
+        .profile-overlay.open .profile-modal {
+            transform: scale(1);
+        }
+
+        @media (max-width: 650px) {
+            .profile-modal { grid-template-columns: 1fr; max-height: 90vh; overflow-y: auto; }
         }
 
         .profile-sidebar {
+            background-color: var(--bg-color);
+            padding: 30px 20px;
             text-align: center;
             border-right: 1px solid var(--border-color);
-            padding-right: 20px;
+            position: relative;
         }
 
-        @media (max-width: 768px) {
-            .profile-sidebar { border-right: none; padding-right: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
+        .close-profile-btn {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 16px;
+            cursor: pointer;
         }
 
         .profile-avatar {
-            width: 100px;
-            height: 100px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
             background: linear-gradient(135deg, #0071e3, #2997ff);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 42px;
-            margin: 0 auto 16px auto;
-            box-shadow: 0 4px 14px rgba(0, 113, 227, 0.3);
+            font-size: 38px;
+            margin: 0 auto 14px auto;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.2);
         }
-
-        .profile-name {
-            font-size: 18px;
-            font-weight: 600;
-            margin: 0 0 4px 0;
+        
+        .profile-avatar .edit-overlay {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            font-size: 10px;
+            padding: 2px 0;
+            border-bottom-left-radius: 45px;
+            border-bottom-right-radius: 45px;
+            opacity: 0;
+            transition: opacity 0.2s;
         }
+        .profile-avatar:hover .edit-overlay { opacity: 1; }
 
-        .profile-role {
-            font-size: 13px;
-            color: var(--text-secondary);
-            background-color: var(--bg-color);
-            padding: 4px 12px;
-            border-radius: 12px;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
+        .profile-name { font-size: 17px; font-weight: 600; margin: 0; }
+        .profile-role { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
 
-        .profile-menu-list {
-            list-style: none;
-            padding: 0;
-            margin: 20px 0 0 0;
-            text-align: left;
-        }
-
+        .profile-menu-list { list-style: none; padding: 0; margin: 25px 0 0 0; text-align: left; }
         .profile-menu-item {
-            padding: 12px 14px;
+            padding: 10px 14px;
             border-radius: 12px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13.5px;
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: background 0.2s;
+            color: var(--text-main);
+            margin-bottom: 4px;
         }
-
         .profile-menu-item.active, .profile-menu-item:hover {
-            background-color: var(--bg-color);
+            background-color: var(--surface-color);
             color: var(--accent-color);
             font-weight: 500;
         }
 
-        /* Bloques de Contenido del Perfil */
-        .profile-content h3 {
-            margin-top: 0;
-            font-size: 20px;
-            font-weight: 600;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-        }
+        /* Área de contenido del panel modal */
+        .profile-content { padding: 30px; overflow-y: auto; }
+        .profile-content h3 { margin-top: 0; font-size: 19px; font-weight: 600; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
+
+        /* Estilos de edición del perfil customizable */
+        .edit-form-group { margin-bottom: 14px; text-align: left; }
+        .edit-form-group label { display: block; font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px; }
 
         .order-card {
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 14px;
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             background-color: var(--bg-color);
+            text-align: left;
         }
-
-        .order-status {
-            font-size: 12px;
-            font-weight: 600;
-            color: #34c759;
-            background-color: rgba(52, 199, 89, 0.1);
-            padding: 4px 10px;
-            border-radius: 20px;
-        }
+        .order-status { font-size: 11px; font-weight: 600; color: #34c759; background-color: rgba(52, 199, 89, 0.1); padding: 4px 10px; border-radius: 20px; }
 
         .temu-coupon {
             background: linear-gradient(135deg, #ff9500, #ffcc00);
-            color: #000;
-            padding: 16px;
-            border-radius: 16px;
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 12px rgba(255, 149, 0, 0.2);
+            color: #000; padding: 14px; border-radius: 14px; font-weight: 600;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
         /* ==========================================
@@ -306,160 +316,48 @@
             border-radius: 28px;
             box-shadow: 0 8px 32px var(--card-shadow);
         }
-
-        .auth-header h2 {
-            font-size: 22px;
-            font-weight: 600;
-            margin: 0 0 20px 0;
-            text-align: center;
-        }
-
+        .auth-header h2 { font-size: 22px; font-weight: 600; margin: 0 0 20px 0; text-align: center; }
         .form-group { margin-bottom: 16px; }
-
         .form-control {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 14px 16px;
-            font-size: 14px;
-            border-radius: 30px;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            outline: none;
+            width: 100%; box-sizing: border-box; padding: 14px 16px; font-size: 14px;
+            border-radius: 30px; border: 1px solid var(--border-color);
+            background-color: var(--bg-color); color: var(--text-main); outline: none;
         }
-
         .btn-submit {
-            width: 100%;
-            padding: 14px;
-            font-size: 14px;
-            font-weight: 500;
-            border-radius: 30px;
-            border: none;
-            background-color: var(--accent-color);
-            color: #ffffff;
-            cursor: pointer;
+            width: 100%; padding: 14px; font-size: 14px; font-weight: 500; border-radius: 30px;
+            border: none; background-color: var(--accent-color); color: #ffffff; cursor: pointer;
             transition: all 0.2s var(--bezier-smooth);
         }
-
         .btn-submit:hover { background-color: var(--accent-hover); }
-
-        .auth-divider {
-            display: flex;
-            align-items: center;
-            text-align: center;
-            margin: 20px 0;
-            color: var(--text-secondary);
-            font-size: 12px;
-        }
-        .auth-divider::before, .auth-divider::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid var(--border-color);
-        }
+        .auth-divider { display: flex; align-items: center; text-align: center; margin: 20px 0; color: var(--text-secondary); font-size: 12px; }
+        .auth-divider::before, .auth-divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-color); }
         .auth-divider:not(:empty)::before { margin-right: .8em; }
         .auth-divider:not(:empty)::after { margin-left: .8em; }
-
         .btn-google-auth {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            padding: 12px;
-            border-radius: 30px;
-            font-size: 13.5px;
-            font-weight: 500;
-            cursor: pointer;
-            border: 1px solid var(--border-color);
-            background: #ffffff;
-            color: #1d1d1f;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px;
+            border-radius: 30px; font-size: 13.5px; font-weight: 500; cursor: pointer;
+            border: 1px solid var(--border-color); background: #ffffff; color: #1d1d1f; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
 
         /* ==========================================
            6. CARRUSEL Y CATALOGO
            ========================================== */
-        .carousel-section, .showcase-container {
-            max-width: 1120px;
-            margin: 30px auto;
-            padding: 0 22px;
-        }
-
-        .carousel-title, .showcase-heading {
-            font-size: 24px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-            margin-bottom: 16px;
-        }
-
-        .carousel-container {
-            display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            padding: 10px 4px 24px 4px;
-            scrollbar-width: none;
-        }
-
+        .carousel-section, .showcase-container { max-width: 1120px; margin: 30px auto; padding: 0 22px; }
+        .carousel-title, .showcase-heading { font-size: 24px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 16px; }
+        .carousel-container { display: flex; gap: 20px; overflow-x: auto; padding: 10px 4px 24px 4px; scrollbar-width: none; }
         .carousel-container::-webkit-scrollbar { display: none; }
-
-        .carousel-card {
-            flex: 0 0 280px;
-            background-color: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 16px;
-            box-shadow: 0 4px 16px var(--card-shadow);
-        }
-
-        .carousel-img-wrapper {
-            width: 100%;
-            height: 140px;
-            border-radius: 16px;
-            overflow: hidden;
-            margin-bottom: 12px;
-        }
-
+        .carousel-card { flex: 0 0 280px; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 24px; padding: 16px; box-shadow: 0 4px 16px var(--card-shadow); }
+        .carousel-img-wrapper { width: 100%; height: 140px; border-radius: 16px; overflow: hidden; margin-bottom: 12px; }
         .carousel-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 24px;
-        }
-
-        .product-card {
-            background-color: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 16px var(--card-shadow);
-        }
-
-        .product-image-wrapper {
-            width: 100%;
-            height: 180px;
-            border-radius: 16px;
-            overflow: hidden;
-            margin-bottom: 14px;
-        }
-
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px; }
+        .product-card { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 24px; padding: 20px; text-align: center; box-shadow: 0 4px 16px var(--card-shadow); }
+        .product-image-wrapper { width: 100%; height: 180px; border-radius: 16px; overflow: hidden; margin-bottom: 14px; }
         .product-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
 
         .theme-toggle-floating {
-            position: fixed;
-            bottom: 28px;
-            right: 28px;
-            background-color: var(--surface-color);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            padding: 14px 20px;
-            border-radius: 40px;
-            cursor: pointer;
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            position: fixed; bottom: 28px; right: 28px; background-color: var(--surface-color); color: var(--text-main);
+            border: 1px solid var(--border-color); padding: 14px 20px; border-radius: 40px; cursor: pointer; z-index: 2000;
+            display: flex; align-items: center; gap: 8px;
         }
     </style>
 </head>
@@ -482,11 +380,10 @@
                 
                 {% if session.get('usuario') %}
                 <li>
-                    <button class="profile-nav-btn" onclick="scrollToProfile()" title="Mi Perfil">
-                        <i class="fas fa-user-circle" style="color: var(--accent-color);"></i>
+                    <button class="profile-nav-btn" onclick="toggleProfileModal(true)" title="Mi Perfil">
+                        <i class="fas fa-user-circle" style="color: var(--accent-color); font-size: 21px;"></i>
                     </button>
                 </li>
-                <li><a href="/logout" class="btn-logout-nav">Salir</a></li>
                 {% endif %}
             </ul>
         </div>
@@ -516,55 +413,82 @@
     {% endif %}
 
     {% if session.get('usuario') %}
-    <section class="profile-container" id="mi-perfil-seccion">
-        <div class="profile-sidebar">
-            <div class="profile-avatar">
-                <i class="fas fa-user"></i>
-            </div>
-            <div class="profile-name">Santiago Cuellar</div>
-            <div class="profile-role">Técnica en Sistemas</div>
+    <div class="profile-overlay" id="perfil-overlay-modal" onclick="closeProfileOnOutsideClick(event)">
+        <div class="profile-modal">
             
-            <ul class="profile-menu-list">
-                <li class="profile-menu-item active" onclick="switchProfileTab('compras')">
-                    <i class="fas fa-box"></i> Mis Compras
-                </li>
-                <li class="profile-menu-item" onclick="switchProfileTab('cupones')">
-                    <i class="fas fa-ticket-alt"></i> Cupones Temu-Inova
-                </li>
-            </ul>
-        </div>
-
-        <div class="profile-content">
-            <div id="tab-compras">
-                <h3>Historial de Pedidos Recientes</h3>
-                <div class="order-card">
-                    <div>
-                        <strong style="font-size: 14.5px;">Uniforme de Diario (Masculino)</strong>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Pedido #IM-9482 • Cantidad: 1</div>
-                    </div>
-                    <span class="order-status"><i class="fas fa-truck"></i> En camino</span>
+            <div class="profile-sidebar">
+                <button class="close-profile-btn" onclick="toggleProfileModal(false)"><i class="fas fa-times"></i></button>
+                
+                <div class="profile-avatar" onclick="changeUserAvatar()" title="Cambiar avatar">
+                    <span id="avatar-icon-placeholder"><i class="fas fa-user"></i></span>
+                    <div class="edit-overlay">Editar</div>
                 </div>
-                <div class="order-card">
-                    <div>
-                        <strong style="font-size: 14.5px;">Camiseta Polo Técnica - Sistemas</strong>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Pedido #IM-8102 • Cantidad: 1</div>
-                    </div>
-                    <span class="order-status" style="color: #0071e3; background-color: rgba(0,113,227,0.1);"><i class="fas fa-check-circle"></i> Entregado</span>
+                <div class="profile-name" id="display-profile-name">Santiago Cuellar</div>
+                <div class="profile-role">Técnica en Sistemas</div>
+                
+                <ul class="profile-menu-list">
+                    <li class="profile-menu-item active" id="menu-btn-compras" onclick="switchProfileTab('compras')">
+                        <i class="fas fa-box"></i> Mis Compras
+                    </li>
+                    <li class="profile-menu-item" id="menu-btn-editar" onclick="switchProfileTab('editar')">
+                        <i class="fas fa-user-edit"></i> Personalizar Perfil
+                    </li>
+                    <li class="profile-menu-item" id="menu-btn-cupones" onclick="switchProfileTab('cupones')">
+                        <i class="fas fa-ticket-alt"></i> Cupones Temu
+                    </li>
+                </ul>
+                <div style="margin-top: 30px;">
+                    <a href="/logout" class="btn-submit" style="background-color: #ff3b30; text-decoration: none; font-size: 12px; padding: 8px 16px; border-radius: 20px;">Cerrar Sesión</a>
                 </div>
             </div>
 
-            <div id="tab-cupones" style="display: none;">
-                <h3>Mis Beneficios Escolares</h3>
-                <div class="temu-coupon">
-                    <div>
-                        <div style="font-size: 20px; font-weight: 800;">15% OFF</div>
-                        <div style="font-size: 12px; opacity: 0.9; margin-top: 2px;">Exclusivo Uniformes Evaristo García</div>
+            <div class="profile-content">
+                
+                <div id="tab-compras">
+                    <h3>Historial de Pedidos Recientes</h3>
+                    <div class="order-card">
+                        <div>
+                            <strong style="font-size: 14px;">Uniforme de Diario (Masculino)</strong>
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Pedido #IM-9482 • Cantidad: 1</div>
+                        </div>
+                        <span class="order-status"><i class="fas fa-truck"></i> En camino</span>
                     </div>
-                    <button style="background: white; border: none; padding: 8px 14px; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 12px;" onclick="showTopNotification('¡Cupón EVARISTO15 copiado!')">Copiar</button>
+                    <div class="order-card">
+                        <div>
+                            <strong style="font-size: 14px;">Camiseta Polo Técnica - Sistemas</strong>
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Pedido #IM-8102 • Cantidad: 1</div>
+                        </div>
+                        <span class="order-status" style="color: #0071e3; background-color: rgba(0,113,227,0.1);"><i class="fas fa-check-circle"></i> Entregado</span>
+                    </div>
                 </div>
+
+                <div id="tab-editar" style="display: none;">
+                    <h3>Personalizar mis Datos</h3>
+                    <div class="edit-form-group">
+                        <label>Nombre de Usuario</label>
+                        <input type="text" id="input-edit-name" class="form-control" style="border-radius: 12px; padding: 10px;" value="Santiago Cuellar">
+                    </div>
+                    <div class="edit-form-group">
+                        <label>Teléfono de Contacto</label>
+                        <input type="text" id="input-edit-phone" class="form-control" style="border-radius: 12px; padding: 10px;" value="3153968920">
+                    </div>
+                    <button class="btn-submit" style="border-radius: 12px; padding: 10px; margin-top: 10px;" onclick="saveProfileChanges()">Guardar Cambios</button>
+                </div>
+
+                <div id="tab-cupones" style="display: none;">
+                    <h3>Beneficios Escolares Activos</h3>
+                    <div class="temu-coupon">
+                        <div>
+                            <div style="font-size: 18px; font-weight: 800;">15% OFF</div>
+                            <div style="font-size: 12px; opacity: 0.9; margin-top: 2px;">Cupón: EVARISTO15</div>
+                        </div>
+                        <button style="background: white; border: none; padding: 6px 12px; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 11px;" onclick="showTopNotification('¡Cupón Copiado!')">Copiar</button>
+                    </div>
+                </div>
+
             </div>
         </div>
-    </section>
+    </div>
     {% endif %}
 
     <section class="carousel-section">
@@ -610,6 +534,8 @@
 
     <script>
         let cartItemsCount = 0;
+        let avatars = ['fa-user', 'fa-user-tie', 'fa-user-grad', 'fa-user-ninja'];
+        let currentAvatarIndex = 0;
 
         function showTopNotification(message) {
             const container = document.getElementById('notification-container');
@@ -634,38 +560,68 @@
             if (cartItemsCount === 0) {
                 showTopNotification("El carrito de compras está vacío.");
             } else {
-                showTopNotification(`¡Listo! Tienes ${cartItemsCount} productos seleccionados.`);
+                showTopNotification(`Tienes ${cartItemsCount} productos listos en la bolsa.`);
             }
         }
 
         function triggerGoogleLogin() {
-            showTopNotification("Abriendo ventana de Google Accounts...");
+            showTopNotification("Abriendo Google Accounts...");
             setTimeout(() => {
-                showTopNotification("Accediendo de forma segura con santiagocuellar@gmail.com...");
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+                window.location.reload();
             }, 1200);
         }
 
-        function scrollToProfile() {
-            document.getElementById('mi-perfil-seccion').scrollIntoView({ behavior: 'smooth' });
+        // CONTROL APERTURA/CIERRE DEL MODAL DEL PERFIL
+        function toggleProfileModal(open) {
+            const modal = document.getElementById('perfil-overlay-modal');
+            if (modal) {
+                if (open) modal.classList.add('open');
+                else modal.classList.remove('open');
+            }
         }
 
-        // CONTROL DE INTERFACES DEL PERFIL (Estilo Mercado Libre)
+        function closeProfileOnOutsideClick(e) {
+            if (e.target.id === 'perfil-overlay-modal') {
+                toggleProfileModal(false);
+            }
+        }
+
+        // MANEJO DE PESTAÑAS DENTRO DEL PERFIL
         function switchProfileTab(tabName) {
-            const items = document.querySelectorAll('.profile-menu-item');
-            items.forEach(el => el.classList.remove('active'));
-            
+            document.getElementById('menu-btn-compras').classList.remove('active');
+            document.getElementById('menu-btn-editar').classList.remove('active');
+            document.getElementById('menu-btn-cupones').classList.remove('active');
+
+            document.getElementById('tab-compras').style.display = 'none';
+            document.getElementById('tab-editar').style.display = 'none';
+            document.getElementById('tab-cupones').style.display = 'none';
+
             if(tabName === 'compras') {
                 document.getElementById('tab-compras').style.display = 'block';
-                document.getElementById('tab-cupones').style.display = 'none';
-                event.currentTarget.classList.add('active');
+                document.getElementById('menu-btn-compras').classList.add('active');
+            } else if (tabName === 'editar') {
+                document.getElementById('tab-editar').style.display = 'block';
+                document.getElementById('menu-btn-editar').classList.add('active');
             } else {
-                document.getElementById('tab-compras').style.display = 'none';
                 document.getElementById('tab-cupones').style.display = 'block';
-                event.currentTarget.classList.add('active');
+                document.getElementById('menu-btn-cupones').classList.add('active');
             }
+        }
+
+        // LOGICA DE PERSONALIZACIÓN DE DATOS (NOMBRES Y AVATARES)
+        function saveProfileChanges() {
+            const newName = document.getElementById('input-edit-name').value;
+            if (newName.trim() !== "") {
+                document.getElementById('display-profile-name').innerText = newName;
+                showTopNotification("¡Datos actualizados correctamente!");
+            }
+        }
+
+        function changeUserAvatar() {
+            currentAvatarIndex = (currentAvatarIndex + 1) % avatars.length;
+            const placeholder = document.getElementById('avatar-icon-placeholder');
+            placeholder.innerHTML = `<i class="fas ${avatars[currentAvatarIndex]}"></i>`;
+            showTopNotification("Avatar de perfil modificado.");
         }
 
         function toggleTheme() {
