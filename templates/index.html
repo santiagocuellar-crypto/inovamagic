@@ -158,7 +158,7 @@
         }
 
         /* ==========================================
-           4. NUEVO MODAL DE PERFIL FLOTANTE (ESTILO INTERFAZ MODERNA)
+           4. MODAL DE PERFIL FLOTANTE
            ========================================== */
         .profile-overlay {
             position: fixed;
@@ -281,7 +281,7 @@
         .profile-content { padding: 30px; overflow-y: auto; }
         .profile-content h3 { margin-top: 0; font-size: 19px; font-weight: 600; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
 
-        /* Estilos de edición del perfil customizable */
+        /* Estilos de edición del perfil */
         .edit-form-group { margin-bottom: 14px; text-align: left; }
         .edit-form-group label { display: block; font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px; }
 
@@ -296,13 +296,8 @@
             background-color: var(--bg-color);
             text-align: left;
         }
-        .order-status { font-size: 11px; font-weight: 600; color: #34c759; background-color: rgba(52, 199, 89, 0.1); padding: 4px 10px; border-radius: 20px; }
-
-        .temu-coupon {
-            background: linear-gradient(135deg, #ff9500, #ffcc00);
-            color: #000; padding: 14px; border-radius: 14px; font-weight: 600;
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .order-status { font-size: 11px; font-weight: 600; color: #0071e3; background-color: rgba(0, 113, 227, 0.1); padding: 4px 10px; border-radius: 20px; }
+        .empty-orders { text-align: center; color: var(--text-secondary); padding: 20px 0; font-size: 14px; }
 
         /* ==========================================
            5. CAJA DE ACCESO (LOGIN)
@@ -428,16 +423,13 @@
                 
                 <ul class="profile-menu-list">
                     <li class="profile-menu-item active" id="menu-btn-compras" onclick="switchProfileTab('compras')">
-                        <i class="fas fa-box"></i> Mis Compras
+                        <i class="fas fa-box"></i> Mis Compras Reales
                     </li>
                     <li class="profile-menu-item" id="menu-btn-editar" onclick="switchProfileTab('editar')">
-                        <i class="fas fa-user-edit"></i> Personalizar Perfil
-                    </li>
-                    <li class="profile-menu-item" id="menu-btn-cupones" onclick="switchProfileTab('cupones')">
-                        <i class="fas fa-ticket-alt"></i> Cupones Temu
+                        <i class="fas fa-user-edit"></i> Personalizar Datos
                     </li>
                 </ul>
-                <div style="margin-top: 30px;">
+                <div style="margin-top: 40px;">
                     <a href="/logout" class="btn-submit" style="background-color: #ff3b30; text-decoration: none; font-size: 12px; padding: 8px 16px; border-radius: 20px;">Cerrar Sesión</a>
                 </div>
             </div>
@@ -445,20 +437,26 @@
             <div class="profile-content">
                 
                 <div id="tab-compras">
-                    <h3>Historial de Pedidos Recientes</h3>
-                    <div class="order-card">
-                        <div>
-                            <strong style="font-size: 14px;">Uniforme de Diario (Masculino)</strong>
-                            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Pedido #IM-9482 • Cantidad: 1</div>
-                        </div>
-                        <span class="order-status"><i class="fas fa-truck"></i> En camino</span>
-                    </div>
-                    <div class="order-card">
-                        <div>
-                            <strong style="font-size: 14px;">Camiseta Polo Técnica - Sistemas</strong>
-                            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Pedido #IM-8102 • Cantidad: 1</div>
-                        </div>
-                        <span class="order-status" style="color: #0071e3; background-color: rgba(0,113,227,0.1);"><i class="fas fa-check-circle"></i> Entregado</span>
+                    <h3>Mis Pedidos Realizados</h3>
+                    <div id="compras-reales-lista">
+                        {% if pedidos %}
+                            {% for pedido in pedidos %}
+                            <div class="order-card">
+                                <div>
+                                    <strong style="font-size: 14px;">{{ pedido.producto_nombre }}</strong>
+                                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+                                        Fecha: {{ pedido.fecha }} • Total: ${{ "{:,.0f}".format(pedido.total) }}
+                                    </div>
+                                </div>
+                                <span class="order-status"><i class="fas fa-circle-notch fa-spin"></i> {{ pedido.estado }}</span>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-orders">
+                                <i class="fas fa-shopping-bag" style="font-size: 30px; margin-bottom: 10px; display: block; color: var(--border-color);"></i>
+                                No has realizado compras reales todavía.
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -473,17 +471,6 @@
                         <input type="text" id="input-edit-phone" class="form-control" style="border-radius: 12px; padding: 10px;" value="3153968920">
                     </div>
                     <button class="btn-submit" style="border-radius: 12px; padding: 10px; margin-top: 10px;" onclick="saveProfileChanges()">Guardar Cambios</button>
-                </div>
-
-                <div id="tab-cupones" style="display: none;">
-                    <h3>Beneficios Escolares Activos</h3>
-                    <div class="temu-coupon">
-                        <div>
-                            <div style="font-size: 18px; font-weight: 800;">15% OFF</div>
-                            <div style="font-size: 12px; opacity: 0.9; margin-top: 2px;">Cupón: EVARISTO15</div>
-                        </div>
-                        <button style="background: white; border: none; padding: 6px 12px; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 11px;" onclick="showTopNotification('¡Cupón Copiado!')">Copiar</button>
-                    </div>
                 </div>
 
             </div>
@@ -571,7 +558,7 @@
             }, 1200);
         }
 
-        // CONTROL APERTURA/CIERRE DEL MODAL DEL PERFIL
+        // APERTURA Y CIERRE DEL PANEL DE PERFIL
         function toggleProfileModal(open) {
             const modal = document.getElementById('perfil-overlay-modal');
             if (modal) {
@@ -586,29 +573,24 @@
             }
         }
 
-        // MANEJO DE PESTAÑAS DENTRO DEL PERFIL
+        // MANEJO DE PESTAÑAS DEL PANEL
         function switchProfileTab(tabName) {
             document.getElementById('menu-btn-compras').classList.remove('active');
             document.getElementById('menu-btn-editar').classList.remove('active');
-            document.getElementById('menu-btn-cupones').classList.remove('active');
 
             document.getElementById('tab-compras').style.display = 'none';
             document.getElementById('tab-editar').style.display = 'none';
-            document.getElementById('tab-cupones').style.display = 'none';
 
             if(tabName === 'compras') {
                 document.getElementById('tab-compras').style.display = 'block';
                 document.getElementById('menu-btn-compras').classList.add('active');
-            } else if (tabName === 'editar') {
+            } else {
                 document.getElementById('tab-editar').style.display = 'block';
                 document.getElementById('menu-btn-editar').classList.add('active');
-            } else {
-                document.getElementById('tab-cupones').style.display = 'block';
-                document.getElementById('menu-btn-cupones').classList.add('active');
             }
         }
 
-        // LOGICA DE PERSONALIZACIÓN DE DATOS (NOMBRES Y AVATARES)
+        // GUARDAR CAMBIOS PERSONALIZADOS
         function saveProfileChanges() {
             const newName = document.getElementById('input-edit-name').value;
             if (newName.trim() !== "") {
