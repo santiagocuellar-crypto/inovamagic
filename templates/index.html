@@ -43,12 +43,6 @@
             color: var(--text-main);
             transition: background-color var(--transition-speed) var(--bezier-smooth), color var(--transition-speed) var(--bezier-smooth);
             -webkit-font-smoothing: antialiased;
-            opacity: 0;
-            animation: fadeInBody 0.6s var(--bezier-smooth) forwards;
-        }
-
-        @keyframes fadeInBody {
-            to { opacity: 1; }
         }
 
         /* ==========================================
@@ -82,7 +76,6 @@
             transform: translateY(-20px) scale(0.95);
             opacity: 0;
             animation: slideInNotif 0.4s var(--bezier-smooth) forwards;
-            transition: all 0.3s var(--bezier-smooth);
         }
 
         @keyframes slideInNotif {
@@ -100,7 +93,6 @@
             position: sticky;
             top: 0;
             z-index: 1000;
-            transition: background-color var(--transition-speed);
         }
 
         [data-theme="dark"] .navbar {
@@ -136,18 +128,18 @@
             padding: 0;
         }
 
-        .cart-nav-btn {
-            position: relative;
+        .cart-nav-btn, .profile-nav-btn {
             background: none;
             border: none;
             color: var(--text-main);
             font-size: 18px;
             cursor: pointer;
             padding: 4px 8px;
+            position: relative;
             transition: transform 0.2s;
         }
 
-        .cart-nav-btn:hover {
+        .cart-nav-btn:hover, .profile-nav-btn:hover {
             transform: scale(1.1);
         }
 
@@ -174,88 +166,132 @@
             font-weight: 500;
             border-radius: 20px;
             text-decoration: none;
-            transition: opacity 0.2s;
-        }
-
-        .btn-logout-nav:hover {
-            opacity: 0.9;
         }
 
         /* ==========================================
-           4. CARRUSEL DE TARJETAS FLUIDO
+           4. NUEVO: APARTADO DE PERFIL PREMIUM (ESTILO MERCADO LIBRE / TEMU)
            ========================================== */
-        .carousel-section {
-            max-width: 1120px;
-            margin: 30px auto 10px auto;
-            padding: 0 22px;
-        }
-
-        .carousel-title {
-            font-size: 24px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-            margin-bottom: 16px;
-        }
-
-        .carousel-container {
-            display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            padding: 10px 4px 24px 4px;
-            scroll-behavior: smooth;
-            scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .carousel-container::-webkit-scrollbar {
-            display: none;
-        }
-
-        .carousel-card {
-            flex: 0 0 280px;
+        .profile-container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 30px;
             background-color: var(--surface-color);
             border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 16px;
-            box-shadow: 0 4px 16px var(--card-shadow);
-            transition: transform 0.3s var(--bezier-smooth), box-shadow 0.3s;
+            border-radius: 28px;
+            box-shadow: 0 8px 32px var(--card-shadow);
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 30px;
+            animation: fadeInBody 0.5s var(--bezier-smooth);
         }
 
-        .carousel-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 12px 28px var(--card-shadow);
+        @media (max-width: 768px) {
+            .profile-container { grid-template-columns: 1fr; }
         }
 
-        .carousel-img-wrapper {
-            width: 100%;
-            height: 150px;
-            border-radius: 16px;
-            overflow: hidden;
-            background-color: var(--bg-color);
-            margin-bottom: 12px;
+        .profile-sidebar {
+            text-align: center;
+            border-right: 1px solid var(--border-color);
+            padding-right: 20px;
         }
 
-        .carousel-img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        @media (max-width: 768px) {
+            .profile-sidebar { border-right: none; padding-right: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
         }
 
-        .carousel-card h4 {
-            margin: 0 0 6px 0;
-            font-size: 15px;
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0071e3, #2997ff);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            margin: 0 auto 16px auto;
+            box-shadow: 0 4px 14px rgba(0, 113, 227, 0.3);
+        }
+
+        .profile-name {
+            font-size: 18px;
             font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            margin: 0 0 4px 0;
         }
 
-        .carousel-card p {
-            margin: 0 0 12px 0;
-            font-size: 12.5px;
+        .profile-role {
+            font-size: 13px;
             color: var(--text-secondary);
-            height: 36px;
-            overflow: hidden;
+            background-color: var(--bg-color);
+            padding: 4px 12px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .profile-menu-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0 0 0;
+            text-align: left;
+        }
+
+        .profile-menu-item {
+            padding: 12px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.2s;
+        }
+
+        .profile-menu-item.active, .profile-menu-item:hover {
+            background-color: var(--bg-color);
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        /* Bloques de Contenido del Perfil */
+        .profile-content h3 {
+            margin-top: 0;
+            font-size: 20px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .order-card {
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-color);
+        }
+
+        .order-status {
+            font-size: 12px;
+            font-weight: 600;
+            color: #34c759;
+            background-color: rgba(52, 199, 89, 0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .temu-coupon {
+            background: linear-gradient(135deg, #ff9500, #ffcc00);
+            color: #000;
+            padding: 16px;
+            border-radius: 16px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(255, 149, 0, 0.2);
         }
 
         /* ==========================================
@@ -263,7 +299,7 @@
            ========================================== */
         .auth-container {
             max-width: 380px;
-            margin: 40px auto 40px auto;
+            margin: 60px auto;
             padding: 36px 30px;
             background-color: var(--surface-color);
             border: 1px solid var(--border-color);
@@ -276,12 +312,9 @@
             font-weight: 600;
             margin: 0 0 20px 0;
             text-align: center;
-            letter-spacing: -0.5px;
         }
 
-        .form-group {
-            margin-bottom: 16px;
-        }
+        .form-group { margin-bottom: 16px; }
 
         .form-control {
             width: 100%;
@@ -308,9 +341,7 @@
             transition: all 0.2s var(--bezier-smooth);
         }
 
-        .btn-submit:hover {
-            background-color: var(--accent-hover);
-        }
+        .btn-submit:hover { background-color: var(--accent-hover); }
 
         .auth-divider {
             display: flex;
@@ -343,80 +374,77 @@
             background: #ffffff;
             color: #1d1d1f;
             box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-            transition: all 0.2s;
-        }
-
-        .btn-google-auth:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         /* ==========================================
-           6. GRID DEL CATÁLOGO
+           6. CARRUSEL Y CATALOGO
            ========================================== */
-        .showcase-container {
+        .carousel-section, .showcase-container {
             max-width: 1120px;
-            margin: 30px auto 80px auto;
+            margin: 30px auto;
             padding: 0 22px;
         }
 
-        .showcase-heading {
-            font-size: 28px;
+        .carousel-title, .showcase-heading {
+            font-size: 24px;
             font-weight: 600;
-            letter-spacing: -0.6px;
-            margin-bottom: 24px;
+            letter-spacing: -0.5px;
+            margin-bottom: 16px;
         }
+
+        .carousel-container {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 10px 4px 24px 4px;
+            scrollbar-width: none;
+        }
+
+        .carousel-container::-webkit-scrollbar { display: none; }
+
+        .carousel-card {
+            flex: 0 0 280px;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 16px;
+            box-shadow: 0 4px 16px var(--card-shadow);
+        }
+
+        .carousel-img-wrapper {
+            width: 100%;
+            height: 140px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .carousel-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
 
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 28px;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 24px;
         }
 
         .product-card {
             background-color: var(--surface-color);
             border: 1px solid var(--border-color);
             border-radius: 24px;
-            padding: 22px;
+            padding: 20px;
             text-align: center;
             box-shadow: 0 4px 16px var(--card-shadow);
         }
 
         .product-image-wrapper {
             width: 100%;
-            height: 190px;
+            height: 180px;
             border-radius: 16px;
             overflow: hidden;
-            background-color: var(--bg-color);
-            margin-bottom: 18px;
+            margin-bottom: 14px;
         }
 
-        .product-image-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .product-title {
-            font-size: 17px;
-            font-weight: 600;
-            margin: 0 0 10px 0;
-        }
-
-        .product-desc {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin: 0 0 16px 0;
-            height: 40px;
-            overflow: hidden;
-        }
-
-        .product-price {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--accent-color);
-            margin-bottom: 18px;
-        }
+        .product-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
 
         .theme-toggle-floating {
             position: fixed;
@@ -428,7 +456,6 @@
             padding: 14px 20px;
             border-radius: 40px;
             cursor: pointer;
-            font-size: 14px;
             z-index: 2000;
             display: flex;
             align-items: center;
@@ -452,7 +479,13 @@
                         <span class="cart-badge" id="cart-counter">0</span>
                     </button>
                 </li>
+                
                 {% if session.get('usuario') %}
+                <li>
+                    <button class="profile-nav-btn" onclick="scrollToProfile()" title="Mi Perfil">
+                        <i class="fas fa-user-circle" style="color: var(--accent-color);"></i>
+                    </button>
+                </li>
                 <li><a href="/logout" class="btn-logout-nav">Salir</a></li>
                 {% endif %}
             </ul>
@@ -462,7 +495,7 @@
     {% if not session.get('usuario') %}
     <main class="auth-container">
         <div class="auth-header">
-            <h2>Ingreso al Sistema</h2>
+            <h2>Ingreso al Ecosistema</h2>
         </div>
         <form action="/" method="POST">
             <div class="form-group">
@@ -473,29 +506,78 @@
             </div>
             <button type="submit" class="btn-submit">Continuar</button>
         </form>
-
         <div class="auth-divider">o continuar con</div>
-
         <div class="social-auth-group">
             <button type="button" class="btn-google-auth" onclick="triggerGoogleLogin()">
-                <i class="fab fa-google" style="color: #db4437;"></i> Continuar con Google
+                <i class="fab fa-google" style="color: #db4437;"></i> Acceder con Google
             </button>
         </div>
     </main>
     {% endif %}
 
+    {% if session.get('usuario') %}
+    <section class="profile-container" id="mi-perfil-seccion">
+        <div class="profile-sidebar">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-name">Santiago Cuellar</div>
+            <div class="profile-role">Técnica en Sistemas</div>
+            
+            <ul class="profile-menu-list">
+                <li class="profile-menu-item active" onclick="switchProfileTab('compras')">
+                    <i class="fas fa-box"></i> Mis Compras
+                </li>
+                <li class="profile-menu-item" onclick="switchProfileTab('cupones')">
+                    <i class="fas fa-ticket-alt"></i> Cupones Temu-Inova
+                </li>
+            </ul>
+        </div>
+
+        <div class="profile-content">
+            <div id="tab-compras">
+                <h3>Historial de Pedidos Recientes</h3>
+                <div class="order-card">
+                    <div>
+                        <strong style="font-size: 14.5px;">Uniforme de Diario (Masculino)</strong>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Pedido #IM-9482 • Cantidad: 1</div>
+                    </div>
+                    <span class="order-status"><i class="fas fa-truck"></i> En camino</span>
+                </div>
+                <div class="order-card">
+                    <div>
+                        <strong style="font-size: 14.5px;">Camiseta Polo Técnica - Sistemas</strong>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Pedido #IM-8102 • Cantidad: 1</div>
+                    </div>
+                    <span class="order-status" style="color: #0071e3; background-color: rgba(0,113,227,0.1);"><i class="fas fa-check-circle"></i> Entregado</span>
+                </div>
+            </div>
+
+            <div id="tab-cupones" style="display: none;">
+                <h3>Mis Beneficios Escolares</h3>
+                <div class="temu-coupon">
+                    <div>
+                        <div style="font-size: 20px; font-weight: 800;">15% OFF</div>
+                        <div style="font-size: 12px; opacity: 0.9; margin-top: 2px;">Exclusivo Uniformes Evaristo García</div>
+                    </div>
+                    <button style="background: white; border: none; padding: 8px 14px; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 12px;" onclick="showTopNotification('¡Cupón EVARISTO15 copiado!')">Copiar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
     <section class="carousel-section">
-        <h3 class="carousel-title">🔥 Lo más buscado (I.E. Evaristo García)</h3>
+        <h3 class="carousel-title">🔥 Más Buscados de la Semana</h3>
         <div class="carousel-container">
             {% for producto in productos[:3] %}
             <div class="carousel-card">
                 <div class="carousel-img-wrapper">
                     <img src="{{ producto.imagen }}" alt="{{ producto.nombre }}">
                 </div>
-                <h4>{{ producto.nombre }}</h4>
-                <p>{{ producto.descripcion }}</p>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-weight: 700; color: var(--accent-color);">${{ "{:,.0f}".format(producto.precio) }}</span>
+                <h4 style="margin: 0 0 6px 0; font-size: 14.5px; font-weight: 600;">{{ producto.nombre }}</h4>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                    <span style="font-weight: 700; color: var(--accent-color); font-size: 14.5px;">${{ "{:,.0f}".format(producto.precio) }}</span>
                     <button class="btn-submit" style="padding: 6px 12px; width: auto; font-size: 12px; border-radius: 20px;" onclick="addToCart('{{ producto.nombre }}')">Añadir</button>
                 </div>
             </div>
@@ -504,16 +586,16 @@
     </section>
 
     <section class="showcase-container">
-        <h2 class="showcase-heading">Catálogo de Uniformes</h2>
+        <h2 class="showcase-heading">Catálogo de Uniformes Completo</h2>
         <div class="product-grid">
             {% for producto in productos %}
             <article class="product-card">
                 <div class="product-image-wrapper">
                     <img src="{{ producto.imagen }}" alt="{{ producto.nombre }}">
                 </div>
-                <h3 class="product-title">{{ producto.nombre }}</h3>
-                <p class="product-desc">{{ producto.descripcion }}</p>
-                <div class="product-price">${{ "{:,.0f}".format(producto.precio) }}</div>
+                <h3 style="font-size: 16px; font-weight: 600; margin: 0 0 8px 0;">{{ producto.nombre }}</h3>
+                <p style="font-size: 12.5px; color: var(--text-secondary); margin: 0 0 16px 0; height: 36px; overflow: hidden;">{{ producto.descripcion }}</p>
+                <div style="font-size: 17px; font-weight: 700; color: var(--accent-color); margin-bottom: 14px;">${{ "{:,.0f}".format(producto.precio) }}</div>
                 <button class="btn-submit" style="padding: 10px;" onclick="addToCart('{{ producto.nombre }}')">
                     <i class="fas fa-cart-plus"></i> Añadir al carrito
                 </button>
@@ -538,7 +620,6 @@
 
             setTimeout(() => {
                 toast.style.opacity = '0';
-                toast.style.transform = 'translateY(-15px) scale(0.95)';
                 setTimeout(() => { toast.remove(); }, 350);
             }, 3000);
         }
@@ -553,22 +634,38 @@
             if (cartItemsCount === 0) {
                 showTopNotification("El carrito de compras está vacío.");
             } else {
-                showTopNotification(`Tienes ${cartItemsCount} uniformes listos para la compra.`);
+                showTopNotification(`¡Listo! Tienes ${cartItemsCount} productos seleccionados.`);
             }
         }
 
         function triggerGoogleLogin() {
             showTopNotification("Abriendo ventana de Google Accounts...");
             setTimeout(() => {
-                showTopNotification("Verificando cuenta: santiagocuellar@gmail.com...");
+                showTopNotification("Accediendo de forma segura con santiagocuellar@gmail.com...");
                 setTimeout(() => {
-                    showTopNotification("¡Acceso concedido exitosamente!");
-                    // Recarga la página simulando que la sesión cambió en el backend
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
-                }, 1500);
-            }, 1500);
+                    window.location.reload();
+                }, 1000);
+            }, 1200);
+        }
+
+        function scrollToProfile() {
+            document.getElementById('mi-perfil-seccion').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // CONTROL DE INTERFACES DEL PERFIL (Estilo Mercado Libre)
+        function switchProfileTab(tabName) {
+            const items = document.querySelectorAll('.profile-menu-item');
+            items.forEach(el => el.classList.remove('active'));
+            
+            if(tabName === 'compras') {
+                document.getElementById('tab-compras').style.display = 'block';
+                document.getElementById('tab-cupones').style.display = 'none';
+                event.currentTarget.classList.add('active');
+            } else {
+                document.getElementById('tab-compras').style.display = 'none';
+                document.getElementById('tab-cupones').style.display = 'block';
+                event.currentTarget.classList.add('active');
+            }
         }
 
         function toggleTheme() {
@@ -576,7 +673,7 @@
             let currentTheme = htmlNode.getAttribute('data-theme');
             let targetTheme = currentTheme === 'dark' ? 'light' : 'dark';
             htmlNode.setAttribute('data-theme', targetTheme);
-            showTopNotification(`Interfaz cambiada al modo ${targetTheme}`);
+            showTopNotification(`Modo ${targetTheme} activado`);
         }
     </script>
 </body>
