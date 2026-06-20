@@ -1,1380 +1,229 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="{{ theme }}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Inovamagic | {{ config.colegio }}</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;600;700;800&display=swap" rel="stylesheet">
-    
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2563eb">
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inovamagic Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ==========================================================================
-           🎨 VARIABLE SYSTEM (SISTEMA DE DISEÑO APPLE/NEUMÓRFICO)
-           ========================================================================== */
-        :root { 
-            --accent: #2563eb; 
-            --accent-glow: rgba(37, 99, 235, 0.12);
-            --text: #0f172a; 
-            --bg: #f8fafc; 
-            --white: rgba(255, 255, 255, 0.85); 
-            --nequi: #7d3291; 
-            --success: #10b981; 
-            --border: rgba(226, 232, 240, 0.8);
-            --card-bg: #ffffff;
-            --sidebar-bg: rgba(255, 255, 255, 0.65);
-            --glass-blur: blur(20px);
-            --ios-ease: cubic-bezier(0.4, 0, 0.2, 1);
+        :root {
+            --bg-color: #f5f5f7;
+            --surface-color: #ffffff;
+            --text-main: #1d1d1f;
+            --text-secondary: #86868b;
+            --accent-color: #0071e3;
+            --accent-hover: #0077ed;
+            --border-color: #d2d2d7;
+            --card-shadow: rgba(0, 0, 0, 0.05);
         }
-
-        /* 🌙 SOPORTE COMPLETO PARA MODO OSCURO (HYPEROS STYLE) */
         [data-theme="dark"] {
-            --text: #f8fafc;
-            --bg: #070b13;
-            --white: rgba(30, 41, 59, 0.75);
-            --border: rgba(51, 65, 85, 0.4);
-            --card-bg: #1e293b;
-            --sidebar-bg: rgba(15, 23, 42, 0.55);
-            --accent-glow: rgba(59, 130, 246, 0.2);
+            --bg-color: #000000;
+            --surface-color: #1d1d1f;
+            --text-main: #f5f5f7;
+            --text-secondary: #86868b;
+            --accent-color: #0071e3;
+            --border-color: #424245;
         }
-
-        /* ==========================================================================
-           🧱 MAQUETACIÓN GLOBAL Y RESETEO CSS
-           ========================================================================== */
-        * { 
-            box-sizing: border-box; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            -webkit-tap-highlight-color: transparent; 
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
         }
-        
-        body { 
-            background: var(--bg); 
-            color: var(--text); 
-            display: flex; 
-            flex-direction: column; 
-            height: 100vh; 
-            overflow: hidden; 
-            position: relative; 
-            transition: background 0.4s var(--ios-ease); 
+        /* NOTIFICACIONES ÚNICAMENTE ARRIBA */
+        #notification-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            width: 90%;
+            max-width: 420px;
         }
-
-        /* ==========================================================================
-           🔝 HEADER (BARRA SUPERIOR DE NAVEGACIÓN)
-           ========================================================================== */
-        header { 
-            background: var(--white); 
-            backdrop-filter: var(--glass-blur); 
-            -webkit-backdrop-filter: var(--glass-blur); 
-            padding: 12px 24px; 
-            border-bottom: 1px solid var(--border); 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            z-index: 100; 
-            position: relative; 
+        .notification {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            padding: 14px 24px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            font-size: 14px;
         }
-
-        .search-container { 
-            flex: 1; 
-            max-width: 450px; 
-            background: rgba(100,116,139,0.06); 
-            border-radius: 14px; 
-            padding: 10px 16px; 
-            margin: 0 15px; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            border: 1px solid var(--border); 
+        .navbar {
+            background-color: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 22px;
         }
-        
-        .search-container input { 
-            border: none; 
-            background: transparent; 
-            width: 100%; 
-            outline: none; 
-            color: var(--text); 
-            font-size: 0.9rem; 
+        .navbar-container {
+            max-width: 1120px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-
-        .dark-toggle { 
-            background: rgba(100,116,139,0.06); 
-            border: 1px solid var(--border); 
-            color: var(--text); 
-            padding: 8px 12px; 
-            border-radius: 12px; 
-            font-weight: bold; 
-            cursor: pointer; 
+        .auth-container {
+            max-width: 380px;
+            margin: 40px auto;
+            padding: 40px 32px;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            text-align: center;
         }
-
-        /* 🔴 CONTADOR DE USUARIOS ACTIVOS EN VIVO */
-        .live-counter { 
-            background: rgba(239, 68, 68, 0.08); 
-            border: 1px solid rgba(239, 68, 68, 0.15); 
-            color: #ef4444; 
-            font-size: 0.75rem; 
-            font-weight: 700; 
-            padding: 6px 12px; 
-            border-radius: 20px; 
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
+        .form-group { margin-bottom: 18px; }
+        .form-control {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-main);
         }
-        
-        .live-pulse { 
-            width: 6px; 
-            height: 6px; 
-            background: #ef4444; 
-            border-radius: 50%; 
-            animation: pulseRing 1.4s infinite alternate var(--ios-ease); 
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background-color: var(--accent-color);
+            color: #ffffff;
+            cursor: pointer;
+            font-weight: 500;
         }
-        
-        @keyframes pulseRing { 
-            from { transform: scale(0.85); opacity: 0.6; } 
-            to { transform: scale(1.25); opacity: 1; } 
+        .auth-divider {
+            margin: 24px 0;
+            color: var(--text-secondary);
+            font-size: 12px;
         }
-
-        .user-profile-trigger { 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            background: rgba(100,116,139,0.06); 
-            border: 1px solid var(--border); 
-            padding: 6px 12px; 
-            border-radius: 14px; 
-            cursor: pointer; 
+        .social-auth-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
-        
-        .avatar-circle { 
-            width: 28px; 
-            height: 28px; 
-            background: var(--accent); 
-            color: white; 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-weight: 800; 
-            font-size: 0.85rem; 
+        .btn-social-auth {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background-color: var(--surface-color);
+            color: var(--text-main);
+            cursor: pointer;
         }
-
-        /* ==========================================================================
-           📐 ESTRUCTURA DE DISTRIBUCIÓN PANTALLA (SIDEBAR + CONTENT)
-           ========================================================================== */
-        .main-layout { 
-            display: flex; 
-            flex: 1; 
-            overflow: hidden; 
-            position: relative; 
-            z-index: 10; 
+        .showcase-container {
+            max-width: 1120px;
+            margin: 40px auto;
+            padding: 0 22px;
         }
-        
-        .sidebar { 
-            width: 280px; 
-            background: var(--sidebar-bg); 
-            backdrop-filter: var(--glass-blur); 
-            border-right: 1px solid var(--border); 
-            padding: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 15px; 
-            overflow-y: auto; 
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 24px;
         }
-        
-        .categories-group { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 6px; 
+        .product-card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 20px;
+            text-align: center;
         }
-        
-        .cat-btn { 
-            background: transparent; 
-            border: 1px solid transparent; 
-            padding: 10px 14px; 
-            text-align: left; 
-            border-radius: 12px; 
-            cursor: pointer; 
-            font-weight: 600; 
-            color: var(--text); 
-            font-size: 0.9rem; 
-            transition: background 0.2s, color 0.2s; 
+        .product-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
         }
-        
-        .cat-btn:hover, .cat-btn.active { 
-            background: rgba(37, 99, 235, 0.08); 
-            color: var(--accent); 
-        }
-
-        .content-area { 
-            flex: 1; 
-            padding: 20px; 
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; 
-        }
-
-        /* ==========================================================================
-           👤 COMPONENTES DE VISTA DE PERFIL Y TARJETA DIGITAL
-           ========================================================================== */
-        .profile-section-container { 
-            display: none; 
-            max-width: 600px; 
-            margin: 0 auto; 
-            flex-direction: column; 
-            gap: 20px; 
-            animation: fadeIn 0.35s var(--ios-ease); 
-        }
-        
-        @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(10px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-        
-        .student-card { 
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6); 
-            color: white; 
-            padding: 25px; 
-            border-radius: 24px; 
-            position: relative; 
-            box-shadow: 0 15px 30px rgba(37, 99, 235, 0.2); 
-            overflow: hidden; 
-            transition: background 0.5s ease;
-        }
-        
-        .student-card::before { 
-            content: ''; 
-            position: absolute; 
-            top: -50px; 
-            right: -50px; 
-            width: 150px; 
-            height: 150px; 
-            background: rgba(255,255,255,0.1); 
-            border-radius: 50%; 
-        }
-        
-        .avatar-selector-grid { 
-            display: grid; 
-            grid-template-columns: repeat(6, 1fr); 
-            gap: 10px; 
-            margin-top: 10px; 
-        }
-        
-        .avatar-option { 
-            font-size: 1.6rem; 
-            padding: 8px; 
-            text-align: center; 
-            background: var(--bg); 
-            border: 2px solid var(--border); 
-            border-radius: 12px; 
-            cursor: pointer; 
-            transition: transform 0.2s; 
-        }
-        
-        .avatar-option:hover { transform: scale(1.15); }
-        .avatar-option.selected { border-color: var(--accent); background: var(--accent-glow); }
-
-        .profile-input-group { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 6px; 
-            margin-bottom: 12px; 
-        }
-        
-        .profile-input-group label { 
-            font-size: 0.72rem; 
-            font-weight: 800; 
-            color: #64748b; 
-            text-transform: uppercase; 
-        }
-        
-        .profile-input-group input, .profile-input-group select { 
-            width: 100%; 
-            padding: 12px; 
-            border-radius: 12px; 
-            border: 1px solid var(--border); 
-            background: var(--card-bg); 
-            color: var(--text); 
-            font-weight: 600; 
-            outline: none; 
-        }
-
-        /* ==========================================================================
-           🎠 CARRUSEL DE PROMOCIONES INTELIGENTE
-           ========================================================================== */
-        .promo-carousel-container { 
-            width: 100%; 
-            overflow-x: auto; 
-            display: flex; 
-            gap: 16px; 
-            margin-bottom: 25px; 
-            padding-bottom: 10px; 
-            scroll-snap-type: x mandatory; 
-            scrollbar-width: none; 
-        }
-        
-        .promo-carousel-container::-webkit-scrollbar { display: none; }
-        
-        .promo-banner { 
-            flex: 0 0 85%; 
-            max-width: 600px; 
-            background: linear-gradient(135deg, #1e3a8a, #2563eb); 
-            border-radius: 20px; 
-            min-height: 160px; 
-            color: white; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 20px; 
-            scroll-snap-align: start; 
-            position: relative; 
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15); 
-            cursor: pointer; 
-        }
-        
-        .promo-banner:nth-child(even) { background: linear-gradient(135deg, #581c87, #7d3291); }
-        .promo-banner:nth-child(3n) { background: linear-gradient(135deg, #064e3b, #10b981); }
-        
-        .promo-badge { 
-            position: absolute; 
-            top: 12px; 
-            left: 12px; 
-            background: rgba(255,255,255,0.25); 
-            backdrop-filter: blur(5px); 
-            padding: 4px 10px; 
-            border-radius: 20px; 
-            font-size: 0.68rem; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-        }
-        
-        .promo-img-box { 
-            width: 110px; 
-            height: 110px; 
-            border-radius: 14px; 
-            background: white; 
-            overflow: hidden; 
-        }
-        
-        .promo-img-box img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-        }
-
-        /* ==========================================================================
-           🛍️ TARJETAS DE PRODUCTO DEL MERCADO (PRODUCT CARDS)
-           ========================================================================== */
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
-            gap: 16px; 
-        }
-        
-        .card { 
-            background: var(--card-bg); 
-            border-radius: 18px; 
-            border: 1px solid var(--border); 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
-            position: relative; 
-            transition: transform 0.3s var(--ios-ease), box-shadow 0.3s; 
-        }
-        
-        .card:hover { 
-            transform: translateY(-4px); 
-            box-shadow: 0 12px 24px var(--accent-glow); 
-        }
-        
-        .stock-badge { 
-            position: absolute; 
-            top: 10px; 
-            left: 10px; 
-            padding: 4px 8px; 
-            border-radius: 8px; 
-            font-size: 0.65rem; 
-            font-weight: 800; 
-            color: white; 
-            z-index: 10; 
-        }
-        
-        .stock-high { background: var(--success); }
-        .stock-low { background: #ef4444; }
-
-        .action-container { 
-            position: absolute; 
-            top: 10px; 
-            right: 10px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 6px; 
-            z-index: 20; 
-        }
-        
-        .action-circle-btn { 
-            width: 34px; 
-            height: 34px; 
-            background: rgba(255,255,255,0.9); 
-            border-radius: 50%; 
-            border: 1px solid #e2e8f0; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer; 
-            font-size: 0.95rem; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
-        }
-        
-        .fav-active { color: #ef4444 !important; transform: scale(1.1); }
-
-        .img-box { 
-            width: 100%; 
-            aspect-ratio: 1/1; 
-            background: #f1f5f9; 
-            overflow: hidden; 
-            cursor: pointer; 
-        }
-        
-        .img-box img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-        }
-        
-        .content { 
-            padding: 14px; 
-            flex-grow: 1; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
-            gap: 8px; 
-        }
-        
-        .price { 
-            font-size: 1.2rem; 
-            font-weight: 800; 
-            color: var(--text); 
-        }
-        
-        .selector-label { 
-            font-size: 0.7rem; 
-            font-weight: 700; 
-            color: #64748b; 
-            text-transform: uppercase; 
-            margin-bottom: 4px; 
-        }
-        
-        .inline-selector-row { 
-            display: flex; 
-            gap: 6px; 
-            overflow-x: auto; 
-            padding: 2px 0; 
-            scrollbar-width: none; 
-        }
-        
-        .inline-selector-row::-webkit-scrollbar { display: none; }
-        
-        .size-chip { 
-            min-width: 34px; 
-            height: 34px; 
-            padding: 0 8px; 
-            border-radius: 8px; 
-            border: 1px solid var(--border); 
-            background: var(--bg); 
-            color: var(--text); 
-            font-size: 0.78rem; 
-            font-weight: 700; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer; 
-        }
-        
-        .size-chip.selected { 
-            background: var(--text); 
-            color: var(--bg); 
-            border-color: var(--text); 
-        }
-
-        .add-btn { 
-            background: #0f172a; 
-            color: white; 
-            border: none; 
-            cursor: pointer; 
-            border-radius: 10px; 
-            font-weight: 700; 
-        }
-        
-        [data-theme="dark"] .add-btn { background: var(--accent); }
-
-        /* ==========================================================================
-           💀 EFFECT SKELETON LOADING (EFECTO CARGA FANTASMA PRE-SHOW)
-           ========================================================================== */
-        .skeleton-wrapper { display: none; }
-        .skeleton-wrapper.active { display: grid; }
-        
-        .skeleton-card { 
-            background: var(--card-bg); 
-            border-radius: 18px; 
-            height: 320px; 
-            padding: 14px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-        }
-        
-        .skeleton-img { 
-            width: 100%; 
-            aspect-ratio: 1/1; 
-            background: rgba(100,116,139,0.08); 
-            border-radius: 12px; 
-        }
-        
-        .skeleton-line { 
-            height: 12px; 
-            background: rgba(100,116,139,0.08); 
-            border-radius: 4px; 
-        }
-
-        /* ==========================================================================
-           💳 MODAL PASARELA DE RECAUDACIÓN (PASARELA NEQUI)
-           ========================================================================== */
-        .modal { 
-            display: none; 
-            position: fixed; 
-            inset: 0; 
-            background: rgba(15, 23, 42, 0.3); 
-            z-index: 2000; 
-            align-items: center; 
-            justify-content: center; 
-            backdrop-filter: blur(12px); 
-        }
-        
-        .modal.active { display: flex; }
-        
-        .modal-box { 
-            background: var(--card-bg); 
-            padding: 25px; 
-            border-radius: 24px; 
-            width: 100%; 
-            max-width: 400px; 
-            position: relative; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.12); 
-        }
-
-        /* ==========================================================================
-           📊 BOTTOM BAR (CONTROLES ECONÓMICOS DE CAJA MAYOR Y PROGRESO)
-           ========================================================================== */
-        .bottom-bar { 
-            background: var(--white); 
-            backdrop-filter: var(--glass-blur); 
-            padding: 14px 24px; 
-            border-top: 1px solid var(--border); 
-            display: grid; 
-            grid-template-columns: 1fr 2fr 1fr; 
-            align-items: center; 
-            gap: 15px; 
-            z-index: 90; 
-            position: relative; 
-        }
-        
-        .budget-container { 
-            width: 100%; 
-            background: rgba(100,116,139,0.12); 
-            height: 8px; 
-            border-radius: 10px; 
-            overflow: hidden; 
-        }
-        
-        .budget-bar { 
-            height: 100%; 
-            background: var(--accent); 
-            width: 0%; 
-            transition: width 0.8s var(--ios-ease); 
-        }
-
-        /* 🔔 LIVE NOTIFICATION TOAST */
-        .live-toast { 
-            position: fixed; 
-            bottom: 90px; 
-            left: 20px; 
-            background: rgba(15, 23, 42, 0.9); 
-            color: white; 
-            padding: 12px 18px; 
-            border-radius: 16px; 
-            font-size: 0.82rem; 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
-            transform: translateY(150px); 
-            opacity: 0; 
-            transition: transform 0.5s var(--ios-ease), opacity 0.5s; 
-            z-index: 999; 
-            backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255,255,255,0.1); 
-            max-width: 320px; 
-        }
-        
-        .live-toast.show { 
-            transform: translateY(0); 
-            opacity: 1; 
-        }
-
-        .tech-selector-container { 
-            margin-bottom: 20px; 
-            background: var(--card-bg); 
-            border: 1px solid var(--border); 
-            padding: 14px; 
-            border-radius: 16px; 
-        }
-        
-        .tech-grid { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 8px; 
-            margin-top: 8px; 
-        }
-        
-        .tech-chip { 
-            background: var(--bg); 
-            border: 1px solid var(--border); 
-            padding: 8px; 
-            text-align: center; 
-            border-radius: 10px; 
-            font-size: 0.78rem; 
-            font-weight: 700; 
-            cursor: pointer; 
-            color: var(--text); 
-            transition: all 0.2s; 
-        }
-        
-        .tech-chip.active { 
-            background: var(--accent); 
-            color: white; 
-            border-color: var(--accent); 
-        }
-
-        /* ==========================================================================
-           📱 DISPOSITIVOS MÓVILES RESPONSIVE DESIGN (XIAOMI/IPHONE MEDIAS)
-           ========================================================================== */
-        @media (max-width: 768px) {
-            header { flex-direction: column; gap: 8px; }
-            .search-container { max-width: 100%; width: 100%; margin: 0; }
-            .main-layout { flex-direction: column; }
-            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); padding: 10px 16px; flex-direction: row; overflow-x: auto; }
-            .categories-group { flex-direction: row; }
-            .promo-banner { flex: 0 0 92%; }
-            .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .bottom-bar { grid-template-columns: 1fr; text-align: center; }
-            .tech-grid { grid-template-columns: repeat(2, 1fr); }
-            .live-toast { left: 10px; right: 10px; max-width: calc(100% - 20px); bottom: 140px; }
+        .theme-toggle-floating {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 12px 18px;
+            border-radius: 30px;
+            border: 1px solid var(--border-color);
+            background-color: var(--surface-color);
+            color: var(--text-main);
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <div id="login-screen" style="position: fixed; inset: 0; background: var(--bg); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 16px;">
-        <div style="background: var(--card-bg); border: 1px solid var(--border); padding: 30px; border-radius: 24px; width: 100%; max-width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.08);">
-            <div style="text-align: center; margin-bottom: 16px;">
-                <div style="font-size: 2.5rem;">🚀</div>
-                <h2 id="auth-title" style="font-weight: 800; color: var(--text); text-transform: uppercase;">Ingresar a la Plataforma</h2>
-                <p id="auth-subtitle" style="color: #64748b; font-size: 0.8rem;">Bienvenido de nuevo, mano</p>
-            </div>
+    <div id="notification-container"></div>
 
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                <input type="text" id="reg-name" placeholder="Tu Nombre Completo" style="display: none; width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none;">
-                <input type="email" id="login-email" placeholder="Correo Institucional" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none;">
-                <input type="password" id="login-pass" placeholder="Contraseña de Acceso" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none;">
-                
-                <div id="reg-tech-box" style="display: none; flex-direction: column; gap: 4px;">
-                    <label style="font-size: 0.7rem; font-weight: 700; color: #64748b;">SELECCIONA TU MODALIDAD TÉCNICA:</label>
-                    <select id="reg-tech" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none; font-weight: 600;">
-                        <option value="Sistemas">💻 Sistemas</option>
-                        <option value="Dibujo">📐 Dibujo Técnico</option>
-                        <option value="Electricidad">⚡ Electricidad</option>
-                    </select>
-                </div>
-
-                <button id="auth-main-btn" onclick="procesarAutenticacion()" style="width: 100%; background: var(--text); color: var(--bg); border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 8px;">Entrar a Inovamagic</button>
-            </div>
-
-            <div style="text-align: center; margin-top: 20px; font-size: 0.82rem;">
-                <span id="auth-switch-text" style="color: #64748b;">¿No tienes una cuenta aún?</span>
-                <span id="auth-switch-link" onclick="toggleAuthMode()" style="color: var(--accent); font-weight: 700; cursor: pointer; margin-left: 4px;">Regístrate aquí</span>
-            </div>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div style="font-weight: 600;"><i class="fas fa-magic"></i> Inovamagic</div>
         </div>
-    </div>
+    </nav>
 
-    <div id="live-alert" class="live-toast">
-        <span style="font-size: 1.2rem;">🛒</span>
-        <div id="live-alert-text">Alguien acaba de comprar un insumo.</div>
-    </div>
+    <main class="auth-container">
+        <h2>Iniciar Sesión</h2>
+        <form action="/login" method="POST">
+            <div class="form-group">
+                <input type="email" name="email" class="form-control" placeholder="Correo electrónico" required>
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
+            </div>
+            <button type="submit" class="btn-submit">Continuar</button>
+        </form>
 
-    <header>
-        <div style="font-weight: 800; color: var(--text); cursor: pointer;" onclick="irASeccion('mercado')">INOVAMAGIC CORE 🚀</div>
-        <div class="search-container">
-            🔍 <input type="text" id="search-input" placeholder="Buscar insumos..." onkeyup="filterProducts(this.value)">
+        <div class="auth-divider">o continuar con</div>
+
+        <div class="social-auth-group">
+            <button type="button" class="btn-social-auth" onclick="showTopNotification('Conectando con Google...')">
+                <i class="fab fa-google" style="color: #db4437;"></i> Google
+            </button>
+            <button type="button" class="btn-social-auth" onclick="showTopNotification('Conectando con Apple...')">
+                <i class="fab fa-apple"></i> Apple
+            </button>
         </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-            
-            <button id="pwa-install-btn" style="display:none; background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 12px; font-weight: 700; font-size: 0.8rem; cursor: pointer; animation: pulseRing 1.5s infinite alternate;">📥 Descargar App</button>
-            
-            <div class="live-counter"><div class="live-pulse"></div><span>🔥 14 activos</span></div>
-            <button class="dark-toggle" onclick="toggleTheme()">🌙</button>
-            
-            <div class="user-profile-trigger" onclick="irASeccion('perfil')">
-                <div class="header-avatar-emoji" id="header-avatar-emoji">💻</div>
-                <span id="user-display-name" style="font-size: 0.82rem; font-weight: 700; color: var(--text);">Perfil</span>
-            </div>
+    </main>
+
+    <section class="showcase-container">
+        <h2>Productos Destacados</h2>
+        <div class="product-grid">
+            {% for producto in productos %}
+            <article class="product-card">
+                <img src="{{ producto.imagen }}" alt="{{ producto.nombre }}">
+                <h3>{{ producto.nombre }}</h3>
+                <p style="font-size: 13px; color: var(--text-secondary);">{{ producto.descripcion }}</p>
+                <div style="color: var(--accent-color); font-weight: 700; margin: 10px 0;">${{ "{:,.0f}".format(producto.precio) }}</div>
+                <button class="btn-submit" style="padding: 8px;" onclick="showTopNotification('Añadido: {{ producto.nombre }}')">Ver detalles</button>
+            </article>
+            {% endfor %}
         </div>
-    </header>
+    </section>
 
-    <div class="main-layout">
-        <aside class="sidebar">
-            <div class="categories-group">
-                <button class="cat-btn active" id="side-btn-todos" onclick="filterByCategory('todos', this)">📂 Mercado</button>
-                <button class="cat-btn" id="side-btn-uniformes" onclick="filterByCategory('uniformes', this)">👕 Uniformes</button>
-                <button class="cat-btn" id="side-btn-escolar" onclick="filterByCategory('escolar', this)">📚 Escolar</button>
-                <button class="cat-btn" id="side-btn-belleza" onclick="filterByCategory('belleza', this)">💄 Belleza</button>
-                <button class="cat-btn" id="side-btn-construccion" onclick="filterByCategory('construccion', this)">🎨 Técnicos</button>
-                <button class="cat-btn" id="side-btn-deportes" onclick="filterByCategory('deportes', this)">⚽ Deportes</button>
-                <button class="cat-btn" id="side-btn-favoritos" onclick="filterByCategory('favoritos', this)" style="color: #ef4444;">❤️ Favoritos</button>
-                <hr style="border: none; border-top: 1px solid var(--border); margin: 10px 0;">
-                <button class="cat-btn" id="side-btn-perfil" onclick="irASeccion('perfil')" style="color: var(--accent);">👤 Mi Perfil</button>
-            </div>
-        </aside>
-
-        <main class="content-area">
-            
-            <div id="market-view-wrapper">
-                <div class="tech-selector-container">
-                    <div class="selector-label">🎯 Filtrar por tu Modalidad Técnico:</div>
-                    <div class="tech-grid">
-                        <div class="tech-chip active" id="tech-chip-todas" onclick="filtrarPorModalidad('todas', this)">Todas</div>
-                        <div class="tech-chip" id="tech-chip-Sistemas" onclick="filtrarPorModalidad('Sistemas', this)">💻 Sistemas</div>
-                        <div class="tech-chip" id="tech-chip-Dibujo" onclick="filtrarPorModalidad('Dibujo', this)">📐 Dibujo</div>
-                        <div class="tech-chip" id="tech-chip-Electricidad" onclick="filtrarPorModalidad('Electricidad', this)">⚡ Electricidad</div>
-                    </div>
-                </div>
-
-                <div class="promo-carousel-container" id="promo-carousel">
-                    {% for b in carrusel %}
-                    <div class="promo-banner" onclick="window.location.href='/producto/{{ b.id }}'">
-                        <span class="promo-badge">{{ b.criterio }}</span>
-                        <div style="max-width: 60%;">
-                            <h2 style="font-size: 1.2rem; font-weight: 800;">{{ b.nombre }}</h2>
-                            <span style="background: white; color: black; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; display: inline-block; margin-top: 10px;">Ver Ficha</span>
-                        </div>
-                        <div class="promo-img-box"><img src="{{ b.img }}"></div>
-                    </div>
-                    {% endfor %}
-                </div>
-
-                <div class="grid skeleton-wrapper active" id="skeleton-grid">
-                    <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line"></div></div>
-                    <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line"></div></div>
-                </div>
-
-                <div class="grid" id="main-grid" style="display: none;">
-                    {% for p in catalogo %}
-                    <div class="card" data-name="{{ p.nombre.lower() }}" data-cat="{{ p.cat }}" data-specs="{{ p.especialidades | join(',') if p.especialidades else '' }}" id="prod-card-{{ p.id }}">
-                        {% if p.stock <= 3 %}
-                        <span class="stock-badge stock-low">⚠️ {{ p.stock }} Disp</span>
-                        {% else %}
-                        <span class="stock-badge stock-high">✔ Stock: {{ p.stock }}</span>
-                        {% endif %}
-                        <div class="action-container"><button class="action-circle-btn" id="fav-{{ p.id }}" onclick="toggleFavorito('{{ p.id }}')">🤍</button></div>
-                        <div class="img-box" onclick="window.location.href='/producto/{{ p.id }}'"><img src="{{ p.img }}" loading="lazy"></div>
-                        <div class="content">
-                            <h3 onclick="window.location.href='/producto/{{ p.id }}'" style="font-size:0.88rem; font-weight: 700; cursor: pointer;">{{ p.nombre }}</h3>
-                            <div>
-                                {% if p.tallas %}
-                                <div style="margin-bottom: 6px;">
-                                    <div class="selector-label">Talla:</div>
-                                    <div class="inline-selector-row" id="talla-row-{{ p.id }}">
-                                        {% for t in p.tallas %}
-                                        <div class="size-chip" onclick="selectChip('{{ p.id }}', 'talla', '{{ t }}', this)">{{ t }}</div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                                {% endif %}
-                                {% if p.especialidades %}
-                                <div style="margin-bottom: 6px;">
-                                    <div class="selector-label">Especialidad:</div>
-                                    <div class="inline-selector-row" id="esp-row-{{ p.id }}">
-                                        {% for e in p.especialidades %}
-                                        <div class="size-chip" onclick="selectChip('{{ p.id }}', 'esp', '{{ e }}', this)">{{ e }}</div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                                {% endif %}
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-                                    <div class="price">$ {{ p.precio_f }}</div>
-                                    <button class="add-btn" onclick="cart.add('{{ p.nombre }}', {{ p.precio }}, '{{ p.id }}')" style="width: 36px; height: 36px;">🛒</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                <div id="no-favs-message" style="display:none; text-align:center; padding:40px; color:#64748b;">No tienes favoritos agregados. ❤️</div>
-            </div>
-
-            <div id="profile-view-wrapper" class="profile-section-container">
-                
-                <div style="background: var(--card-bg); border: 1px solid var(--border); padding: 16px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px var(--accent-glow);">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="font-size: 1.5rem;">🎛️</span>
-                        <div>
-                            <h4 style="font-weight: 800; font-size: 0.9rem; margin: 0;">Panel de Control Core</h4>
-                            <p style="font-size: 0.7rem; color: #64748b; margin: 0;">Estadísticas del Evaristo García</p>
-                        </div>
-                    </div>
-                    <button onclick="document.getElementById('admin-chart-box').scrollIntoView({ behavior: 'smooth' })" style="background: var(--accent); color: white; border: none; padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 0.78rem; cursor: pointer;">
-                        Abrir Panel →
-                    </button>
-                </div>
-
-                <div class="student-card" id="student-digital-badge">
-                    <div style="display: flex; align-items: center; gap: 16px;">
-                        <div style="font-size: 3rem; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 50%; width: 75px; height: 75px; display: flex; align-items: center; justify-content: center;" id="card-avatar-placeholder">💻</div>
-                        <div>
-                            <h3 style="font-weight: 800; font-size: 1.3rem;" id="card-student-name">Estudiante</h3>
-                            <p style="font-size: 0.8rem; opacity: 0.9;" id="card-student-email">correo@institucion.com</p>
-                            <span style="background: rgba(255,255,255,0.25); font-size: 0.68rem; padding: 3px 10px; border-radius: 12px; font-weight: 800; display: inline-block; margin-top: 6px; text-transform: uppercase;" id="card-student-tech">Especialidad: Sistemas</span>
-                        </div>
-                    </div>
-                    <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 10px; display: flex; justify-content: space-between; font-size: 0.75rem; opacity: 0.85;">
-                        <div><b>Colegio:</b> I.E. Evaristo García</div>
-                        <div><b>Jornada:</b> <span id="card-student-jornada">Mañana</span></div>
-                    </div>
-                </div>
-
-                <div id="admin-chart-box" style="background: var(--card-bg); border: 1px solid var(--border); padding: 24px; border-radius: 24px;">
-                    <h3 style="font-weight: 800; font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 15px;">📊 Panel de Control Administrativo (Simulación IA)</h3>
-                    <div style="width: 100%; max-height: 240px; position: relative;">
-                        <canvas id="adminChart"></canvas>
-                    </div>
-                    <p style="font-size: 0.72rem; color:#64748b; margin-top: 10px; text-align: center;">Muestra estadística en tiempo real de insumos despachados por modalidad técnica.</p>
-                </div>
-
-                <div style="background: var(--card-bg); border: 1px solid var(--border); padding: 24px; border-radius: 24px; display: flex; flex-direction: column; gap: 14px;">
-                    <h3 style="font-weight: 800; font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;">⚙️ Personalizar mis Datos</h3>
-                    
-                    <div class="profile-input-group">
-                        <label>1. Elige tu Ícono de Avatar:</label>
-                        <div class="avatar-selector-grid">
-                            <div class="avatar-option" onclick="cambiarEmojiAvatar('💻', this)">💻</div>
-                            <div class="avatar-option" onclick="cambiarEmojiAvatar('📐', this)">📐</div>
-                            <div class="avatar-option" onclick="cambiarEmojiAvatar('⚡', this)">⚡</div>
-                            <div class="avatar-option" onclick="cambiarEmojiAvatar('🎨', this)">🎨</div>
-                            <div class="avatar-option" onclick="cambiarEmojiAvatar('⚽', this)">⚽</div>
-                            <div class="avatar-option" onclick="cambiarEmojiAvatar('🥋', this)">🥋</div>
-                        </div>
-                    </div>
-
-                    <div class="profile-input-group">
-                        <label>Nombre en Plataforma:</label>
-                        <input type="text" id="edit-profile-name" oninput="sincronizarCamposEdicion()">
-                    </div>
-
-                    <div class="profile-input-group">
-                        <label>Especialidad Técnica:</label>
-                        <select id="edit-profile-tech" onchange="sincronizarCamposEdicion()">
-                            <option value="Sistemas">💻 Sistemas</option>
-                            <option value="Dibujo">📐 Dibujo Técnico</option>
-                            <option value="Electricidad">⚡ Electricidad</option>
-                        </select>
-                    </div>
-
-                    <div class="profile-input-group">
-                        <label>Jornada Escolar:</label>
-                        <select id="edit-profile-jornada" onchange="sincronizarCamposEdicion()">
-                            <option value="Mañana">☀️ Mañana</option>
-                            <option value="Tarde">🌤️ Tarde</option>
-                        </select>
-                    </div>
-
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button onclick="guardarCambiosPerfil()" style="flex: 2; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer;">💾 Guardar Cambios</button>
-                        <button onclick="cerrarSesionCompleta()" style="flex: 1; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer;">🚪 Salir</button>
-                    </div>
-                </div>
-            </div>
-
-        </main>
-    </div>
-
-    <div class="bottom-bar">
-        <div onclick="cart.showDatos()" style="cursor:pointer; font-weight:700;">🛒 Bolsa: <span id="count">0</span> items</div>
-        <div style="display: flex; flex-direction: column; align-items: center;">
-            <span style="font-size: 0.7rem; font-weight: bold;">Caja Mayor: <span id="budget-txt">$ 0</span> / $ {{ "{:,.0f}".format(meta).replace(",", ".") }}</span>
-            <div class="budget-container"><div class="budget-bar" id="budget-bar-fill"></div></div>
-        </div>
-        <div id="total" style="font-size: 1.1rem; font-weight:800; color:var(--accent); text-align: right;">$ 0</div>
-    </div>
-
-    <div id="modal-recibo" class="modal">
-        <div class="modal-box">
-            <button onclick="cerrarRecibo()" style="position: absolute; top: 12px; right: 12px; background: #ef4444; border: none; color: white; border-radius: 50%; width: 24px; height: 24px; cursor: pointer;">✕</button>
-            <h3 style="text-align:center; color:var(--nequi); font-weight: 800;">PASARELA DIRECTA NEQUI</h3>
-            <div id="recibo-info" style="margin: 12px 0; font-size: 0.85rem; border-top: 1px dashed #cbd5e1; padding-top: 10px;"></div>
-            
-            <div style="margin-bottom: 12px;">
-                <label style="font-size: 0.7rem; font-weight: bold;">📍 Bloque de Entrega:</label>
-                <select id="logistica-bloque" onchange="calcularTiempoEntrega()" style="width: 100%; padding: 8px; border-radius: 8px; background: var(--bg); color: var(--text); border: 1px solid var(--border);">
-                    <option value="">Seleccionar...</option>
-                    <option value="A">Bloque A (Sistemas)</option>
-                    <option value="B">Bloque B (Talleres)</option>
-                    <option value="C">Bloque C (Aulas)</option>
-                </select>
-                <div id="tiempo-entrega-txt" style="font-size: 0.7rem; color: var(--accent); margin-top: 2px; font-weight: bold;"></div>
-            </div>
-
-            <div style="text-align:center; margin: 10px 0;"><img id="nequi-qr" style="width:120px; height:120px; border-radius:10px;"></div>
-            <button class="add-btn" style="background:var(--nequi); color: white; width: 100%; padding: 10px; margin-bottom: 6px;" onclick="cart.abrirNequiReal()">💳 Abrir Nequi App</button>
-            <button class="add-btn" style="background:#10b981; color: white; width: 100%; padding: 10px;" onclick="cart.send()">Confirmar Transacción</button>
-        </div>
-    </div>
+    <button class="theme-toggle-floating" onclick="toggleTheme()">Alternar Modo</button>
 
     <script>
-        let ventasAcumuladas = parseInt("{{ ventas_reales }}") || 0;
-        const metaFinanciera = parseInt("{{ meta }}") || 2000000;
-        let selectedSelections = {};
-        let currentCategoryFilter = 'todos';
-        let currentTechFilter = 'todas';
-        let authMode = 'login';
-        let selectedAvatarEmoji = '💻';
-        let adminChartInstance = null;
-
-        /* 📡 LOGIC 1: CONTROLLER SERVICE WORKER ASYNC (PWA) */
-        let deferredPrompt;
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-            .then(() => console.log("Service Worker Activo."))
-            .catch(err => console.log("Error de Registro Worker: ", err));
-        }
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            const installBtn = document.getElementById('pwa-install-btn');
-            if(installBtn) installBtn.style.display = 'block'; 
-        });
-
-        document.getElementById('pwa-install-btn').addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('App instalada por el usuario.');
-                }
-                deferredPrompt = null;
-                document.getElementById('pwa-install-btn').style.display = 'none';
-            }
-        });
-
-        /* 📊 LOGIC 2: ENGINE RENDER CHART.JS ENGINE */
-        function inicializarGraficaAdmin() {
-            const ctx = document.getElementById('adminChart').getContext('2d');
-            adminChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['💻 Sistemas', '📐 Dibujo', '⚡ Electricidad', '🎒 Otros'],
-                    datasets: [{
-                        label: 'Insumos Solicitados',
-                        data: [42, 19, 28, 15], 
-                        backgroundColor: ['#2563eb', '#10b981', '#b45309', '#64748b'],
-                        borderWidth: 0,
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
-        }
-
-        /* 🔄 LOGIC 3: ROUTING INTERNO DE VISTAS (SPA STYLE) */
-        function irASeccion(seccion) {
-            const marketView = document.getElementById('market-view-wrapper');
-            const profileView = document.getElementById('profile-view-wrapper');
-            
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-
-            if (seccion === 'perfil') {
-                marketView.style.display = 'none';
-                profileView.style.display = 'flex';
-                document.getElementById('side-btn-perfil').classList.add('active');
-                cargarCamposDesdeStorage();
-                
-                setTimeout(() => {
-                    if(!adminChartInstance) inicializarGraficaAdmin();
-                }, 150);
-            } else {
-                marketView.style.display = 'block';
-                profileView.style.display = 'none';
-                document.getElementById('side-btn-todos').classList.add('active');
-                currentCategoryFilter = 'todos';
-                applyFilters();
-            }
-        }
-
-        /* 🔐 LOGIC 4: CONTROL DE ACCESO (AUTENTICACIÓN ENGINE) */
-        function toggleAuthMode() {
-            const title = document.getElementById('auth-title');
-            const subtitle = document.getElementById('auth-subtitle');
-            const mainBtn = document.getElementById('auth-main-btn');
-            const switchText = document.getElementById('auth-switch-text');
-            const switchLink = document.getElementById('auth-switch-link');
-            const nameInput = document.getElementById('reg-name');
-            const techBox = document.getElementById('reg-tech-box');
-
-            if (authMode === 'login') {
-                authMode = 'register';
-                title.innerText = "Crear una Cuenta";
-                subtitle.innerText = "Regístrate para guardar tu perfil, mano";
-                mainBtn.innerText = "Registrarse y Entrar";
-                switchText.innerText = "¿Ya tienes un perfil?";
-                switchLink.innerText = "Inicia sesión aquí";
-                nameInput.style.display = 'block';
-                techBox.style.display = 'flex';
-            } else {
-                authMode = 'login';
-                title.innerText = "Ingresar a la Plataforma";
-                subtitle.innerText = "Bienvenido de nuevo, mano";
-                mainBtn.innerText = "Entrar a Inovamagic";
-                switchText.innerText = "¿No tienes una cuenta aún?";
-                switchLink.innerText = "Regístrate aquí";
-                nameInput.style.display = 'none';
-                techBox.style.display = 'none';
-            }
-        }
-
-        function procesarAutenticacion() {
-            const email = document.getElementById('login-email').value.trim().toLowerCase();
-            const pass = document.getElementById('login-pass').value.trim();
-            const name = document.getElementById('reg-name').value.trim();
-            const tech = document.getElementById('reg-tech').value;
-            
-            if (!email || !pass) {
-                alert("Completa los campos principales, mano. ❌");
-                return;
-            }
-
-            if (authMode === 'register') {
-                if (!name) {
-                    alert("Por favor escribe tu nombre para armar el perfil. 👤");
-                    return;
-                }
-                
-                localStorage.setItem('saved_email', email);
-                localStorage.setItem('saved_password', pass);
-                localStorage.setItem('user_name', name);
-                localStorage.setItem('user_tech', tech);
-                localStorage.setItem('user_avatar', '💻');
-                localStorage.setItem('user_jornada', 'Mañana');
-                localStorage.setItem('session_active', 'true');
-                
-                document.getElementById('login-screen').style.display = 'none';
-                aplicarPreferenciasVisualesPerfil();
-                alert(`¡Cuenta creada con éxito! Bienvenido a Inovamagic, ${name}. 🎉`);
-                
-            } else {
-                const emailRegistrado = localStorage.getItem('saved_email');
-                const passwordRegistrada = localStorage.getItem('saved_password');
-
-                if (!emailRegistrado) {
-                    alert("Este correo no está registrado, mano. Crea tu cuenta primero. 📋");
-                    return;
-                }
-
-                if (email === emailRegistrado && pass === passwordRegistrada) {
-                    localStorage.setItem('session_active', 'true');
-                    document.getElementById('login-screen').style.display = 'none';
-                    aplicarPreferenciasVisualesPerfil();
-                    alert(`¡Ingreso exitoso! Qué bueno verte, ${localStorage.getItem('user_name') || 'mano'}. 👋`);
-                } else {
-                    alert("❌ ¡Contraseña o correo incorrectos, mano!");
-                    return;
-                }
-            }
-        }
-
-        /* ⚙️ LOGIC 5: PROFILE MANAGER ENGINE */
-        function cambiarEmojiAvatar(emoji, element) {
-            document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('selected'));
-            if(element) element.classList.add('selected');
-            selectedAvatarEmoji = emoji;
-            document.getElementById('card-avatar-placeholder').innerText = emoji;
-        }
-
-        document.querySelectorAll('.avatar-option').forEach(o => {
-            o.addEventListener('click', function() {
-                cambiarEmojiAvatar(this.innerText, this);
-            });
-        });
-
-        function sincronizarCamposEdicion() {
-            document.getElementById('card-student-name').innerText = document.getElementById('edit-profile-name').value || "Estudiante";
-            document.getElementById('card-student-tech').innerText = "Especialidad: " + document.getElementById('edit-profile-tech').value;
-            document.getElementById('card-student-jornada').innerText = document.getElementById('edit-profile-jornada').value;
-            
-            const card = document.getElementById('student-digital-badge');
-            const tech = document.getElementById('edit-profile-tech').value;
-            if(tech === 'Sistemas') card.style.background = "linear-gradient(135deg, #1e3a8a, #3b82f6)";
-            if(tech === 'Dibujo') card.style.background = "linear-gradient(135deg, #15803d, #22c55e)";
-            if(tech === 'Electricidad') card.style.background = "linear-gradient(135deg, #b45309, #eab308)";
-        }
-
-        function cargarCamposDesdeStorage() {
-            document.getElementById('edit-profile-name').value = localStorage.getItem('user_name') || "";
-            document.getElementById('edit-profile-tech').value = localStorage.getItem('user_tech') || "Sistemas";
-            document.getElementById('edit-profile-jornada').value = localStorage.getItem('user_jornada') || "Mañana";
-            selectedAvatarEmoji = localStorage.getItem('user_avatar') || '💻';
-            
-            document.querySelectorAll('.avatar-option').forEach(o => {
-                if(o.innerText === selectedAvatarEmoji) o.classList.add('selected');
-                else o.classList.remove('selected');
-            });
-            
-            sincronizarCamposEdicion();
-            cambiarEmojiAvatar(selectedAvatarEmoji, null);
-        }
-
-        function guardarCambiosPerfil() {
-            const nuevoNombre = document.getElementById('edit-profile-name').value.trim();
-            const nuevaTech = document.getElementById('edit-profile-tech').value;
-            const nuevaJornada = document.getElementById('edit-profile-jornada').value;
-
-            if(!nuevoNombre) return alert("El nombre no puede quedar vacío, mano.");
-
-            localStorage.setItem('user_name', nuevoNombre);
-            localStorage.setItem('user_tech', nuevaTech);
-            localStorage.setItem('user_jornada', nuevaJornada);
-            localStorage.setItem('user_avatar', selectedAvatarEmoji);
-
-            aplicarPreferenciasVisualesPerfil();
-            alert("¡Perfil personalizado y guardado correctamente, mano! 💾");
-            irASeccion('mercado');
-        }
-
-        function aplicarPreferenciasVisualesPerfil() {
-            const name = localStorage.getItem('user_name') || "Estudiante";
-            const emoji = localStorage.getItem('user_avatar') || "💻";
-            const tech = localStorage.getItem('user_tech') || "todas";
-
-            document.getElementById('user-display-name').innerText = name.split(' ')[0];
-            document.getElementById('header-avatar-emoji').innerText = emoji;
-            document.getElementById('card-student-email').innerText = localStorage.getItem('saved_email') || "";
-
-            const targetChip = document.getElementById('tech-chip-' + tech);
-            if(targetChip) filtrarPorModalidad(tech, targetChip);
-        }
-
-        function cerrarSesionCompleta() {
-            localStorage.removeItem('session_active');
-            irASeccion('mercado');
-            document.getElementById('login-screen').style.display = 'flex';
-            document.getElementById('login-email').value = "";
-            document.getElementById('login-pass').value = "";
-            alert("Sesión cerrada, mano! 🚀");
-        }
-
-        /* 🛍️ LOGIC 6: FILTRADO INTELIGENTE DE PRODUCTOS */
-        function selectChip(productId, type, value, element) {
-            element.parentElement.querySelectorAll('.size-chip').forEach(c => c.classList.remove('selected'));
-            element.classList.add('selected');
-            if (!selectedSelections[productId]) selectedSelections[productId] = {};
-            selectedSelections[productId][type] = value;
-        }
-
-        function toggleFavorito(id) {
-            const btn = document.getElementById('fav-'+id);
-            btn.classList.toggle('fav-active');
-            if(btn.classList.contains('fav-active')) {
-                btn.innerText = "❤️"; localStorage.setItem('fav-'+id, 'true');
-            } else {
-                btn.innerText = "🤍"; localStorage.removeItem('fav-'+id);
-            }
-            if(currentCategoryFilter === 'favoritos') applyFilters();
-        }
-
-        function filtrarPorModalidad(modalidad, element) {
-            document.querySelectorAll('.tech-chip').forEach(chip => chip.classList.remove('active'));
-            if(element) element.classList.add('active');
-            currentTechFilter = modalidad;
-            applyFilters();
-        }
-
-        function filterByCategory(cat, btn) {
-            irASeccion('mercado');
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentCategoryFilter = cat;
-            applyFilters();
-            document.getElementById('promo-carousel').style.display = cat === "todos" ? "flex" : "none";
-        }
-
-        function applyFilters() {
-            let count = 0;
-            document.querySelectorAll('.card').forEach(c => {
-                const id = c.id.replace('prod-card-', '');
-                const matchesCategory = (currentCategoryFilter === 'todos' || c.dataset.cat === currentCategoryFilter);
-                const isFav = localStorage.getItem('fav-'+id) === 'true';
-                
-                const productSpecs = c.dataset.specs ? c.dataset.specs.split(',') : [];
-                const matchesTech = (currentTechFilter === 'todas' || productSpecs.includes(currentTechFilter));
-
-                let finalDisplay = false;
-                if (currentCategoryFilter === 'favoritos') {
-                    finalDisplay = isFav && matchesTech;
-                } else {
-                    finalDisplay = matchesCategory && matchesTech;
-                }
-
-                c.style.display = finalDisplay ? 'flex' : 'none';
-                if(finalDisplay && currentCategoryFilter === 'favoritos') count++;
-            });
-
-            document.getElementById('no-favs-message').style.display = (currentCategoryFilter === 'favoritos' && count === 0) ? 'block' : 'none';
-        }
-
-        /* 🔔 LOGIC 7: SIMULADOR DE NOTIFICACIONES ASÍNCRONAS EN TIEMPO REAL */
-        function iniciarNotificacionesSimuladas() {
-            const nombres = ["Mateo", "Valentina", "Juan Camilo", "Isabella", "Andrés", "Mariana", "Samuel", "Gabriela"];
-            const grados = ["10-1", "10-2", "11-1", "11-2"];
-            const acciones = [
-                "acaba de comprar una Caja de Colores 🎨",
-                "añadió un Camibuso de Diario a la bolsa 👕",
-                "compró un Cuaderno Cuadriculado 📚",
-                "adquirió un Kit de Reglas Técnicas 📐"
-            ];
-
-            setInterval(() => {
-                if (document.getElementById('modal-recibo').classList.contains('active')) return;
-                const rNombre = nombres[Math.floor(Math.random() * nombres.length)];
-                const rGrado = grados[Math.floor(Math.random() * grados.length)];
-                const rAccion = acciones[Math.floor(Math.random() * acciones.length)];
-
-                const txt = document.getElementById('live-alert-text');
-                txt.innerHTML = `<b>${rNombre} (${rGrado})</b> ${rAccion}`;
-
-                const toast = document.getElementById('live-alert');
-                toast.classList.add('show');
-                setTimeout(() => { toast.classList.remove('show'); }, 4500);
-            }, 12000);
-        }
-
-        /* 🏁 WINDOWS INITIALIZER */
-        window.onload = function() {
-            const sesionActiva = localStorage.getItem('session_active');
-
-            if (sesionActiva === 'true') {
-                document.getElementById('login-screen').style.display = 'none';
-                aplicarPreferenciasVisualesPerfil();
-            }
-
-            document.querySelectorAll('.action-circle-btn[id^="fav-"]').forEach(btn => {
-                const id = btn.id.split('-')[1];
-                if(localStorage.getItem('fav-'+id) === 'true') { btn.classList.add('fav-active'); btn.innerText = "❤️"; }
-            });
-
-            actualizarBarraPresupuesto(ventasAcumuladas);
-            
-            setTimeout(() => {
-                document.getElementById('skeleton-grid').classList.remove('active');
-                document.getElementById('main-grid').style.display = 'grid';
-                iniciarNotificacionesSimuladas();
-            }, 400);
-        };
-
-        function calcularTiempoEntrega() {
-            const b = document.getElementById('logistica-bloque').value;
-            const txt = document.getElementById('tiempo-entrega-txt');
-            if(!b) return txt.innerText = "";
-            let m = b === 'A' ? 5 : (b === 'B' ? 8 : 12);
-            txt.innerText = `🚀 Llega al Bloque ${b} en ${m} minutos.`;
-            cart.bloqueEntrega = b;
+        function showTopNotification(message) {
+            const container = document.getElementById('notification-container');
+            const toast = document.createElement('div');
+            toast.className = 'notification';
+            toast.innerText = message;
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3000);
         }
 
         function toggleTheme() {
-            const t = document.documentElement.getAttribute('data-theme');
-            document.documentElement.setAttribute('data-theme', t === 'dark' ? 'light' : 'dark');
+            const htmlNode = document.documentElement;
+            let currentTheme = htmlNode.getAttribute('data-theme');
+            let targetTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            htmlNode.setAttribute('data-theme', targetTheme);
+            fetch('/save-theme', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ theme: targetTheme })
+            });
+            showTopNotification(`Modo ${targetTheme}`);
         }
-
-        function actualizarBarraPresupuesto(total) {
-            document.getElementById('budget-bar-fill').style.width = Math.min((total / metaFinanciera) * 100, 100) + "%";
-            document.getElementById('budget-txt').innerText = "$ " + total.toLocaleString('es-CO');
-        }
-
-        function filterProducts(q) {
-            const query = q.toLowerCase();
-            document.querySelectorAll('.card').forEach(c => c.style.display = c.dataset.name.includes(query) ? 'flex' : 'none');
-        }
-
-        function cerrarRecibo() { document.getElementById('modal-recibo').classList.remove('active'); }
-
-        /* ==========================================================================
-           🛒 LOGIC 8: MOTOR DEL CARRITO DE COMPRAS (FINANCIAL ENGINE)
-           ========================================================================== */
-        const cart = {
-            items: [], total: 0, bloqueEntrega: "",
-            add(name, price, id) {
-                const s = selectedSelections[id] || {};
-                if(document.getElementById('talla-row-'+id) && !s.talla) return alert("Selecciona una talla, mano.");
-                if(document.getElementById('esp-row-'+id) && !s.esp) return alert("Selecciona la especialidad.");
-                let desc = (s.talla ? "Talla " + s.talla : "") + (s.esp ? " " + s.esp : "");
-                this.items.push({name, price, d: desc}); this.update();
-            },
-            update() {
-                this.total = this.items.reduce((s, i) => s + i.price, 0);
-                document.getElementById('count').innerText = this.items.length;
-                document.getElementById('total').innerText = "$ " + this.total.toLocaleString('es-CO');
-            },
-            showDatos() {
-                if(this.items.length === 0) return alert("Bolsa vacía, mano.");
-                let html = `<b>Tus productos:</b><br>`;
-                this.items.forEach(i => html += `• ${i.name} ${i.d}<br>`);
-                html += `<br><b style="color:#2563eb;">Total Orden: $${this.total.toLocaleString('es-CO')}</b>`;
-                document.getElementById('nequi-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Inovamagic_${this.total}`;
-                document.getElementById('recibo-info').innerHTML = html;
-                document.getElementById('modal-recibo').classList.add('active');
-            },
-            abrirNequiReal() { window.location.href = `nequi://transfer?phone={{ config.nequi_numero }}&amount=${this.total}`; },
-            send() {
-                if(!this.bloqueEntrega) return alert("Elige dónde te entregamos el producto.");
-                let msg = `*NUEVO PEDIDO INOVAMAGIC*\n*Lugar de Entrega:* Bloque ${this.bloqueEntrega}\n`;
-                this.items.forEach(i => msg += `- ${i.name} ${i.d}\n`);
-                msg += `*TOTAL NETO: $${this.total.toLocaleString('es-CO')}*`;
-                
-                fetch('/api/registrar-venta', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ total: this.total }) })
-                .then(res => res.json())
-                .then(data => {
-                    actualizarBarraPresupuesto(data.nuevas_ventas);
-                    
-                    /* 📊 ACTUALIZACIÓN EN VIVO DE LA GRÁFICA AL HACER LA COMPRA */
-                    if(adminChartInstance) {
-                        const currentTech = localStorage.getItem('user_tech') || 'Sistemas';
-                        if(currentTech === 'Sistemas') adminChartInstance.data.datasets[0].data[0] += 1;
-                        if(currentTech === 'Dibujo') adminChartInstance.data.datasets[0].data[1] += 1;
-                        if(currentTech === 'Electricidad') adminChartInstance.data.datasets[0].data[2] += 1;
-                        adminChartInstance.update();
-                    }
-
-                    window.open(`https://wa.me/{{ config.whatsapp_admin }}?text=${encodeURIComponent(msg)}`, '_blank');
-                    this.items = []; this.update(); cerrarRecibo();
-                });
-            }
-        };
     </script>
 </body>
 </html>
