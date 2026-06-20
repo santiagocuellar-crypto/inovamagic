@@ -130,7 +130,7 @@
         .navbar-menu {
             display: flex;
             align-items: center;
-            gap: 26px;
+            gap: 20px;
             list-style: none;
             margin: 0;
             padding: 0;
@@ -165,12 +165,28 @@
             text-align: center;
         }
 
+        .btn-logout-nav {
+            background-color: #ff3b30;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            font-size: 12.5px;
+            font-weight: 500;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .btn-logout-nav:hover {
+            opacity: 0.9;
+        }
+
         /* ==========================================
-           4. NUEVO: CARRUSEL DE TARJETAS FLUIDO (REEMPLAZA LOGIN INICIAL)
+           4. CARRUSEL DE TARJETAS FLUIDO
            ========================================== */
         .carousel-section {
             max-width: 1120px;
-            margin: 40px auto 20px auto;
+            margin: 30px auto 10px auto;
             padding: 0 22px;
         }
 
@@ -187,12 +203,12 @@
             overflow-x: auto;
             padding: 10px 4px 24px 4px;
             scroll-behavior: smooth;
-            scrollbar-width: none; /* Oculta scrollbar en Firefox */
+            scrollbar-width: none;
             -webkit-overflow-scrolling: touch;
         }
 
         .carousel-container::-webkit-scrollbar {
-            display: none; /* Oculta scrollbar en Chrome/Safari */
+            display: none;
         }
 
         .carousel-card {
@@ -203,7 +219,6 @@
             padding: 16px;
             box-shadow: 0 4px 16px var(--card-shadow);
             transition: transform 0.3s var(--bezier-smooth), box-shadow 0.3s;
-            text-align: left;
         }
 
         .carousel-card:hover {
@@ -244,11 +259,11 @@
         }
 
         /* ==========================================
-           5. CAJA DE ACCESO REUBICADA ABAJO (LOGIN LIMPIO)
+           5. CAJA DE ACCESO (LOGIN)
            ========================================== */
         .auth-container {
             max-width: 380px;
-            margin: 20px auto 60px auto;
+            margin: 40px auto 40px auto;
             padding: 36px 30px;
             background-color: var(--surface-color);
             border: 1px solid var(--border-color);
@@ -278,11 +293,6 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             outline: none;
-        }
-
-        .form-control:focus {
-            border-color: var(--accent-color);
-            background-color: var(--surface-color);
         }
 
         .btn-submit {
@@ -318,13 +328,7 @@
         .auth-divider:not(:empty)::before { margin-right: .8em; }
         .auth-divider:not(:empty)::after { margin-left: .8em; }
 
-        .social-auth-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .btn-social-auth {
+        .btn-google-auth {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -336,16 +340,23 @@
             font-weight: 500;
             cursor: pointer;
             border: 1px solid var(--border-color);
-            background: var(--surface-color);
-            color: var(--text-main);
+            background: #ffffff;
+            color: #1d1d1f;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+
+        .btn-google-auth:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         /* ==========================================
-           6. GRID DE CATALOGO COMPLETO
+           6. GRID DEL CATÁLOGO
            ========================================== */
         .showcase-container {
             max-width: 1120px;
-            margin: 0 auto 80px auto;
+            margin: 30px auto 80px auto;
             padding: 0 22px;
         }
 
@@ -435,15 +446,43 @@
                 <i class="fas fa-magic" style="color: var(--accent-color);"></i> Inovamagic
             </div>
             <ul class="navbar-menu">
-                <li class="navbar-item">
+                <li>
                     <button class="cart-nav-btn" onclick="reviewCart()">
                         <i class="fas fa-shopping-bag"></i>
                         <span class="cart-badge" id="cart-counter">0</span>
                     </button>
                 </li>
+                {% if session.get('usuario') %}
+                <li><a href="/logout" class="btn-logout-nav">Salir</a></li>
+                {% endif %}
             </ul>
         </div>
     </nav>
+
+    {% if not session.get('usuario') %}
+    <main class="auth-container">
+        <div class="auth-header">
+            <h2>Ingreso al Sistema</h2>
+        </div>
+        <form action="/" method="POST">
+            <div class="form-group">
+                <input type="email" name="email" class="form-control" placeholder="Correo electrónico" required>
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
+            </div>
+            <button type="submit" class="btn-submit">Continuar</button>
+        </form>
+
+        <div class="auth-divider">o continuar con</div>
+
+        <div class="social-auth-group">
+            <button type="button" class="btn-google-auth" onclick="triggerGoogleLogin()">
+                <i class="fab fa-google" style="color: #db4437;"></i> Continuar con Google
+            </button>
+        </div>
+    </main>
+    {% endif %}
 
     <section class="carousel-section">
         <h3 class="carousel-title">🔥 Lo más buscado (I.E. Evaristo García)</h3>
@@ -463,29 +502,6 @@
             {% endfor %}
         </div>
     </section>
-
-    <main class="auth-container">
-        <div class="auth-header">
-            <h2>Ingreso al Sistema</h2>
-        </div>
-        <form action="/" method="POST">
-            <div class="form-group">
-                <input type="email" name="email" class="form-control" placeholder="Correo electrónico" required>
-            </div>
-            <div class="form-group">
-                <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
-            </div>
-            <button type="submit" class="btn-submit">Continuar</button>
-        </form>
-
-        <div class="auth-divider">o continuar con</div>
-
-        <div class="social-auth-group">
-            <button type="button" class="btn-social-auth" onclick="triggerGoogleLogin()">
-                <i class="fab fa-google" style="color: #db4437;"></i> Google Funcional
-            </button>
-        </div>
-    </main>
 
     <section class="showcase-container">
         <h2 class="showcase-heading">Catálogo de Uniformes</h2>
@@ -546,7 +562,11 @@
             setTimeout(() => {
                 showTopNotification("Verificando cuenta: santiagocuellar@gmail.com...");
                 setTimeout(() => {
-                    showTopNotification("¡Acceso concedido exitosamente con Google!");
+                    showTopNotification("¡Acceso concedido exitosamente!");
+                    // Recarga la página simulando que la sesión cambió en el backend
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
                 }, 1500);
             }, 1500);
         }
