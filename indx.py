@@ -1,14 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 
 app = Flask(__name__)
-# La clave secreta es obligatoria en Flask para poder usar sesiones cifradas
+# Clave secreta obligatoria para cifrar las sesiones de los usuarios en el navegador
 app.secret_key = 'inovamagic_secret_key_2026' 
 
-# Credenciales de prueba fijas para la sustentación
+# Credenciales de prueba fijas para la sustentación técnica
 USUARIO_TEST = "santiago@evaristogarcia.com"
 CLAVE_TEST = "12345"
 
-# Tu base de datos de 20 productos
+# BASE DE DATOS COMPLETA: Los 20 productos oficiales sin recortes
 productos = [
     {"id": 1, "categoria": "diario-masculino", "nombre": "Pantalón de Diario Lino (Talla 14)", "descripcion": "Pantalón gris de lino institucional para hombre. Confección clásica, tela resistente y cómoda.", "precio": 75000, "imagen": "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=500&auto=format&fit=crop"},
     {"id": 2, "categoria": "diario-masculino", "nombre": "Pantalón de Diario Lino (Talla S)", "descripcion": "Pantalón gris de lino institucional talla adulto S. Corte elegante y excelente caída.", "precio": 79000, "imagen": "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?q=80&w=500&auto=format&fit=crop"},
@@ -34,28 +34,39 @@ productos = [
 
 @app.route('/')
 def index():
+    # Artículos destacados del carrusel superior
     carrusel_items = [productos[0], productos[5], productos[15]]
-    # Mandamos el estado de la sesión y los errores si existen
     usuario_logueado = session.get('usuario')
     error_auth = session.pop('error_auth', None)
     return render_template('index.html', productos=productos, carrusel=carrusel_items, usuario=usuario_logueado, error=error_auth)
+
+@app.route('/login-page')
+def login_page():
+    # Renderiza la vista independiente con los botones de Google y tradicionales
+    error_auth = session.pop('error_auth', None)
+    return render_template('login.html', error=error_auth)
 
 @app.route('/login', methods=['POST'])
 def login():
     correo = request.form.get('email')
     contrasena = request.form.get('password')
     
-    # Validación lógica de credenciales
     if correo == USUARIO_TEST and contrasena == CLAVE_TEST:
-        session['usuario'] = "Santiago Cuellar"  # Guarda el usuario en la sesión
+        session['usuario'] = "Santiago Cuellar"
+        return redirect(url_for('index'))
     else:
         session['error_auth'] = "Correo o contraseña incorrectos"
-        
+        return redirect(url_for('login_page'))
+
+@app.route('/login-google')
+def login_google():
+    # Simula el inicio de sesión exitoso por medio de las APIs de Google
+    session['usuario'] = "Santiago Cuellar (Google)"
     return redirect(url_for('index'))
 
 @app.route('/logout')
 def logout():
-    session.pop('usuario', None)  # Destruye la sesión del usuario
+    session.pop('usuario', None)
     return redirect(url_for('index'))
 
 if __name__ == '__main__':

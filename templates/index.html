@@ -38,9 +38,7 @@
             flex-direction: column;
         }
 
-        /* ==========================================================================
-           BARRA DE NAVEGACIÓN (NAVBAR)
-           ========================================================================== */
+        /* === BARRA DE NAVEGACIÓN (NAVBAR) === */
         .navbar {
             background-color: var(--primary);
             color: white;
@@ -125,9 +123,7 @@
             gap: 8px;
         }
 
-        /* ==========================================================================
-           SECCIÓN COMPONENTE: CARRUSEL DESTACADOS
-           ========================================================================== */
+        /* === SECCIÓN COMPONENTE: CARRUSEL DESTACADOS === */
         .carousel-section {
             max-width: 1200px;
             margin: 35px auto 15px auto;
@@ -194,9 +190,7 @@
             font-size: 14px;
         }
 
-        /* ==========================================================================
-           SECCIÓN COMPONENTE: ÁREA DE ACCIONES Y BUSCADOR
-           ========================================================================== */
+        /* === SECCIÓN COMPONENTE: ÁREA DE BUSCADOR === */
         .search-area {
             max-width: 1200px;
             margin: 25px auto;
@@ -245,9 +239,7 @@
             font-size: 16px;
         }
 
-        /* ==========================================================================
-           SECCIÓN COMPONENTE: GRILLA GENERAL DE PRODUCTOS
-           ========================================================================== */
+        /* === SECCIÓN COMPONENTE: GRILLA GENERAL DE PRODUCTOS === */
         .grid-section {
             max-width: 1200px;
             margin: 0 auto 60px auto;
@@ -335,9 +327,7 @@
             background: var(--accent);
         }
 
-        /* ==========================================================================
-           MODALES Y VENTANAS EMERGENTES (DETALLE, LOGIN Y PERFIL)
-           ========================================================================== */
+        /* === MODALES Y VENTANAS EMERGENTES === */
         .modal-view {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -386,7 +376,6 @@
             color: var(--primary);
         }
 
-        /* Estilos Internos Modal Detalle */
         .modal-picture {
             width: 100%;
             height: 250px;
@@ -410,52 +399,7 @@
             line-height: 1.6;
         }
 
-        /* Estilos Internos Formularios y Modales de Usuario */
-        .form-group {
-            margin-bottom: 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .form-group label {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--primary-light);
-        }
-
-        .form-group input {
-            padding: 12px 15px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            outline: none;
-            font-size: 14px;
-            transition: border-color 0.2s;
-        }
-
-        .form-group input:focus {
-            border-color: var(--accent);
-        }
-
-        .btn-submit-form {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-            font-size: 15px;
-            transition: background 0.2s;
-        }
-
-        .btn-submit-form:hover {
-            background: var(--accent-hover);
-        }
-
-        /* Perfil de Usuario Interno */
+        /* Perfil de Usuario Filas */
         .profile-row {
             display: flex;
             justify-content: space-between;
@@ -474,9 +418,25 @@
             font-weight: 500;
         }
 
-        /* ==========================================================================
-           PIE DE PÁGINA (FOOTER)
-           ========================================================================== */
+        .btn-close-profile {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            font-size: 15px;
+            transition: background 0.2s;
+        }
+
+        .btn-close-profile:hover {
+            background: var(--accent);
+        }
+
+        /* === PIE DE PÁGINA (FOOTER) === */
         footer {
             background: var(--primary);
             color: #94a3b8;
@@ -502,20 +462,14 @@
                     </div>
                     <a href="/logout" class="nav-btn btn-logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
                 {% else %}
-                    <div class="nav-btn btn-login" onclick="showLoginModal()">
+                    <a href="/login-page" class="nav-btn btn-login">
                         <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                    </div>
+                    </a>
                 {% endif %}
                 <div class="cart-status"><i class="fas fa-shopping-basket"></i> Canasta: <span id="lbl-count">0</span></div>
             </div>
         </div>
     </nav>
-
-    {% if error %}
-    <div style="background-color: #fee2e2; color: #b91c1c; text-align: center; padding: 12px; font-weight: 600; font-size: 14px; width: 100%;">
-        <i class="fas fa-exclamation-circle"></i> {{ error }}
-    </div>
-    {% endif %}
 
     <section class="carousel-section">
         <h3 class="carousel-title">Destacados de la Semana</h3>
@@ -572,26 +526,6 @@
         </div>
     </div>
 
-    <div class="modal-view" id="login-modal" onclick="hideLoginModal()">
-        <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 400px;">
-            <i class="fas fa-times close-btn" onclick="hideLoginModal()"></i>
-            <h3 style="margin-bottom: 5px; font-weight: 700; color: var(--primary);">Acceso al Sistema</h3>
-            <p style="font-size: 12px; color: var(--muted); margin-bottom: 20px;">Credenciales: santiago@evaristogarcia.com | 12345</p>
-            
-            <form action="/login" method="POST">
-                <div class="form-group">
-                    <label>Correo Institucional</label>
-                    <input type="email" name="email" placeholder="nombre@evaristogarcia.com" required>
-                </div>
-                <div class="form-group">
-                    <label>Contraseña de Acceso</label>
-                    <input type="password" name="password" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="btn-submit-form">Autenticar Cuenta</button>
-            </form>
-        </div>
-    </div>
-
     <div class="modal-view" id="profile-modal" onclick="hideProfileModal()">
         <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 420px;">
             <i class="fas fa-times close-btn" onclick="hideProfileModal()"></i>
@@ -618,7 +552,7 @@
                 <span>Administrador / Tester</span>
             </div>
             
-            <button class="btn-submit-form" style="background: var(--primary); margin-top: 20px;" onclick="hideProfileModal()">Cerrar Vista</button>
+            <button class="btn-close-profile" onclick="hideProfileModal()">Cerrar Vista</button>
         </div>
     </div>
 
@@ -641,15 +575,6 @@
         
         function hideModal() { 
             document.getElementById('pop-modal').classList.remove('active'); 
-        }
-
-        // Funciones del Modal de Formulario de Login
-        function showLoginModal() { 
-            document.getElementById('login-modal').classList.add('active'); 
-        }
-        
-        function hideLoginModal() { 
-            document.getElementById('login-modal').classList.remove('active'); 
         }
 
         // Funciones del Modal del Perfil del Usuario Logueado
