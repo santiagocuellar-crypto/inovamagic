@@ -436,6 +436,63 @@
             background: var(--accent);
         }
 
+        /* === NUEVO SISTEMA: TOASTS DE NOTIFICACIONES FLOTANTES SUPERIORES === */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .toast-notification {
+            pointer-events: auto;
+            background: white;
+            color: var(--text);
+            padding: 16px 24px;
+            border-radius: 12px; /* Bordes redondeados estéticos */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            min-width: 300px;
+            max-width: 450px;
+            border-left: 5px solid #cbd5e1;
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.3s;
+            opacity: 0;
+        }
+
+        .toast-notification.active {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast-notification.success {
+            border-left-color: var(--accent);
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .toast-notification.success i {
+            color: var(--accent);
+        }
+
+        .toast-notification.error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .toast-notification.error i {
+            color: #ef4444;
+        }
+
         /* === PIE DE PÁGINA (FOOTER) === */
         footer {
             background: var(--primary);
@@ -450,6 +507,8 @@
     </style>
 </head>
 <body>
+
+    <div id="toast-container"></div>
 
     <nav class="navbar">
         <div class="nav-container">
@@ -505,7 +564,7 @@
                 </div>
                 <h3 class="p-name">{{ p.nombre }}</h3>
                 <div class="p-price">${{ "{:,.0f}".format(p.precio) }}</div>
-                <button class="btn-action" onclick="event.stopPropagation(); addItem();">
+                <button class="btn-action" onclick="event.stopPropagation(); addItem('{{ p.nombre }}');">
                     <i class="fas fa-cart-plus"></i> Añadir al Carrito
                 </button>
             </article>
@@ -521,7 +580,7 @@
             <p id="pop-desc" class="modal-desc"></p>
             <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                 <span id="pop-price" style="font-size: 24px; font-weight: 700; color: var(--accent);"></span>
-                <button class="btn-action" style="width: auto; padding: 12px 25px;" onclick="hideModal(); addItem();">Comprar Artículo</button>
+                <button class="btn-action" style="width: auto; padding: 12px 25px;" id="btn-pop-buy">Comprar Artículo</button>
             </div>
         </div>
     </div>
@@ -561,6 +620,27 @@
     </footer>
 
     <script>
+        // Función Centralizada de Notificaciones Estéticas (Toasts)
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast-notification ${type}`;
+            
+            const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            toast.innerHTML = `<i class="fas ${icon}"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            // Forzar reflow para ejecutar animación de entrada
+            setTimeout(() => toast.classList.add('active'), 50);
+            
+            // Retirar de la vista y destruir elemento
+            setTimeout(() => {
+                toast.classList.remove('active');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
         // Funciones del Modal de Detalles del Producto
         function showModal(name, desc, img, price) {
             document.getElementById('pop-title').innerText = name;
@@ -570,6 +650,13 @@
                 style: 'currency', currency: 'COP', minimumFractionDigits: 0
             });
             document.getElementById('pop-price').innerText = formatted;
+            
+            // Vincular el botón de comprar dentro del modal de forma limpia
+            document.getElementById('btn-pop-buy').onclick = function() {
+                hideModal();
+                addItem(name);
+            };
+            
             document.getElementById('pop-modal').classList.add('active');
         }
         
@@ -577,7 +664,7 @@
             document.getElementById('pop-modal').classList.remove('active'); 
         }
 
-        // Funciones del Modal del Perfil del Usuario Logueado
+        // Funciones del Modal del Perfil
         function showProfileModal() { 
             document.getElementById('profile-modal').classList.add('active'); 
         }
@@ -602,12 +689,19 @@
             }
         }
 
-        // Lógica Reactiva del Carrito de Compras
+        // Lógica Reactiva del Carrito de Compras usando Notificaciones Estéticas
         let itemsCount = 0;
-        function addItem() {
+        function addItem(productName) {
             itemsCount++;
             document.getElementById('lbl-count').innerText = itemsCount;
-            alert('¡Producto indexado correctamente en los registros de la base de datos local!');
+            showToast(`¡"${productName}" añadido con éxito al carrito!`, 'success');
+        }
+
+        // Detectar si el Backend envió un mensaje de bienvenida tras el login
+        window.onload = function() {
+            {% if usuario %}
+                showToast("¡Sesión iniciada correctamente! Bienvenido de vuelta.", "success");
+            {% endif %}
         }
     </script>
 </body>
