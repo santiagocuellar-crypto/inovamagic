@@ -436,7 +436,7 @@
             background: var(--accent);
         }
 
-        /* === NUEVO SISTEMA: TOASTS DE NOTIFICACIONES FLOTANTES SUPERIORES === */
+        /* === SISTEMA: TOASTS DE NOTIFICACIONES FLOTANTES SUPERIORES === */
         #toast-container {
             position: fixed;
             top: 20px;
@@ -453,7 +453,7 @@
             background: white;
             color: var(--text);
             padding: 16px 24px;
-            border-radius: 12px; /* Bordes redondeados estéticos */
+            border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
             display: flex;
             align-items: center;
@@ -479,9 +479,7 @@
             color: #166534;
         }
 
-        .toast-notification.success i {
-            color: var(--accent);
-        }
+        .toast-notification.success i { color: var(--accent); }
 
         .toast-notification.error {
             border-left-color: #ef4444;
@@ -489,9 +487,7 @@
             color: #991b1b;
         }
 
-        .toast-notification.error i {
-            color: #ef4444;
-        }
+        .toast-notification.error i { color: #ef4444; }
 
         /* === PIE DE PÁGINA (FOOTER) === */
         footer {
@@ -620,7 +616,6 @@
     </footer>
 
     <script>
-        // Función Centralizada de Notificaciones Estéticas (Toasts)
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -630,18 +625,14 @@
             toast.innerHTML = `<i class="fas ${icon}"></i> <span>${message}</span>`;
             
             container.appendChild(toast);
-            
-            // Forzar reflow para ejecutar animación de entrada
             setTimeout(() => toast.classList.add('active'), 50);
             
-            // Retirar de la vista y destruir elemento
             setTimeout(() => {
                 toast.classList.remove('active');
                 setTimeout(() => toast.remove(), 300);
             }, 3500);
         }
 
-        // Funciones del Modal de Detalles del Producto
         function showModal(name, desc, img, price) {
             document.getElementById('pop-title').innerText = name;
             document.getElementById('pop-desc').innerText = desc;
@@ -651,29 +642,17 @@
             });
             document.getElementById('pop-price').innerText = formatted;
             
-            // Vincular el botón de comprar dentro del modal de forma limpia
             document.getElementById('btn-pop-buy').onclick = function() {
                 hideModal();
                 addItem(name);
             };
-            
             document.getElementById('pop-modal').classList.add('active');
         }
         
-        function hideModal() { 
-            document.getElementById('pop-modal').classList.remove('active'); 
-        }
+        function hideModal() { document.getElementById('pop-modal').classList.remove('active'); }
+        function showProfileModal() { document.getElementById('profile-modal').classList.add('active'); }
+        function hideProfileModal() { document.getElementById('profile-modal').classList.remove('active'); }
 
-        // Funciones del Modal del Perfil
-        function showProfileModal() { 
-            document.getElementById('profile-modal').classList.add('active'); 
-        }
-        
-        function hideProfileModal() { 
-            document.getElementById('profile-modal').classList.remove('active'); 
-        }
-
-        // Motor de Búsqueda Dinámica en Tiempo Real
         function runSearch() {
             const query = document.getElementById('txt-search').value.toLowerCase();
             const grid = document.getElementById('main-products-view');
@@ -689,7 +668,6 @@
             }
         }
 
-        // Lógica Reactiva del Carrito de Compras usando Notificaciones Estéticas
         let itemsCount = 0;
         function addItem(productName) {
             itemsCount++;
@@ -697,7 +675,6 @@
             showToast(`¡"${productName}" añadido con éxito al carrito!`, 'success');
         }
 
-        // Detectar si el Backend envió un mensaje de bienvenida tras el login
         window.onload = function() {
             {% if usuario %}
                 showToast("¡Sesión iniciada correctamente! Bienvenido de vuelta.", "success");

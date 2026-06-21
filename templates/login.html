@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inovamagic - Iniciar Sesión</title>
+    <title>Inovamagic - Autenticación</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -21,13 +21,34 @@
             padding: 40px;
             border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            max-width: 400px;
+            max-width: 420px;
             width: 90%;
             text-align: center;
         }
         h2 { color: #0f172a; margin-bottom: 5px; font-weight: 700; }
-        p { color: #64748b; font-size: 14px; margin-bottom: 30px; }
+        p { color: #64748b; font-size: 14px; margin-bottom: 25px; }
         
+        /* Pestañas para cambiar entre Login y Registro */
+        .auth-tabs {
+            display: flex;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 25px;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .auth-tab.active {
+            color: #10b981;
+            border-bottom: 2px solid #10b981;
+            margin-bottom: -2px;
+        }
+
         .form-group {
             text-align: left;
             margin-bottom: 20px;
@@ -96,7 +117,6 @@
         .btn-google:hover { background: #f8fafc; }
         .btn-back { display: inline-block; margin-top: 20px; color: #10b981; text-decoration: none; font-size: 14px; font-weight: 500; }
         
-        /* ALERTA DE ERROR REMODELADA SUPERIOR CON BORDES REDONDEADOS */
         .error-msg {
             background-color: #fef2f2;
             color: #991b1b;
@@ -111,13 +131,37 @@
             gap: 10px;
             text-align: left;
         }
+
+        .success-msg {
+            background-color: #f0fdf4;
+            color: #166534;
+            border-left: 4px solid #10b981;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+        }
+
+        /* Ocultar elementos por defecto */
+        .auth-form { display: none; }
+        .auth-form.active { display: block; }
     </style>
 </head>
 <body>
 
     <div class="login-card">
-        <h2>Bienvenido</h2>
-        <p>Ingresa a tu cuenta de Inovamagic Store</p>
+        <h2>Inovamagic Store</h2>
+        <p>Gestiona tus compras institucionales</p>
+        
+        <div class="auth-tabs">
+            <div class="auth-tab active" id="tab-login" onclick="switchForm('login')">Iniciar Sesión</div>
+            <div class="auth-tab" id="tab-register" onclick="switchForm('register')">Registrarse</div>
+        </div>
         
         {% if error %}
         <div class="error-msg">
@@ -125,28 +169,77 @@
             <span>{{ error }}</span>
         </div>
         {% endif %}
+
+        {% if success %}
+        <div class="success-msg">
+            <i class="fas fa-check-circle"></i>
+            <span>{{ success }}</span>
+        </div>
+        {% endif %}
         
-        <form action="/login" method="POST">
-            <div class="form-group">
-                <label>Correo Electrónico</label>
-                <input type="email" name="email" placeholder="santiago@evaristogarcia.com" required>
-            </div>
-            <div class="form-group">
-                <label>Contraseña</label>
-                <input type="password" name="password" placeholder="12345" required>
-            </div>
-            <button type="submit" class="btn-submit">Ingresar al Sistema</button>
-        </form>
+        <div id="form-login" class="auth-form active">
+            <form action="/login" method="POST">
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" name="email" placeholder="santiago@evaristogarcia.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" name="password" placeholder="12345" required>
+                </div>
+                <button type="submit" class="btn-submit">Ingresar al Sistema</button>
+            </form>
+        </div>
+
+        <div id="form-register" class="auth-form">
+            <form action="/register" method="POST">
+                <div class="form-group">
+                    <label>Nombre Completo</label>
+                    <input type="text" name="name" placeholder="Ej: Juan Pérez" required>
+                </div>
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" name="email" placeholder="ejemplo@correo.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña Nueva</label>
+                    <input type="password" name="password" placeholder="Crea tu clave de seguridad" required>
+                </div>
+                <button type="submit" class="btn-submit" style="background: var(--accent);">Crear Cuenta Nueva</button>
+            </form>
+        </div>
         
         <div class="divider">O CONTINÚA CON</div>
         
         <a href="/login-google" class="btn-google">
             <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_Logo.svg" alt="Google" width="18">
-            Iniciar sesión con Google
+            Autenticarse con Google
         </a>
         
         <a href="/" class="btn-back"><i class="fas fa-arrow-left"></i> Volver al catálogo</a>
     </div>
 
+    <script>
+        // Cambiar dinámicamente de pestaña sin recargar
+        function switchForm(type) {
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            
+            if(type === 'login') {
+                document.getElementById('form-login').classList.add('active');
+                document.getElementById('tab-login').classList.add('active');
+            } else {
+                document.getElementById('form-register').classList.add('active');
+                document.getElementById('tab-register').classList.add('active');
+            }
+        }
+
+        // Si se viene de un intento de registro fallido o exitoso, mantener la pestaña correcta
+        window.onload = function() {
+            {% if active_tab == 'register' %}
+                switchForm('register');
+            {% endif %}
+        }
+    </script>
 </body>
 </html>
