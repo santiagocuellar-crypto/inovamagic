@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inovamagic Store - Catálogo Oficial</title>
+    <title>Inovamagic Store - Catálogo Oficial Completo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --primary: #0f172a;
+            --primary-light: #1e293b;
             --accent: #10b981;
+            --accent-hover: #059669;
             --bg: #f8fafc;
             --surface: #ffffff;
             --text: #1e293b;
             --muted: #64748b;
             --border: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
             --radius-md: 12px;
             --radius-lg: 16px;
         }
@@ -31,9 +33,14 @@
         body {
             background-color: var(--bg);
             color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* === BARRA DE NAVEGACIÓN COMPLETA === */
+        /* ==========================================================================
+           BARRA DE NAVEGACIÓN (NAVBAR)
+           ========================================================================== */
         .navbar {
             background-color: var(--primary);
             color: white;
@@ -55,13 +62,13 @@
         .nav-logo {
             font-size: 22px;
             font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .nav-logo span {
             color: var(--accent);
         }
 
-        /* Enlaces de Autenticación y Perfil incorporados */
         .nav-actions {
             display: flex;
             align-items: center;
@@ -75,10 +82,13 @@
             font-weight: 500;
             padding: 8px 16px;
             border-radius: 8px;
+            cursor: pointer;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             gap: 8px;
+            border: none;
+            background: transparent;
         }
 
         .nav-btn:hover {
@@ -92,7 +102,16 @@
         }
 
         .nav-btn.btn-login:hover {
-            background: #059669;
+            background: var(--accent-hover);
+        }
+
+        .nav-btn.btn-logout {
+            background: #ef4444;
+            color: white;
+        }
+
+        .nav-btn.btn-logout:hover {
+            background: #dc2626;
         }
 
         .cart-status {
@@ -101,13 +120,19 @@
             border-radius: 20px;
             font-size: 14px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        /* === SECCIÓN CARRUSEL ORGANIZADO === */
+        /* ==========================================================================
+           SECCIÓN COMPONENTE: CARRUSEL DESTACADOS
+           ========================================================================== */
         .carousel-section {
             max-width: 1200px;
-            margin: 35px auto;
+            margin: 35px auto 15px auto;
             padding: 0 20px;
+            width: 100%;
         }
 
         .carousel-title {
@@ -116,17 +141,19 @@
             margin-bottom: 15px;
             border-left: 4px solid var(--accent);
             padding-left: 10px;
+            color: var(--primary);
         }
 
         .carousel-track {
             display: flex;
             gap: 20px;
             overflow-x: auto;
-            padding-bottom: 10px;
+            padding-bottom: 15px;
+            scroll-behavior: smooth;
         }
 
         .carousel-track::-webkit-scrollbar {
-            height: 5px;
+            height: 6px;
         }
 
         .carousel-track::-webkit-scrollbar-thumb {
@@ -135,50 +162,78 @@
         }
 
         .carousel-item {
-            min-width: 280px;
+            min-width: 290px;
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
-            padding: 12px;
+            padding: 15px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
             box-shadow: var(--shadow);
         }
 
         .carousel-img {
-            width: 65px;
-            height: 65px;
+            width: 70px;
+            height: 70px;
             object-fit: cover;
             border-radius: 8px;
+            background-color: #f1f5f9;
         }
 
-        /* === BARRA DE BÚSQUEDA === */
+        .carousel-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .carousel-info span {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* ==========================================================================
+           SECCIÓN COMPONENTE: ÁREA DE ACCIONES Y BUSCADOR
+           ========================================================================== */
         .search-area {
             max-width: 1200px;
-            margin: 30px auto;
+            margin: 25px auto;
             padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 15px;
+            width: 100%;
+        }
+
+        .search-area h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
         }
 
         .search-box {
             position: relative;
-            max-width: 360px;
+            max-width: 400px;
             width: 100%;
         }
 
         .search-box input {
             width: 100%;
-            padding: 12px 20px 12px 45px;
+            padding: 12px 20px 12px 48px;
             border-radius: 25px;
             border: 1px solid var(--border);
             outline: none;
             box-shadow: var(--shadow);
             font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent);
         }
 
         .search-box i {
@@ -187,18 +242,23 @@
             top: 50%;
             transform: translateY(-50%);
             color: var(--muted);
+            font-size: 16px;
         }
 
-        /* === GRILLA DE PRODUCTOS ESCALABLE === */
+        /* ==========================================================================
+           SECCIÓN COMPONENTE: GRILLA GENERAL DE PRODUCTOS
+           ========================================================================== */
         .grid-section {
             max-width: 1200px;
             margin: 0 auto 60px auto;
             padding: 0 20px;
+            width: 100%;
+            flex: 1;
         }
 
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 25px;
         }
 
@@ -206,25 +266,25 @@
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 18px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             box-shadow: var(--shadow);
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .product-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08);
         }
 
         .img-container {
             width: 100%;
-            height: 200px;
+            height: 210px;
             overflow: hidden;
             border-radius: var(--radius-md);
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             background: #f1f5f9;
         }
 
@@ -232,44 +292,56 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .img-container img {
+            transform: scale(1.04);
         }
 
         .p-name {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 600;
             margin-bottom: 8px;
             color: var(--primary);
+            line-height: 1.4;
         }
 
         .p-price {
-            font-size: 18px;
+            font-size: 19px;
             font-weight: 700;
             color: var(--accent);
             margin-top: auto;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
         }
 
         .btn-action {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background: var(--primary);
             color: white;
             border: none;
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn-action:hover {
             background: var(--accent);
         }
 
-        /* === TARJETA DETALLE FLOTANTE (MODAL INTERACTIVO) === */
+        /* ==========================================================================
+           MODALES Y VENTANAS EMERGENTES (DETALLE, LOGIN Y PERFIL)
+           ========================================================================== */
         .modal-view {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.5);
+            background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(4px);
             display: flex;
             justify-content: center;
@@ -290,35 +362,130 @@
             max-width: 500px;
             width: 90%;
             border-radius: var(--radius-lg);
-            padding: 25px;
+            padding: 30px;
             position: relative;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-view.active .modal-box {
+            transform: scale(1);
         }
 
         .close-btn {
             position: absolute;
-            top: 15px; right: 15px;
-            font-size: 20px;
+            top: 20px; right: 20px;
+            font-size: 22px;
             color: var(--muted);
             cursor: pointer;
+            transition: color 0.2s;
         }
 
+        .close-btn:hover {
+            color: var(--primary);
+        }
+
+        /* Estilos Internos Modal Detalle */
         .modal-picture {
             width: 100%;
-            height: 240px;
+            height: 250px;
             object-fit: cover;
             border-radius: var(--radius-md);
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            background-color: #f1f5f9;
         }
 
-        /* === PIE DE PÁGINA INSTITUCIONAL === */
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .modal-desc {
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        /* Estilos Internos Formularios y Modales de Usuario */
+        .form-group {
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary-light);
+        }
+
+        .form-group input {
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent);
+        }
+
+        .btn-submit-form {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            font-size: 15px;
+            transition: background 0.2s;
+        }
+
+        .btn-submit-form:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Perfil de Usuario Interno */
+        .profile-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .profile-row span:first-child {
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        .profile-row span:last-child {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* ==========================================================================
+           PIE DE PÁGINA (FOOTER)
+           ========================================================================== */
         footer {
             background: var(--primary);
             color: #94a3b8;
             text-align: center;
-            padding: 25px;
+            padding: 25px 20px;
             font-size: 13px;
             border-top: 3px solid var(--accent);
+            width: 100%;
+            margin-top: auto;
         }
     </style>
 </head>
@@ -329,22 +496,36 @@
             <div class="nav-logo">Inova<span>magic</span> Store</div>
             
             <div class="nav-actions">
-                <a href="#" class="nav-btn" onclick="alert('Abriendo módulo de Autenticación / Registro...')"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
-                <a href="#" class="nav-btn" onclick="alert('Cargando el perfil del estudiante / cliente...')"><i class="fas fa-user-circle"></i> Mi Perfil</a>
+                {% if usuario %}
+                    <div class="nav-btn" onclick="showProfileModal()" style="color: white; font-weight: 600;">
+                        <i class="fas fa-user-circle"></i> Mi Perfil
+                    </div>
+                    <a href="/logout" class="nav-btn btn-logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
+                {% else %}
+                    <div class="nav-btn btn-login" onclick="showLoginModal()">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    </div>
+                {% endif %}
                 <div class="cart-status"><i class="fas fa-shopping-basket"></i> Canasta: <span id="lbl-count">0</span></div>
             </div>
         </div>
     </nav>
 
+    {% if error %}
+    <div style="background-color: #fee2e2; color: #b91c1c; text-align: center; padding: 12px; font-weight: 600; font-size: 14px; width: 100%;">
+        <i class="fas fa-exclamation-circle"></i> {{ error }}
+    </div>
+    {% endif %}
+
     <section class="carousel-section">
-        <h3 class="carousel-title">Destacados Seleccionados</h3>
+        <h3 class="carousel-title">Destacados de la Semana</h3>
         <div class="carousel-track">
             {% for c in carrusel %}
             <div class="carousel-item">
                 <img src="{{ c.imagen }}" class="carousel-img" alt="{{ c.nombre }}">
-                <div>
-                    <h4 style="font-size: 13px; font-weight: 600;">{{ c.nombre }}</h4>
-                    <span style="color: var(--accent); font-weight: bold; font-size: 13px;">${{ "{:,.0f}".format(c.precio) }}</span>
+                <div class="carousel-info">
+                    <h4>{{ c.nombre }}</h4>
+                    <span>${{ "{:,.0f}".format(c.precio) }}</span>
                 </div>
             </div>
             {% endfor %}
@@ -352,7 +533,7 @@
     </section>
 
     <div class="search-area">
-        <h2 style="font-size: 18px; font-weight: 700;">Catálogo de Artículos Oficiales</h2>
+        <h2>Catálogo Institucional Obligatorio</h2>
         <div class="search-box">
             <i class="fas fa-search"></i>
             <input type="text" id="txt-search" onkeyup="runSearch()" placeholder="Buscar prenda, talla, categoría...">
@@ -370,7 +551,9 @@
                 </div>
                 <h3 class="p-name">{{ p.nombre }}</h3>
                 <div class="p-price">${{ "{:,.0f}".format(p.precio) }}</div>
-                <button class="btn-action" onclick="event.stopPropagation(); addItem();">Añadir al Carrito</button>
+                <button class="btn-action" onclick="event.stopPropagation(); addItem();">
+                    <i class="fas fa-cart-plus"></i> Añadir al Carrito
+                </button>
             </article>
             {% endfor %}
         </div>
@@ -380,40 +563,105 @@
         <div class="modal-box" onclick="event.stopPropagation()">
             <i class="fas fa-times close-btn" onclick="hideModal()"></i>
             <img src="" id="pop-img" class="modal-picture" alt="Prenda">
-            <h3 id="pop-title" style="margin-bottom: 10px; font-weight: 700;"></h3>
-            <p id="pop-desc" style="font-size: 14px; color: var(--muted); margin-bottom: 20px; line-height: 1.5;"></p>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span id="pop-price" style="font-size: 22px; font-weight: 700; color: var(--accent);"></span>
-                <button class="btn-action" style="width: auto; padding: 10px 25px;" onclick="hideModal(); addItem();">Comprar</button>
+            <h3 id="pop-title" class="modal-title"></h3>
+            <p id="pop-desc" class="modal-desc"></p>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                <span id="pop-price" style="font-size: 24px; font-weight: 700; color: var(--accent);"></span>
+                <button class="btn-action" style="width: auto; padding: 12px 25px;" onclick="hideModal(); addItem();">Comprar Artículo</button>
             </div>
         </div>
     </div>
 
+    <div class="modal-view" id="login-modal" onclick="hideLoginModal()">
+        <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 400px;">
+            <i class="fas fa-times close-btn" onclick="hideLoginModal()"></i>
+            <h3 style="margin-bottom: 5px; font-weight: 700; color: var(--primary);">Acceso al Sistema</h3>
+            <p style="font-size: 12px; color: var(--muted); margin-bottom: 20px;">Credenciales: santiago@evaristogarcia.com | 12345</p>
+            
+            <form action="/login" method="POST">
+                <div class="form-group">
+                    <label>Correo Institucional</label>
+                    <input type="email" name="email" placeholder="nombre@evaristogarcia.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña de Acceso</label>
+                    <input type="password" name="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-submit-form">Autenticar Cuenta</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-view" id="profile-modal" onclick="hideProfileModal()">
+        <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 420px;">
+            <i class="fas fa-times close-btn" onclick="hideProfileModal()"></i>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <i class="fas fa-user-shield" style="font-size: 45px; color: var(--accent); margin-bottom: 10px;"></i>
+                <h3 style="font-weight: 700; color: var(--primary);">Perfil de Usuario</h3>
+                <p style="font-size: 12px; color: var(--muted);">Estudiante Técnico de Sistemas</p>
+            </div>
+            
+            <div class="profile-row">
+                <span>Nombre Completo:</span>
+                <span>{{ usuario }}</span>
+            </div>
+            <div class="profile-row">
+                <span>Institución:</span>
+                <span>I.E. Evaristo García</span>
+            </div>
+            <div class="profile-row">
+                <span>Proyecto de Grado:</span>
+                <span>Inovamagic Store</span>
+            </div>
+            <div class="profile-row">
+                <span>Rol Asignado:</span>
+                <span>Administrador / Tester</span>
+            </div>
+            
+            <button class="btn-submit-form" style="background: var(--primary); margin-top: 20px;" onclick="hideProfileModal()">Cerrar Vista</button>
+        </div>
+    </div>
+
     <footer>
-        <p>Institución Educativa Evaristo García &copy; 2026. Módulo Técnico de Sistemas e E-commerce Escolar.</p>
+        <p>Institución Educativa Evaristo García &copy; 2026. Módulo Técnico de Sistemas y Gestión de Tiendas Digitales.</p>
     </footer>
 
     <script>
-        // Control de Apertura de la Ventana Flotante
+        // Funciones del Modal de Detalles del Producto
         function showModal(name, desc, img, price) {
             document.getElementById('pop-title').innerText = name;
             document.getElementById('pop-desc').innerText = desc;
             document.getElementById('pop-img').src = img;
-            
-            // Convertir número crudo a formato legible de pesos colombianos
             const formatted = parseFloat(price).toLocaleString('es-CO', {
                 style: 'currency', currency: 'COP', minimumFractionDigits: 0
             });
             document.getElementById('pop-price').innerText = formatted;
             document.getElementById('pop-modal').classList.add('active');
         }
-
-        // Cierre de la Ventana Flotante
-        function hideModal() {
-            document.getElementById('pop-modal').classList.remove('active');
+        
+        function hideModal() { 
+            document.getElementById('pop-modal').classList.remove('active'); 
         }
 
-        // Buscador Inteligente en Tiempo Real
+        // Funciones del Modal de Formulario de Login
+        function showLoginModal() { 
+            document.getElementById('login-modal').classList.add('active'); 
+        }
+        
+        function hideLoginModal() { 
+            document.getElementById('login-modal').classList.remove('active'); 
+        }
+
+        // Funciones del Modal del Perfil del Usuario Logueado
+        function showProfileModal() { 
+            document.getElementById('profile-modal').classList.add('active'); 
+        }
+        
+        function hideProfileModal() { 
+            document.getElementById('profile-modal').classList.remove('active'); 
+        }
+
+        // Motor de Búsqueda Dinámica en Tiempo Real
         function runSearch() {
             const query = document.getElementById('txt-search').value.toLowerCase();
             const grid = document.getElementById('main-products-view');
@@ -421,16 +669,20 @@
 
             for (let i = 0; i < cards.length; i++) {
                 const meta = cards[i].getAttribute('data-search');
-                cards[i].style.display = meta.includes(query) ? "" : "none";
+                if (meta.includes(query)) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
             }
         }
 
-        // Lógica Reactiva de Añadir Elementos al Carrito
+        // Lógica Reactiva del Carrito de Compras
         let itemsCount = 0;
         function addItem() {
             itemsCount++;
             document.getElementById('lbl-count').innerText = itemsCount;
-            alert('Producto indexado con éxito en los registros de Inovamagic.');
+            alert('¡Producto indexado correctamente en los registros de la base de datos local!');
         }
     </script>
 </body>
