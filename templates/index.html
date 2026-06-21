@@ -17,6 +17,8 @@
             --muted: #64748b;
             --border: #e2e8f0;
             --shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            --radius-md: 12px;
+            --radius-lg: 16px;
         }
 
         * {
@@ -31,14 +33,15 @@
             color: var(--text);
         }
 
-        /* NAVBAR */
+        /* === BARRA DE NAVEGACIÓN COMPLETA === */
         .navbar {
             background-color: var(--primary);
             color: white;
-            padding: 20px;
+            padding: 15px 20px;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
         }
 
         .nav-container {
@@ -58,17 +61,52 @@
             color: var(--accent);
         }
 
+        /* Enlaces de Autenticación y Perfil incorporados */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-btn.btn-login {
+            background: var(--accent);
+            color: white;
+        }
+
+        .nav-btn.btn-login:hover {
+            background: #059669;
+        }
+
         .cart-status {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.15);
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 14px;
+            font-weight: 600;
         }
 
-        /* CARRUSEL RE-ORGANIZADO */
+        /* === SECCIÓN CARRUSEL ORGANIZADO === */
         .carousel-section {
             max-width: 1200px;
-            margin: 30px auto;
+            margin: 35px auto;
             padding: 0 20px;
         }
 
@@ -87,11 +125,20 @@
             padding-bottom: 10px;
         }
 
+        .carousel-track::-webkit-scrollbar {
+            height: 5px;
+        }
+
+        .carousel-track::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
         .carousel-item {
-            min-width: 260px;
+            min-width: 280px;
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             padding: 12px;
             display: flex;
             align-items: center;
@@ -106,7 +153,7 @@
             border-radius: 8px;
         }
 
-        /* BUSCADOR */
+        /* === BARRA DE BÚSQUEDA === */
         .search-area {
             max-width: 1200px;
             margin: 30px auto;
@@ -131,12 +178,21 @@
             border: 1px solid var(--border);
             outline: none;
             box-shadow: var(--shadow);
+            font-size: 14px;
         }
 
-        /* GRILLA DE PRODUCTOS (20 ARTÍCULOS) */
+        .search-box i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+        }
+
+        /* === GRILLA DE PRODUCTOS ESCALABLE === */
         .grid-section {
             max-width: 1200px;
-            margin: 0 auto 50px auto;
+            margin: 0 auto 60px auto;
             padding: 0 20px;
         }
 
@@ -149,25 +205,27 @@
         .product-card {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 15px;
+            border-radius: var(--radius-lg);
+            padding: 18px;
             display: flex;
             flex-direction: column;
             box-shadow: var(--shadow);
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .product-card:hover {
             transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08);
         }
 
         .img-container {
             width: 100%;
             height: 200px;
             overflow: hidden;
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             margin-bottom: 12px;
+            background: #f1f5f9;
         }
 
         .img-container img {
@@ -180,6 +238,7 @@
             font-size: 15px;
             font-weight: 600;
             margin-bottom: 8px;
+            color: var(--primary);
         }
 
         .p-price {
@@ -199,9 +258,14 @@
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
+            transition: background 0.2s;
         }
 
-        /* TARJETA DETALLE FLOTANTE (MODAL) */
+        .btn-action:hover {
+            background: var(--accent);
+        }
+
+        /* === TARJETA DETALLE FLOTANTE (MODAL INTERACTIVO) === */
         .modal-view {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -210,10 +274,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 2000;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s;
+            transition: opacity 0.3s ease;
         }
 
         .modal-view.active {
@@ -225,9 +289,10 @@
             background: var(--surface);
             max-width: 500px;
             width: 90%;
-            border-radius: 16px;
+            border-radius: var(--radius-lg);
             padding: 25px;
             position: relative;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
         }
 
         .close-btn {
@@ -242,17 +307,18 @@
             width: 100%;
             height: 240px;
             object-fit: cover;
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             margin-bottom: 15px;
         }
 
-        /* FOOTER */
+        /* === PIE DE PÁGINA INSTITUCIONAL === */
         footer {
             background: var(--primary);
             color: #94a3b8;
             text-align: center;
             padding: 25px;
             font-size: 13px;
+            border-top: 3px solid var(--accent);
         }
     </style>
 </head>
@@ -261,7 +327,12 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">Inova<span>magic</span> Store</div>
-            <div class="cart-status"><i class="fas fa-shopping-basket"></i> Canasta: <span id="lbl-count">0</span></div>
+            
+            <div class="nav-actions">
+                <a href="#" class="nav-btn" onclick="alert('Abriendo módulo de Autenticación / Registro...')"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+                <a href="#" class="nav-btn" onclick="alert('Cargando el perfil del estudiante / cliente...')"><i class="fas fa-user-circle"></i> Mi Perfil</a>
+                <div class="cart-status"><i class="fas fa-shopping-basket"></i> Canasta: <span id="lbl-count">0</span></div>
+            </div>
         </div>
     </nav>
 
@@ -281,10 +352,10 @@
     </section>
 
     <div class="search-area">
-        <h2 style="font-size: 18px;">Catálogo de Artículos (20)</h2>
+        <h2 style="font-size: 18px; font-weight: 700;">Catálogo de Artículos Oficiales</h2>
         <div class="search-box">
             <i class="fas fa-search"></i>
-            <input type="text" id="txt-search" onkeyup="runSearch()" placeholder="Buscar prenda...">
+            <input type="text" id="txt-search" onkeyup="runSearch()" placeholder="Buscar prenda, talla, categoría...">
         </div>
     </div>
 
@@ -299,7 +370,7 @@
                 </div>
                 <h3 class="p-name">{{ p.nombre }}</h3>
                 <div class="p-price">${{ "{:,.0f}".format(p.precio) }}</div>
-                <button class="btn-action" onclick="event.stopPropagation(); addItem();">Añadir</button>
+                <button class="btn-action" onclick="event.stopPropagation(); addItem();">Añadir al Carrito</button>
             </article>
             {% endfor %}
         </div>
@@ -309,26 +380,27 @@
         <div class="modal-box" onclick="event.stopPropagation()">
             <i class="fas fa-times close-btn" onclick="hideModal()"></i>
             <img src="" id="pop-img" class="modal-picture" alt="Prenda">
-            <h3 id="pop-title" style="margin-bottom: 10px;"></h3>
-            <p id="pop-desc" style="font-size: 14px; color: var(--muted); margin-bottom: 15px; line-height: 1.5;"></p>
+            <h3 id="pop-title" style="margin-bottom: 10px; font-weight: 700;"></h3>
+            <p id="pop-desc" style="font-size: 14px; color: var(--muted); margin-bottom: 20px; line-height: 1.5;"></p>
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span id="pop-price" style="font-size: 22px; font-weight: 700; color: var(--accent);"></span>
-                <button class="btn-action" style="width: auto; padding: 10px 20px;" onclick="hideModal(); addItem();">Comprar</button>
+                <button class="btn-action" style="width: auto; padding: 10px 25px;" onclick="hideModal(); addItem();">Comprar</button>
             </div>
         </div>
     </div>
 
     <footer>
-        <p>Institución Educativa Evaristo García &copy; 2026. Módulo Técnico de Sistemas.</p>
+        <p>Institución Educativa Evaristo García &copy; 2026. Módulo Técnico de Sistemas e E-commerce Escolar.</p>
     </footer>
 
     <script>
-        // Lógica de la Tarjeta Emergente
+        // Control de Apertura de la Ventana Flotante
         function showModal(name, desc, img, price) {
             document.getElementById('pop-title').innerText = name;
             document.getElementById('pop-desc').innerText = desc;
             document.getElementById('pop-img').src = img;
             
+            // Convertir número crudo a formato legible de pesos colombianos
             const formatted = parseFloat(price).toLocaleString('es-CO', {
                 style: 'currency', currency: 'COP', minimumFractionDigits: 0
             });
@@ -336,11 +408,12 @@
             document.getElementById('pop-modal').classList.add('active');
         }
 
+        // Cierre de la Ventana Flotante
         function hideModal() {
             document.getElementById('pop-modal').classList.remove('active');
         }
 
-        // Buscador Dinámico
+        // Buscador Inteligente en Tiempo Real
         function runSearch() {
             const query = document.getElementById('txt-search').value.toLowerCase();
             const grid = document.getElementById('main-products-view');
@@ -352,12 +425,12 @@
             }
         }
 
-        // Carrito
+        // Lógica Reactiva de Añadir Elementos al Carrito
         let itemsCount = 0;
         function addItem() {
             itemsCount++;
             document.getElementById('lbl-count').innerText = itemsCount;
-            alert('Añadido al sistema de Inovamagic.');
+            alert('Producto indexado con éxito en los registros de Inovamagic.');
         }
     </script>
 </body>
