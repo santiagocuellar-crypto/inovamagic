@@ -14,11 +14,11 @@
             --accent: #10b981;
             --accent-hover: #059669;
             --bg: #f8fafc;
-            --surface: #ffffff;
+            --surface: rgba(255, 255, 255, 0.85); /* Un toque transparente para ver el fondo */
             --text: #1e293b;
             --muted: #64748b;
-            --border: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+            --border: rgba(226, 232, 240, 0.8);
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.03), 0 2px 4px -1px rgba(0,0,0,0.02);
             --radius-md: 12px;
             --radius-lg: 16px;
         }
@@ -36,6 +36,61 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* === SISTEMA DE BURBUJAS ESTÉTICAS DE FONDO === */
+        .bubble-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Quedan detrás de todo */
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(15, 23, 42, 0.08));
+            filter: blur(60px); /* Desenfoque suave para imitar la imagen */
+            animation: floatBackground 20s infinite alternate ease-in-out;
+        }
+
+        /* Burbuja Grande Izquierda */
+        .bubble-1 {
+            width: 450px;
+            height: 450px;
+            top: -100px;
+            left: -150px;
+        }
+
+        /* Burbuja Mediana Derecha */
+        .bubble-2 {
+            width: 350px;
+            height: 350px;
+            top: 40%;
+            right: -100px;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.1), rgba(16, 185, 129, 0.12));
+            animation-delay: -5s;
+        }
+
+        /* Burbuja Inferior Izquierda */
+        .bubble-3 {
+            width: 400px;
+            height: 400px;
+            bottom: -150px;
+            left: 10%;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(241, 245, 249, 1));
+            animation-delay: -10s;
+        }
+
+        @keyframes floatBackground {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, 30px) scale(1.05); }
         }
 
         /* === BARRA DE NAVEGACIÓN (NAVBAR) === */
@@ -63,9 +118,7 @@
             letter-spacing: 0.5px;
         }
 
-        .nav-logo span {
-            color: var(--accent);
-        }
+        .nav-logo span { color: var(--accent); }
 
         .nav-actions {
             display: flex;
@@ -94,23 +147,10 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        .nav-btn.btn-login {
-            background: var(--accent);
-            color: white;
-        }
-
-        .nav-btn.btn-login:hover {
-            background: var(--accent-hover);
-        }
-
-        .nav-btn.btn-logout {
-            background: #ef4444;
-            color: white;
-        }
-
-        .nav-btn.btn-logout:hover {
-            background: #dc2626;
-        }
+        .nav-btn.btn-login { background: var(--accent); color: white; }
+        .nav-btn.btn-login:hover { background: var(--accent-hover); }
+        .nav-btn.btn-logout { background: #ef4444; color: white; }
+        .nav-btn.btn-logout:hover { background: #dc2626; }
 
         .cart-status {
             background: rgba(255,255,255,0.15);
@@ -123,7 +163,7 @@
             gap: 8px;
         }
 
-        /* === SECCIÓN COMPONENTE: CARRUSEL DESTACADOS === */
+        /* === CARRUSEL DESTACADOS === */
         .carousel-section {
             max-width: 1200px;
             margin: 35px auto 15px auto;
@@ -148,18 +188,13 @@
             scroll-behavior: smooth;
         }
 
-        .carousel-track::-webkit-scrollbar {
-            height: 6px;
-        }
-
-        .carousel-track::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 10px;
-        }
+        .carousel-track::-webkit-scrollbar { height: 6px; }
+        .carousel-track::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
 
         .carousel-item {
             min-width: 290px;
             background: var(--surface);
+            backdrop-filter: blur(8px);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
             padding: 15px;
@@ -167,6 +202,10 @@
             align-items: center;
             gap: 15px;
             box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+        .carousel-item:hover {
+            transform: scale(1.02);
         }
 
         .carousel-img {
@@ -190,7 +229,7 @@
             font-size: 14px;
         }
 
-        /* === SECCIÓN COMPONENTE: ÁREA DE BUSCADOR === */
+        /* === ÁREA DE BUSCADOR === */
         .search-area {
             max-width: 1200px;
             margin: 25px auto;
@@ -203,17 +242,9 @@
             width: 100%;
         }
 
-        .search-area h2 {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--primary);
-        }
+        .search-area h2 { font-size: 20px; font-weight: 700; color: var(--primary); }
 
-        .search-box {
-            position: relative;
-            max-width: 400px;
-            width: 100%;
-        }
+        .search-box { position: relative; max-width: 400px; width: 100%; }
 
         .search-box input {
             width: 100%;
@@ -221,25 +252,17 @@
             border-radius: 25px;
             border: 1px solid var(--border);
             outline: none;
+            background: var(--surface);
+            backdrop-filter: blur(8px);
             box-shadow: var(--shadow);
             font-size: 14px;
-            transition: border-color 0.2s;
+            transition: all 0.3s ease;
         }
 
-        .search-box input:focus {
-            border-color: var(--accent);
-        }
+        .search-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15); }
+        .search-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 16px; }
 
-        .search-box i {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--muted);
-            font-size: 16px;
-        }
-
-        /* === SECCIÓN COMPONENTE: GRILLA GENERAL DE PRODUCTOS === */
+        /* === MOVIMIENTO SUAVE Y PREMIUM EN TARJETAS DE PRODUCTOS === */
         .grid-section {
             max-width: 1200px;
             margin: 0 auto 60px auto;
@@ -256,6 +279,7 @@
 
         .product-card {
             background: var(--surface);
+            backdrop-filter: blur(12px); /* Efecto vidrio translúcido sobre las burbujas */
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             padding: 20px;
@@ -263,12 +287,17 @@
             flex-direction: column;
             box-shadow: var(--shadow);
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            /* Transición ultra suave para el movimiento solicitado */
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                        box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                        border-color 0.4s ease;
         }
 
+        /* Movimiento suave al pasar el cursor (Hover) */
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08);
+            transform: translateY(-8px) scale(1.02); /* Sube suavemente y crece un pelo */
+            box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.12); /* Sombra difuminada profunda */
+            border-color: rgba(16, 185, 129, 0.4); /* Ilumina el borde sutilmente en verde */
         }
 
         .img-container {
@@ -284,28 +313,16 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s ease;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
+        /* Movimiento suave de la foto dentro de la tarjeta */
         .product-card:hover .img-container img {
-            transform: scale(1.04);
+            transform: scale(1.06);
         }
 
-        .p-name {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--primary);
-            line-height: 1.4;
-        }
-
-        .p-price {
-            font-size: 19px;
-            font-weight: 700;
-            color: var(--accent);
-            margin-top: auto;
-            margin-bottom: 15px;
-        }
+        .p-name { font-size: 16px; font-weight: 600; margin-bottom: 8px; color: var(--primary); line-height: 1.4; }
+        .p-price { font-size: 19px; font-weight: 700; color: var(--accent); margin-top: auto; margin-bottom: 15px; }
 
         .btn-action {
             width: 100%;
@@ -316,23 +333,21 @@
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s ease;
+            transition: all 0.3s ease;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 8px;
         }
 
-        .btn-action:hover {
-            background: var(--accent);
-        }
+        .btn-action:hover { background: var(--accent); transform: translateY(-2px); }
 
-        /* === MODALES Y VENTANAS EMERGENTES === */
+        /* === MODALES Y EMERGENTES === */
         .modal-view {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(6px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -342,174 +357,58 @@
             transition: opacity 0.3s ease;
         }
 
-        .modal-view.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .modal-view.active { opacity: 1; pointer-events: auto; }
 
         .modal-box {
-            background: var(--surface);
+            background: white;
             max-width: 500px;
             width: 90%;
             border-radius: var(--radius-lg);
             padding: 30px;
             position: relative;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
             transform: scale(0.95);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .modal-view.active .modal-box {
-            transform: scale(1);
-        }
+        .modal-view.active .modal-box { transform: scale(1); }
+        .close-btn { position: absolute; top: 20px; right: 20px; font-size: 22px; color: var(--muted); cursor: pointer; transition: color 0.2s; }
+        .close-btn:hover { color: var(--primary); }
+        .modal-picture { width: 100%; height: 250px; object-fit: cover; border-radius: var(--radius-md); margin-bottom: 20px; }
+        .modal-title { font-size: 20px; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+        .modal-desc { font-size: 14px; color: var(--muted); margin-bottom: 25px; line-height: 1.6; }
 
-        .close-btn {
-            position: absolute;
-            top: 20px; right: 20px;
-            font-size: 22px;
-            color: var(--muted);
-            cursor: pointer;
-            transition: color 0.2s;
-        }
+        .profile-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+        .profile-row span:first-child { font-weight: 600; color: var(--muted); }
+        .profile-row span:last-child { color: var(--primary); font-weight: 500; }
+        .btn-close-profile { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 20px; transition: all 0.2s; }
+        .btn-close-profile:hover { background: var(--accent); }
 
-        .close-btn:hover {
-            color: var(--primary);
-        }
-
-        .modal-picture {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            border-radius: var(--radius-md);
-            margin-bottom: 20px;
-            background-color: #f1f5f9;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .modal-desc {
-            font-size: 14px;
-            color: var(--muted);
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-
-        /* Perfil de Usuario Filas */
-        .profile-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-            font-size: 14px;
-        }
-
-        .profile-row span:first-child {
-            font-weight: 600;
-            color: var(--muted);
-        }
-
-        .profile-row span:last-child {
-            color: var(--primary);
-            font-weight: 500;
-        }
-
-        .btn-close-profile {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 20px;
-            font-size: 15px;
-            transition: background 0.2s;
-        }
-
-        .btn-close-profile:hover {
-            background: var(--accent);
-        }
-
-        /* === SISTEMA: TOASTS DE NOTIFICACIONES FLOTANTES SUPERIORES === */
-        #toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            pointer-events: none;
-        }
-
-        .toast-notification {
-            pointer-events: auto;
-            background: white;
-            color: var(--text);
-            padding: 16px 24px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 14px;
-            font-weight: 500;
-            min-width: 300px;
-            max-width: 450px;
-            border-left: 5px solid #cbd5e1;
-            transform: translateX(120%);
-            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.3s;
-            opacity: 0;
-        }
-
-        .toast-notification.active {
-            transform: translateX(0);
-            opacity: 1;
-        }
-
-        .toast-notification.success {
-            border-left-color: var(--accent);
-            background: #f0fdf4;
-            color: #166534;
-        }
-
+        /* === TOASTS SUPERIORES REDONDEADOS === */
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast-notification { pointer-events: auto; background: white; color: var(--text); padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 500; min-width: 300px; max-width: 450px; border-left: 5px solid #cbd5e1; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s; opacity: 0; }
+        .toast-notification.active { transform: translateX(0); opacity: 1; }
+        .toast-notification.success { border-left-color: var(--accent); background: #f0fdf4; color: #166534; }
         .toast-notification.success i { color: var(--accent); }
-
-        .toast-notification.error {
-            border-left-color: #ef4444;
-            background: #fef2f2;
-            color: #991b1b;
-        }
-
+        .toast-notification.error { border-left-color: #ef4444; background: #fef2f2; color: #991b1b; }
         .toast-notification.error i { color: #ef4444; }
 
-        /* === PIE DE PÁGINA (FOOTER) === */
-        footer {
-            background: var(--primary);
-            color: #94a3b8;
-            text-align: center;
-            padding: 25px 20px;
-            font-size: 13px;
-            border-top: 3px solid var(--accent);
-            width: 100%;
-            margin-top: auto;
-        }
+        footer { background: var(--primary); color: #94a3b8; text-align: center; padding: 25px 20px; font-size: 13px; border-top: 3px solid var(--accent); width: 100%; margin-top: auto; }
     </style>
 </head>
 <body>
+
+    <div class="bubble-container">
+        <div class="bubble bubble-1"></div>
+        <div class="bubble bubble-2"></div>
+        <div class="bubble bubble-3"></div>
+    </div>
 
     <div id="toast-container"></div>
 
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">Inova<span>magic</span> Store</div>
-            
             <div class="nav-actions">
                 {% if usuario %}
                     <div class="nav-btn" onclick="showProfileModal()" style="color: white; font-weight: 600;">
@@ -517,9 +416,7 @@
                     </div>
                     <a href="/logout" class="nav-btn btn-logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
                 {% else %}
-                    <a href="/login-page" class="nav-btn btn-login">
-                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                    </a>
+                    <a href="/login-page" class="nav-btn btn-login"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
                 {% endif %}
                 <div class="cart-status"><i class="fas fa-shopping-basket"></i> Canasta: <span id="lbl-count">0</span></div>
             </div>
@@ -589,24 +486,10 @@
                 <h3 style="font-weight: 700; color: var(--primary);">Perfil de Usuario</h3>
                 <p style="font-size: 12px; color: var(--muted);">Estudiante Técnico de Sistemas</p>
             </div>
-            
-            <div class="profile-row">
-                <span>Nombre Completo:</span>
-                <span>{{ usuario }}</span>
-            </div>
-            <div class="profile-row">
-                <span>Institución:</span>
-                <span>I.E. Evaristo García</span>
-            </div>
-            <div class="profile-row">
-                <span>Proyecto de Grado:</span>
-                <span>Inovamagic Store</span>
-            </div>
-            <div class="profile-row">
-                <span>Rol Asignado:</span>
-                <span>Administrador / Tester</span>
-            </div>
-            
+            <div class="profile-row"><span>Nombre Completo:</span><span>{{ usuario }}</span></div>
+            <div class="profile-row"><span>Institución:</span><span>I.E. Evaristo García</span></div>
+            <div class="profile-row"><span>Proyecto de Grado:</span><span>Inovamagic Store</span></div>
+            <div class="profile-row"><span>Rol Asignado:</span><span>Administrador / Tester</span></div>
             <button class="btn-close-profile" onclick="hideProfileModal()">Cerrar Vista</button>
         </div>
     </div>
@@ -620,32 +503,18 @@
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `toast-notification ${type}`;
-            
-            const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
-            toast.innerHTML = `<i class="fas ${icon}"></i> <span>${message}</span>`;
-            
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> <span>${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => toast.classList.add('active'), 50);
-            
-            setTimeout(() => {
-                toast.classList.remove('active');
-                setTimeout(() => toast.remove(), 300);
-            }, 3500);
+            setTimeout(() => { toast.classList.remove('active'); setTimeout(() => toast.remove(), 300); }, 3500);
         }
 
         function showModal(name, desc, img, price) {
             document.getElementById('pop-title').innerText = name;
             document.getElementById('pop-desc').innerText = desc;
             document.getElementById('pop-img').src = img;
-            const formatted = parseFloat(price).toLocaleString('es-CO', {
-                style: 'currency', currency: 'COP', minimumFractionDigits: 0
-            });
-            document.getElementById('pop-price').innerText = formatted;
-            
-            document.getElementById('btn-pop-buy').onclick = function() {
-                hideModal();
-                addItem(name);
-            };
+            document.getElementById('pop-price').innerText = parseFloat(price).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
+            document.getElementById('btn-pop-buy').onclick = function() { hideModal(); addItem(name); };
             document.getElementById('pop-modal').classList.add('active');
         }
         
@@ -655,16 +524,9 @@
 
         function runSearch() {
             const query = document.getElementById('txt-search').value.toLowerCase();
-            const grid = document.getElementById('main-products-view');
-            const cards = grid.getElementsByClassName('product-card');
-
+            const cards = document.getElementsByClassName('product-card');
             for (let i = 0; i < cards.length; i++) {
-                const meta = cards[i].getAttribute('data-search');
-                if (meta.includes(query)) {
-                    cards[i].style.display = "";
-                } else {
-                    cards[i].style.display = "none";
-                }
+                cards[i].style.display = cards[i].getAttribute('data-search').includes(query) ? "" : "none";
             }
         }
 
@@ -676,9 +538,7 @@
         }
 
         window.onload = function() {
-            {% if usuario %}
-                showToast("¡Sesión iniciada correctamente! Bienvenido de vuelta.", "success");
-            {% endif %}
+            {% if usuario %} showToast("¡Sesión iniciada correctamente! Bienvenido de vuelta.", "success"); {% endif %}
         }
     </script>
 </body>
