@@ -3,10 +3,12 @@ from flask import Flask, render_template, request, redirect, url_for, session
 app = Flask(__name__)
 app.secret_key = 'inovamagic_secret_key_2026' 
 
+# Simulador de usuarios registrados (Base de datos en memoria local)
 USUARIOS_REGISTRADOS = {
     "santiago@evaristogarcia.com": {"name": "Santiago Cuellar", "password": "12345"}
 }
 
+# Base de datos íntegra con los 20 artículos oficiales sin recortes
 productos = [
     {"id": 1, "categoria": "diario-masculino", "nombre": "Pantalón de Diario Lino (Talla 14)", "descripcion": "Pantalón gris de lino institucional para hombre. Confección clásica, tela resistente y cómoda.", "precio": 75000, "imagen": "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=500&auto=format&fit=crop"},
     {"id": 2, "categoria": "diario-masculino", "nombre": "Pantalón de Diario Lino (Talla S)", "descripcion": "Pantalón gris de lino institucional talla adulto S. Corte elegante y excelente caída.", "precio": 79000, "imagen": "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?q=80&w=500&auto=format&fit=crop"},
@@ -48,6 +50,7 @@ def login():
     correo = request.form.get('email')
     contrasena = request.form.get('password')
     
+    # Comprobar si el usuario existe en nuestro diccionario central
     if correo in USUARIOS_REGISTRADOS and USUARIOS_REGISTRADOS[correo]["password"] == contrasena:
         session['usuario'] = USUARIOS_REGISTRADOS[correo]["name"]
         return redirect(url_for('index'))
@@ -56,6 +59,7 @@ def login():
         session['active_tab'] = 'login'
         return redirect(url_for('login_page'))
 
+# NUEVA RUTA: Procesamiento del Formulario de Registro
 @app.route('/register', methods=['POST'])
 def register():
     nombre = request.form.get('name')
@@ -66,6 +70,7 @@ def register():
         session['error_auth'] = "Este correo electrónico ya se encuentra registrado."
         session['active_tab'] = 'register'
     else:
+        # Registrar de forma dinámica el nuevo perfil en la memoria local
         USUARIOS_REGISTRADOS[correo] = {"name": nombre, "password": contrasena}
         session['success_auth'] = "¡Cuenta creada con éxito! Ya puedes iniciar sesión."
         session['active_tab'] = 'login'
