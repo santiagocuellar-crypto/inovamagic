@@ -1,14 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from datetime import datetime
+import uuid
 
 app = Flask(__name__)
-app.secret_key = 'inovamagic_secret_key_2026' 
+app.secret_key = 'inovamagic_secret_key_2026'
 
-# Simulador de usuarios registrados (Base de datos en memoria local)
 USUARIOS_REGISTRADOS = {
     "santiago@evaristogarcia.com": {"name": "Santiago Cuellar", "password": "12345"}
 }
 
-# Base de datos íntegra con los 20 artículos oficiales sin recortes
 productos = [
     {"id": 1, "categoria": "diario-masculino", "nombre": "Pantalón de Diario Lino (Talla 14)", "descripcion": "Pantalón gris de lino institucional para hombre. Confección clásica, tela resistente y cómoda.", "precio": 75000, "imagen": "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=500&auto=format&fit=crop"},
     {"id": 2, "categoria": "diario-masculino", "nombre": "Pantalón de Diario Lino (Talla S)", "descripcion": "Pantalón gris de lino institucional talla adulto S. Corte elegante y excelente caída.", "precio": 79000, "imagen": "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?q=80&w=500&auto=format&fit=crop"},
@@ -32,11 +32,69 @@ productos = [
     {"id": 20, "categoria": "accesorios", "nombre": "Medias Blancas Tejidas", "descripcion": "Par de medias escolares blancas de caña alta, elástico suave que no marca la piel.", "precio": 8000, "imagen": "https://images.unsplash.com/photo-1582966772680-860e372bb558?q=80&w=500&auto=format&fit=crop"}
 ]
 
+PRODUCTOS_POR_ID = {p["id"]: p for p in productos}
+
+IVA_RATE = 0.19
+ENVIO_GRATIS_DESDE = 150000
+COSTO_ENVIO = 8900
+
+
+def _init_carrito():
+    if "carrito" not in session:
+        session["carrito"] = {}
+    return session["carrito"]
+
+
+def _buscar_producto(producto_id):
+    return PRODUCTOS_POR_ID.get(int(producto_id))
+
+
+def _calcular_totales(items):
+    subtotal = sum(item["precio"] * item["cantidad"] for item in items)
+    envio = 0 if subtotal >= ENVIO_GRATIS_DESDE or subtotal == 0 else COSTO_ENVIO
+    iva = round(subtotal * IVA_RATE)
+    total = subtotal + envio + iva
+    cantidad_items = sum(item["cantidad"] for item in items)
+    return {
+        "subtotal": subtotal,
+        "envio": envio,
+        "iva": iva,
+        "total": total,
+        "cantidad_items": cantidad_items,
+        "envio_gratis": subtotal >= ENVIO_GRATIS_DESDE,
+    }
+
+
+def _carrito_a_lista():
+    carrito = _init_carrito()
+    items = []
+    for pid, data in carrito.items():
+        producto = _buscar_producto(pid)
+        if producto:
+            items.append({
+                "id": producto["id"],
+                "nombre": producto["nombre"],
+                "precio": producto["precio"],
+                "imagen": producto["imagen"],
+                "categoria": producto["categoria"],
+                "cantidad": data["cantidad"],
+                "subtotal_linea": producto["precio"] * data["cantidad"],
+            })
+    return items
+
+
+def _respuesta_carrito():
+    items = _carrito_a_lista()
+    totales = _calcular_totales(items)
+    return {"items": items, **totales}
+
+
 @app.route('/')
 def index():
     carrusel_items = [productos[0], productos[5], productos[15]]
     usuario_logueado = session.get('usuario')
     return render_template('index.html', productos=productos, carrusel=carrusel_items, usuario=usuario_logueado)
+
 
 @app.route('/login-page')
 def login_page():
@@ -45,12 +103,12 @@ def login_page():
     active_tab = session.pop('active_tab', 'login')
     return render_template('login.html', error=error_auth, success=success_auth, active_tab=active_tab)
 
+
 @app.route('/login', methods=['POST'])
 def login():
     correo = request.form.get('email')
     contrasena = request.form.get('password')
-    
-    # Comprobar si el usuario existe en nuestro diccionario central
+
     if correo in USUARIOS_REGISTRADOS and USUARIOS_REGISTRADOS[correo]["password"] == contrasena:
         session['usuario'] = USUARIOS_REGISTRADOS[correo]["name"]
         return redirect(url_for('index'))
@@ -59,33 +117,159 @@ def login():
         session['active_tab'] = 'login'
         return redirect(url_for('login_page'))
 
-# NUEVA RUTA: Procesamiento del Formulario de Registro
+
 @app.route('/register', methods=['POST'])
 def register():
     nombre = request.form.get('name')
     correo = request.form.get('email')
     contrasena = request.form.get('password')
-    
+
     if correo in USUARIOS_REGISTRADOS:
         session['error_auth'] = "Este correo electrónico ya se encuentra registrado."
         session['active_tab'] = 'register'
     else:
-        # Registrar de forma dinámica el nuevo perfil en la memoria local
         USUARIOS_REGISTRADOS[correo] = {"name": nombre, "password": contrasena}
         session['success_auth'] = "¡Cuenta creada con éxito! Ya puedes iniciar sesión."
         session['active_tab'] = 'login'
-        
+
     return redirect(url_for('login_page'))
+
 
 @app.route('/login-google')
 def login_google():
     session['usuario'] = "Santiago Cuellar (Google)"
     return redirect(url_for('index'))
 
+
 @app.route('/logout')
 def logout():
     session.pop('usuario', None)
     return redirect(url_for('index'))
+
+
+@app.route('/carrito')
+def carrito_legacy():
+    return redirect(url_for('index', carrito=1))
+
+
+# ── API del Carrito ──
+
+@app.route('/api/carrito', methods=['GET'])
+def obtener_carrito():
+    return jsonify(_respuesta_carrito())
+
+
+@app.route('/api/carrito/agregar', methods=['POST'])
+def agregar_al_carrito():
+    data = request.get_json(silent=True) or {}
+    producto_id = data.get('id')
+    cantidad = int(data.get('cantidad', 1))
+
+    if cantidad < 1:
+        return jsonify({"ok": False, "mensaje": "Cantidad inválida."}), 400
+
+    producto = _buscar_producto(producto_id)
+    if not producto:
+        return jsonify({"ok": False, "mensaje": "Producto no encontrado."}), 404
+
+    carrito = _init_carrito()
+    pid = str(producto["id"])
+    if pid in carrito:
+        carrito[pid]["cantidad"] += cantidad
+    else:
+        carrito[pid] = {"cantidad": cantidad}
+
+    session.modified = True
+    resp = _respuesta_carrito()
+    resp["ok"] = True
+    resp["mensaje"] = f'"{producto["nombre"]}" añadido al carrito.'
+    return jsonify(resp)
+
+
+@app.route('/api/carrito/actualizar', methods=['POST'])
+def actualizar_carrito():
+    data = request.get_json(silent=True) or {}
+    producto_id = data.get('id')
+    cantidad = int(data.get('cantidad', 1))
+
+    producto = _buscar_producto(producto_id)
+    if not producto:
+        return jsonify({"ok": False, "mensaje": "Producto no encontrado."}), 404
+
+    carrito = _init_carrito()
+    pid = str(producto["id"])
+
+    if cantidad <= 0:
+        carrito.pop(pid, None)
+    elif pid in carrito:
+        carrito[pid]["cantidad"] = cantidad
+
+    session.modified = True
+    resp = _respuesta_carrito()
+    resp["ok"] = True
+    return jsonify(resp)
+
+
+@app.route('/api/carrito/eliminar', methods=['POST'])
+def eliminar_del_carrito():
+    data = request.get_json(silent=True) or {}
+    producto_id = data.get('id')
+
+    carrito = _init_carrito()
+    pid = str(producto_id)
+    carrito.pop(pid, None)
+    session.modified = True
+
+    resp = _respuesta_carrito()
+    resp["ok"] = True
+    resp["mensaje"] = "Producto eliminado del carrito."
+    return jsonify(resp)
+
+
+@app.route('/api/carrito/vaciar', methods=['POST'])
+def vaciar_carrito():
+    session["carrito"] = {}
+    session.modified = True
+    resp = _respuesta_carrito()
+    resp["ok"] = True
+    resp["mensaje"] = "Carrito vaciado."
+    return jsonify(resp)
+
+
+@app.route('/api/carrito/comprar', methods=['POST'])
+def finalizar_compra():
+    items = _carrito_a_lista()
+    if not items:
+        return jsonify({"ok": False, "mensaje": "Tu carrito está vacío."}), 400
+
+    totales = _calcular_totales(items)
+    ahora = datetime.now()
+    numero_orden = f"INV-{ahora.strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}"
+
+    recibo = {
+        "numero_orden": numero_orden,
+        "fecha": ahora.strftime("%d/%m/%Y"),
+        "hora": ahora.strftime("%H:%M:%S"),
+        "comprador": session.get("usuario", "Cliente Invitado"),
+        "institucion": "I.E. Evaristo García",
+        "tienda": "Inovamagic Store",
+        "metodo_pago": "Pago en línea — Tarjeta débito/crédito",
+        "estado": "Pago aprobado",
+        "items": items,
+        "subtotal": totales["subtotal"],
+        "envio": totales["envio"],
+        "iva": totales["iva"],
+        "total": totales["total"],
+        "cantidad_items": totales["cantidad_items"],
+        "envio_gratis": totales["envio_gratis"],
+        "entrega_estimada": "3 a 5 días hábiles",
+    }
+
+    session["carrito"] = {}
+    session.modified = True
+
+    return jsonify({"ok": True, "recibo": recibo})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
