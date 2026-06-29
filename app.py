@@ -4,6 +4,7 @@ import uuid
 
 app = Flask(__name__)
 app.secret_key = 'inovamagic_secret_key_2026'
+app.config['SESSION_COOKIE_HTTPONLY'] = True
 
 USUARIOS_REGISTRADOS = {
     "santiago@evaristogarcia.com": {"name": "Santiago Cuellar", "password": "12345"}
@@ -35,8 +36,8 @@ productos = [
 PRODUCTOS_POR_ID = {p["id"]: p for p in productos}
 
 IVA_RATE = 0.19
-ENVIO_GRATIS_DESDE = 150000
-COSTO_ENVIO = 8900
+ENVIO_GRATIS_DESDE = 150_000
+COSTO_ENVIO = 8_900
 
 
 def _init_carrito():
@@ -46,7 +47,10 @@ def _init_carrito():
 
 
 def _buscar_producto(producto_id):
-    return PRODUCTOS_POR_ID.get(int(producto_id))
+    try:
+        return PRODUCTOS_POR_ID.get(int(producto_id))
+    except (TypeError, ValueError):
+        return None
 
 
 def _calcular_totales(items):
@@ -83,17 +87,25 @@ def _carrito_a_lista():
     return items
 
 
-def _respuesta_carrito():
+def _respuesta_carrito(extra=None):
     items = _carrito_a_lista()
     totales = _calcular_totales(items)
-    return {"items": items, **totales}
+    resp = {"ok": True, "items": items, **totales}
+    if extra:
+        resp.update(extra)
+    return resp
 
 
 @app.route('/')
 def index():
     carrusel_items = [productos[0], productos[5], productos[15]]
     usuario_logueado = session.get('usuario')
-    return render_template('index.html', productos=productos, carrusel=carrusel_items, usuario=usuario_logueado)
+    return render_template(
+        'index.html',
+        productos=productos,
+        carrusel=carrusel_items,
+        usuario=usuario_logueado,
+    )
 
 
 @app.route('/login-page')
@@ -112,10 +124,9 @@ def login():
     if correo in USUARIOS_REGISTRADOS and USUARIOS_REGISTRADOS[correo]["password"] == contrasena:
         session['usuario'] = USUARIOS_REGISTRADOS[correo]["name"]
         return redirect(url_for('index'))
-    else:
-        session['error_auth'] = "El correo o la contraseña son incorrectos. Inténtalo de nuevo."
-        session['active_tab'] = 'login'
-        return redirect(url_for('login_page'))
+    session['error_auth'] = "El correo o la contraseña son incorrectos. Inténtalo de nuevo."
+    session['active_tab'] = 'login'
+    return redirect(url_for('login_page'))
 
 
 @app.route('/register', methods=['POST'])
@@ -152,7 +163,7 @@ def carrito_legacy():
     return redirect(url_for('index', carrito=1))
 
 
-# ── API del Carrito ──
+# ── API REST del Carrito ──
 
 @app.route('/api/carrito', methods=['GET'])
 def obtener_carrito():
@@ -163,7 +174,10 @@ def obtener_carrito():
 def agregar_al_carrito():
     data = request.get_json(silent=True) or {}
     producto_id = data.get('id')
-    cantidad = int(data.get('cantidad', 1))
+    try:
+        cantidad = int(data.get('cantidad', 1))
+    except (TypeError, ValueError):
+        return jsonify({"ok": False, "mensaje": "Cantidad inválida."}), 400
 
     if cantidad < 1:
         return jsonify({"ok": False, "mensaje": "Cantidad inválida."}), 400
@@ -180,17 +194,19 @@ def agregar_al_carrito():
         carrito[pid] = {"cantidad": cantidad}
 
     session.modified = True
-    resp = _respuesta_carrito()
-    resp["ok"] = True
-    resp["mensaje"] = f'"{producto["nombre"]}" añadido al carrito.'
-    return jsonify(resp)
+    return jsonify(_respuesta_carrito({
+        "mensaje": f'"{producto["nombre"]}" añadido al carrito.',
+    }))
 
 
 @app.route('/api/carrito/actualizar', methods=['POST'])
 def actualizar_carrito():
     data = request.get_json(silent=True) or {}
     producto_id = data.get('id')
-    cantidad = int(data.get('cantidad', 1))
+    try:
+        cantidad = int(data.get('cantidad', 1))
+    except (TypeError, ValueError):
+        return jsonify({"ok": False, "mensaje": "Cantidad inválida."}), 400
 
     producto = _buscar_producto(producto_id)
     if not producto:
@@ -203,11 +219,11 @@ def actualizar_carrito():
         carrito.pop(pid, None)
     elif pid in carrito:
         carrito[pid]["cantidad"] = cantidad
+    else:
+        carrito[pid] = {"cantidad": cantidad}
 
     session.modified = True
-    resp = _respuesta_carrito()
-    resp["ok"] = True
-    return jsonify(resp)
+    return jsonify(_respuesta_carrito())
 
 
 @app.route('/api/carrito/eliminar', methods=['POST'])
@@ -215,25 +231,21 @@ def eliminar_del_carrito():
     data = request.get_json(silent=True) or {}
     producto_id = data.get('id')
 
+    if not _buscar_producto(producto_id):
+        return jsonify({"ok": False, "mensaje": "Producto no encontrado."}), 404
+
     carrito = _init_carrito()
-    pid = str(producto_id)
-    carrito.pop(pid, None)
+    carrito.pop(str(producto_id), None)
     session.modified = True
 
-    resp = _respuesta_carrito()
-    resp["ok"] = True
-    resp["mensaje"] = "Producto eliminado del carrito."
-    return jsonify(resp)
+    return jsonify(_respuesta_carrito({"mensaje": "Producto eliminado del carrito."}))
 
 
 @app.route('/api/carrito/vaciar', methods=['POST'])
 def vaciar_carrito():
     session["carrito"] = {}
     session.modified = True
-    resp = _respuesta_carrito()
-    resp["ok"] = True
-    resp["mensaje"] = "Carrito vaciado."
-    return jsonify(resp)
+    return jsonify(_respuesta_carrito({"mensaje": "Carrito vaciado."}))
 
 
 @app.route('/api/carrito/comprar', methods=['POST'])
@@ -253,7 +265,7 @@ def finalizar_compra():
         "comprador": session.get("usuario", "Cliente Invitado"),
         "institucion": "I.E. Evaristo García",
         "tienda": "Inovamagic Store",
-        "metodo_pago": "Pago en línea — Tarjeta débito/crédito",
+        "metodo_pago": "Apple Pay · Tarjeta terminada en •••• 4242",
         "estado": "Pago aprobado",
         "items": items,
         "subtotal": totales["subtotal"],
