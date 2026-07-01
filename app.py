@@ -1,14 +1,74 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash, get_flashed_messages
 from datetime import datetime
 import uuid
+from werkzeug.security import generate_password_hash, check_password_hash
+from authlib.integrations.flask_client import OAuth
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
+from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = 'inovamagic_secret_key_2026'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 
-USUARIOS_REGISTRADOS = {
-    "santiago@evaristogarcia.com": {"name": "Santiago Cuellar", "password": "12345"}
+# Configuration for Google OAuth
+app.config['GOOGLE_CLIENT_ID'] = 'YOUR_GOOGLE_CLIENT_ID' # Placeholder
+app.config['GOOGLE_CLIENT_SECRET'] = 'YOUR_GOOGLE_CLIENT_SECRET' # Placeholder
+app.config['GOOGLE_DISCOVERY_URL'] = (
+    'https://accounts.google.com/.well-known/openid-configuration'
+)
+
+oauth = OAuth(app)
+s = URLSafeTimedSerializer(app.secret_key) # For password reset tokens
+
+# In-memory user store for demonstration purposes
+USERS = {
+    "santiago@evaristogarcia.com": {
+        "name": "Santiago Cuellar",
+        "password": generate_password_hash("12345"), # Hashed password
+        "role": "Administrador",
+        "institution": "I.E. Evaristo García",
+        "address": "Calle 1 # 2-3, Cali",
+        "neighborhood": "Centro",
+        "phone": "+57 300 1234567",
+        "is_admin": True,
+        "google_id": None # To store Google ID if authenticated via Google
+    },
+    "maria@evaristogarcia.com": {
+        "name": "Maria Lopez",
+        "password": generate_password_hash("password123"),
+        "role": "Estudiante",
+        "institution": "I.E. Evaristo García",
+        "address": "Carrera 4 # 5-6, Cali",
+        "neighborhood": "Versalles",
+        "phone": "+57 310 9876543",
+        "is_admin": False,
+        "google_id": None
+    }
 }
+
+# Decorator to check if user is logged in
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_email' not in session:
+            flash("Necesitas iniciar sesión para acceder a esta página.", "error")
+            return redirect(url_for('login_page'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# Decorator to check if user is admin
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_email' not in session:
+            flash("Necesitas iniciar sesión para acceder a esta página.", "error")
+            return redirect(url_for('login_page'))
+        user = USERS.get(session['user_email'])
+        if not user or not user.get('is_admin'):
+            flash("No tienes permisos de administrador para acceder a esta página.", "error")
+            return redirect(url_for('index'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 productos = [
     {"id": 1, "categoria": "diario-masculino", "nombre": "Pantalón de Diario Lino (Talla 14)", "descripcion": "Pantalón gris de lino institucional para hombre. Confección clásica, tela resistente y cómoda.", "precio": 75000, "imagen": "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=500&auto=format&fit=crop"},
@@ -95,16 +155,19 @@ def _respuesta_carrito(extra=None):
         resp.update(extra)
     return resp
 
-
 @app.route('/')
 def index():
     carrusel_items = [productos[0], productos[5], productos[15]]
-    usuario_logueado = session.get('usuario')
+    user_email = session.get('user_email')
+    usuario_logueado = USERS.get(user_email) if user_email else None
+    has_flashed_messages = bool(get_flashed_messages())
     return render_template(
         'index.html',
         productos=productos,
         carrusel=carrusel_items,
         usuario=usuario_logueado,
+        current_year=datetime.now().year,
+        has_flashed_messages=has_flashed_messages
     )
 
 
@@ -121,10 +184,12 @@ def login():
     correo = request.form.get('email')
     contrasena = request.form.get('password')
 
-    if correo in USUARIOS_REGISTRADOS and USUARIOS_REGISTRADOS[correo]["password"] == contrasena:
-        session['usuario'] = USUARIOS_REGISTRADOS[correo]["name"]
+    user = USERS.get(correo)
+    if user and check_password_hash(user["password"], contrasena):
+        session['user_email'] = correo
+        flash(f"Bienvenido, {user['name']}!", "success")
         return redirect(url_for('index'))
-    session['error_auth'] = "El correo o la contraseña son incorrectos. Inténtalo de nuevo."
+    flash("El correo o la contraseña son incorrectos. Inténtalo de nuevo.", "error")
     session['active_tab'] = 'login'
     return redirect(url_for('login_page'))
 
@@ -134,28 +199,194 @@ def register():
     nombre = request.form.get('name')
     correo = request.form.get('email')
     contrasena = request.form.get('password')
+    rol = request.form.get('role')
+    institucion = request.form.get('institution')
+    direccion = request.form.get('address')
+    barrio = request.form.get('neighborhood')
+    telefono = request.form.get('phone')
 
-    if correo in USUARIOS_REGISTRADOS:
-        session['error_auth'] = "Este correo electrónico ya se encuentra registrado."
+    if not all([nombre, correo, contrasena, rol, institucion, direccion, barrio, telefono]):
+        flash("Todos los campos son obligatorios para el registro.", "error")
+        session['active_tab'] = 'register'
+        return redirect(url_for('login_page'))
+
+    if correo in USERS:
+        flash("Este correo electrónico ya se encuentra registrado.", "error")
         session['active_tab'] = 'register'
     else:
-        USUARIOS_REGISTRADOS[correo] = {"name": nombre, "password": contrasena}
-        session['success_auth'] = "¡Cuenta creada con éxito! Ya puedes iniciar sesión."
+        hashed_password = generate_password_hash(contrasena)
+        USERS[correo] = {
+            "name": nombre,
+            "password": hashed_password,
+            "role": rol,
+            "institution": institucion,
+            "address": direccion,
+            "neighborhood": barrio,
+            "phone": telefono,
+            "is_admin": False, # New registered users are not admins by default
+            "google_id": None
+        }
+        flash("¡Cuenta creada con éxito! Ya puedes iniciar sesión.", "success")
         session['active_tab'] = 'login'
 
     return redirect(url_for('login_page'))
 
 
-@app.route('/login-google')
-def login_google():
-    session['usuario'] = "Santiago Cuellar (Google)"
-    return redirect(url_for('index'))
-
-
 @app.route('/logout')
 def logout():
-    session.pop('usuario', None)
+    session.pop('user_email', None)
+    # Clear Authlib session for Google OAuth
+    oauth.google.clear_session()
+    flash("Has cerrado sesión exitosamente.", "success")
     return redirect(url_for('index'))
+
+# Password reset functionality
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        if email not in USERS:
+            flash("Si tu correo está registrado, recibirás un enlace para restablecer tu contraseña.", "info")
+            return redirect(url_for('login_page'))
+
+        # Generate a token
+        token = s.dumps(email, salt='password-reset-salt')
+        reset_link = url_for('reset_password', token=token, _external=True)
+
+        # In a real application, send this link via email.
+        # For this demo, we'll print it to the console.
+        print(f"Password reset link for {email}: {reset_link}")
+        flash("Se ha enviado un enlace de recuperación de contraseña a tu correo electrónico.", "success")
+        return redirect(url_for('login_page'))
+    return render_template('forgot_password.html') # Need to create this template
+
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    try:
+        email = s.loads(token, salt='password-reset-salt', max_age=3600) # Token valid for 1 hour
+    except SignatureExpired:
+        flash("El enlace de restablecimiento de contraseña ha expirado.", "error")
+        return redirect(url_for('forgot_password'))
+    except BadTimeSignature:
+        flash("El enlace de restablecimiento de contraseña no es válido.", "error")
+        return redirect(url_for('forgot_password'))
+
+    if request.method == 'POST':
+        new_password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+
+        if not new_password or new_password != confirm_password:
+            flash("Las contraseñas no coinciden o están vacías.", "error")
+            return render_template('reset_password.html', token=token)
+
+        USERS[email]["password"] = generate_password_hash(new_password)
+        flash("Tu contraseña ha sido restablecida con éxito. Ya puedes iniciar sesión.", "success")
+        return redirect(url_for('login_page'))
+
+    return render_template('reset_password.html', token=token) # Need to create this template
+
+
+# Google OAuth2 Setup
+oauth.register(
+    'google',
+    client_id=app.config.get('GOOGLE_CLIENT_ID'),
+    client_secret=app.config.get('GOOGLE_CLIENT_SECRET'),
+    server_metadata_url=app.config.get('GOOGLE_DISCOVERY_URL'),
+    client_kwargs={'scope': 'openid email profile'},
+    # Use HTTPS in production
+    redirect_uri='http://127.0.0.1:5000/authorize/google'
+)
+
+@app.route('/login-google')
+def login_google():
+    # Clear previous session data for Google OAuth
+    session.pop('google_oauth_token', None)
+    session.pop('user_email', None)
+    return oauth.google.authorize_redirect(redirect_uri=url_for('authorize_google', _external=True))
+
+
+@app.route('/authorize/google')
+def authorize_google():
+    try:
+        token = oauth.google.authorize_access_token()
+    except Exception as e:
+        flash(f"Error de autenticación con Google: {e}", "error")
+        return redirect(url_for('login_page'))
+
+    userinfo = token.get('userinfo')
+    if userinfo:
+        email = userinfo['email']
+        name = userinfo['name']
+        google_id = userinfo['sub']
+
+        if email not in USERS:
+            # Register new user if not exists
+            USERS[email] = {
+                "name": name,
+                "password": None, # Google authenticated users don't have a local password
+                "role": "Estudiante", # Default role for new Google users
+                "institution": "No especificada",
+                "address": "No especificada",
+                "neighborhood": "No especificado",
+                "phone": "No especificado",
+                "is_admin": False,
+                "google_id": google_id
+            }
+            flash(f"¡Bienvenido, {name}! Tu cuenta de Google ha sido vinculada.", "success")
+        else:
+            # Update existing user with Google ID if they haven't logged in with Google before
+            if not USERS[email].get('google_id'):
+                USERS[email]['google_id'] = google_id
+            flash(f"Bienvenido de nuevo, {name}!", "success")
+
+        session['user_email'] = email
+        return redirect(url_for('index'))
+    
+    flash("No se pudo obtener la información de usuario de Google.", "error")
+    return redirect(url_for('login_page'))
+
+
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    user_email = session['user_email']
+    user_data = USERS.get(user_email)
+
+    if request.method == 'POST':
+        user_data['name'] = request.form.get('name')
+        user_data['role'] = request.form.get('role')
+        user_data['institution'] = request.form.get('institution')
+        user_data['address'] = request.form.get('address')
+        user_data['neighborhood'] = request.form.get('neighborhood')
+        user_data['phone'] = request.form.get('phone')
+        flash("Tu perfil ha sido actualizado exitosamente.", "success")
+        return redirect(url_for('profile')) # Redirect to GET to show updated data
+
+    return render_template('profile.html', user=user_data) # Need to create this template
+
+
+@app.route('/admin')
+@admin_required
+def admin_panel():
+    total_sales = 1_500_000 # Placeholder
+    orders_count = 120 # Placeholder
+    visits_count = 5000 # Placeholder
+
+    # Example sales history (placeholder data)
+    sales_history = [
+        {"id": 1, "cliente": "Santiago Cuellar", "grado": "11°", "productos": "Pantalón, Camisa", "total": 107000},
+        {"id": 2, "cliente": "Maria Lopez", "grado": "10°", "productos": "Jardinera", "total": 97500},
+    ]
+
+    # Pass all users to the admin template
+    return render_template(
+        'admin.html',
+        ventas_totales="{:,.0f}".format(total_sales),
+        stats={"pedidos_cont": orders_count, "visitas": visits_count},
+        historial=sales_history,
+        users=USERS # Pass the entire USERS dictionary
+    )
 
 
 @app.route('/carrito')
@@ -262,7 +493,7 @@ def finalizar_compra():
         "numero_orden": numero_orden,
         "fecha": ahora.strftime("%d/%m/%Y"),
         "hora": ahora.strftime("%H:%M:%S"),
-        "comprador": session.get("usuario", "Cliente Invitado"),
+        "comprador": session.get("user_name", "Cliente Invitado"), # Use user_name from session
         "institucion": "I.E. Evaristo García",
         "tienda": "Inovamagic Store",
         "metodo_pago": "Apple Pay · Tarjeta terminada en •••• 4242",

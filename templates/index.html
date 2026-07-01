@@ -99,7 +99,11 @@
 
         .nav-logo span { color: var(--ios-blue); }
 
-        .nav-actions { display: flex; align-items: center; gap: 10px; }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
         .nav-btn {
             font-family: var(--sf);
@@ -199,7 +203,7 @@
         .carousel-item {
             min-width: 280px;
             scroll-snap-align: start;
-            background: var(--ios-bg-elevated);
+            /* background: var(--ios-bg-elevated); */ /* Removed for gradient */
             border-radius: var(--radius-lg);
             padding: 14px;
             display: flex;
@@ -207,7 +211,26 @@
             gap: 14px;
             border: 0.5px solid var(--ios-separator);
             box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-            transition: transform 0.2s var(--spring);
+            transition: transform 0.2s var(--spring), box-shadow 0.2s var(--spring);
+            /* Added for gradient and hover effects */
+            position: relative;
+            overflow: hidden;
+        }
+        .carousel-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #a8ff78, #78ffd6); /* Example gradient */
+            opacity: 0.8; /* Adjust opacity as needed */
+            border-radius: var(--radius-lg);
+            z-index: -1;
+        }
+        .carousel-item:nth-child(2n)::before { background: linear-gradient(135deg, #84fab0, #8fd3f4); }
+        .carousel-item:nth-child(3n)::before { background: linear-gradient(135deg, #a1c4fd, #c2e9fb); }
+
+        .carousel-item:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.6) inset;
         }
 
         .carousel-item:active { transform: scale(0.98); }
@@ -989,6 +1012,7 @@
 
         .apple-toast.success .apple-toast-icon { background: rgba(52,199,89,0.15); color: var(--ios-green); }
         .apple-toast.error .apple-toast-icon { background: rgba(255,59,48,0.12); color: var(--ios-red); }
+        .apple-toast.info .apple-toast-icon { background: rgba(0,122,255,0.15); color: var(--ios-blue); }
 
         /* Profile modal */
         .profile-sheet .profile-row {
@@ -1036,9 +1060,12 @@
                     <button class="nav-btn" onclick="showProfileModal()">
                         <i class="fas fa-user-circle"></i> Perfil
                     </button>
-                    <a href="/logout" class="nav-btn btn-logout"><i class="fas fa-sign-out-alt"></i></a>
+                    {% if usuario.is_admin %}
+                    <a href="{{ url_for('admin_panel') }}" class="nav-btn"><i class="fas fa-user-gear"></i> Admin</a>
+                    {% endif %}
+                    <a href="{{ url_for('logout') }}" class="nav-btn btn-logout"><i class="fas fa-sign-out-alt"></i></a>
                 {% else %}
-                    <a href="/login-page" class="nav-btn btn-login">Iniciar Sesión</a>
+                    <a href="{{ url_for('login_page') }}" class="nav-btn btn-login">Iniciar Sesión</a>
                 {% endif %}
                 <button class="cart-btn" onclick="openCart()" aria-label="Abrir carrito">
                     <i class="fas fa-bag-shopping"></i>
@@ -1047,6 +1074,20 @@
             </div>
         </div>
     </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div style="max-width: 1200px; margin: 20px auto 0; padding: 0 20px;">
+        {% for category, message in messages %}
+            <div class="apple-toast {{ category }}" style="position: relative; top: 0; left: 0; transform: none; opacity: 1; margin-bottom: 10px;">
+                <div class="apple-toast-icon"><i class="fas {{ 'fa-exclamation-circle' if category == 'error' else 'fa-check-circle' if category == 'success' else 'fa-info-circle' }}"></i></div>
+                <span>{{ message }}</span>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
 
     <!-- Carrusel -->
     <section class="carousel-section">
@@ -1121,13 +1162,25 @@
                     <i class="fas fa-user"></i>
                 </div>
                 <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.03em;">Mi Perfil</h3>
-                <p style="font-size:14px;color:var(--ios-label-secondary);margin-top:4px;">Estudiante Técnico de Sistemas</p>
+                {% if usuario %}
+                <p style="font-size:14px;color:var(--ios-label-secondary);margin-top:4px;">{{ usuario.role }}</p>
             </div>
-            <div class="profile-row"><span>Nombre</span><span>{{ usuario }}</span></div>
-            <div class="profile-row"><span>Institución</span><span>I.E. Evaristo García</span></div>
-            <div class="profile-row"><span>Proyecto</span><span>Inovamagic Store</span></div>
-            <div class="profile-row"><span>Rol</span><span>Administrador / Tester</span></div>
+            <div class="profile-row"><span>Nombre</span><span>{{ usuario.name }}</span></div>
+            <div class="profile-row"><span>Correo</span><span>{{ usuario.email }}</span></div>
+            <div class="profile-row"><span>Rol</span><span>{{ usuario.role }}</span></div>
+            <div class="profile-row"><span>Institución</span><span>{{ usuario.institution }}</span></div>
+            <div class="profile-row"><span>Dirección</span><span>{{ usuario.address }}</span></div>
+            <div class="profile-row"><span>Barrio</span><span>{{ usuario.neighborhood }}</span></div>
+            <div class="profile-row"><span>Teléfono</span><span>{{ usuario.phone }}</span></div>
+            {% if usuario.is_admin %}
+            <div class="profile-row"><span>Administrador</span><span style="color: var(--ios-green);">Sí</span></div>
+            {% endif %}
             <button class="btn-receipt-close" style="margin-top:20px;" onclick="hideProfileModal()">Cerrar</button>
+            {% else %}
+            <p style="font-size:14px;color:var(--ios-label-secondary);margin-top:4px;">No has iniciado sesión</p>
+            </div>
+            <a href="{{ url_for('login_page') }}" class="btn-receipt-close" style="margin-top:20px;">Iniciar Sesión</a>
+            {% endif %}
         </div>
     </div>
 
@@ -1161,7 +1214,7 @@
     </div>
 
     <footer>
-        I.E. Evaristo García &copy; 2026 · Inovamagic Store
+        I.E. Evaristo García &copy; {{ current_year }} · Inovamagic Store
     </footer>
 
     <script id="catalog-data" type="application/json">
@@ -1181,7 +1234,10 @@
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `apple-toast ${type}`;
-            const icon = type === 'success' ? 'fa-check' : 'fa-exclamation';
+            let icon = 'fa-info-circle';
+            if (type === 'success') icon = 'fa-check';
+            else if (type === 'error') icon = 'fa-exclamation-circle';
+
             toast.innerHTML = `
                 <div class="apple-toast-icon"><i class="fas ${icon}"></i></div>
                 <span>${message}</span>`;
@@ -1477,9 +1533,12 @@
                     history.replaceState({}, '', '/');
                 }
             });
-            {% if usuario %}
-            showToast('Bienvenido de vuelta');
-            {% endif %}
+            const usuarioPresent = {{ 'true' if usuario else 'false' }};
+            const hasFlashedMessages = {{ 'true' if get_flashed_messages() | length > 0 else 'false' }};
+
+            if (usuarioPresent && !hasFlashedMessages) {
+                showToast('Bienvenido de vuelta, {{ usuario.name.split(" ")[0] }}!', 'info');
+            }
         });
     </script>
 </body>
