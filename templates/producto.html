@@ -142,3 +142,34 @@
     </script>
 </body>
 </html>
+
+<!-- Agregar un botón para recuperar contraseña -->
+<button id="btnRecuperarContraseña" onclick="recuperarContraseña()">Recuperar contraseña</button>
+
+<!-- Agregar un script para manejar la lógica de recuperación de contraseña -->
+<script>
+    function recuperarContraseña() {
+        // Aquí iría la lógica para recuperar la contraseña del usuario
+        // Puedes realizar una solicitud HTTP a tu servidor para procesar esta acción
+        // Por ejemplo, puedes usar fetch o axios para enviar una solicitud POST a una ruta específica en tu servidor
+        // Aquí hay un ejemplo básico usando fetch:
+        fetch('/recuperar-contraseña', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                // Aquí puedes incluir los datos necesarios para la recuperación de contraseña, como el correo electrónico del usuario
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Aquí puedes manejar la respuesta del servidor, como mostrar un mensaje de éxito o de error
+            console.log(data);
+        })
+        .catch(error => {
+            // Aquí puedes manejar cualquier error que ocurra durante la solicitud
+            console.error(error);
+        });
+    }
+</script>
