@@ -516,3 +516,11 @@ def finalizar_compra():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+@app.route('/recuperar_contrasena', methods=['GET', 'POST'])
+def recuperar_contrasena():
+    if request.method == 'POST':
+        correo = request.form.get('correo')
+        # Aquí Windsurf te sugerirá cómo buscar el correo en tu base de datos
+        return "Te enviamos un enlace de recuperación", 200
+    return render_template('recuperar.html')
