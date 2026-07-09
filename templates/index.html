@@ -376,7 +376,7 @@
         .p-price {
             font-size: 20px;
             font-weight: 700;
-            letter-spacing: -0.03em;
+            letter-spacing: -0.04em;
             margin-bottom: 14px;
         }
 
@@ -627,7 +627,11 @@
             letter-spacing: -0.02em;
         }
 
-        .cart-item-controls { display: flex; align-items: center; gap: 6px; }
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
         /* Apple-style quantity bubble */
         .qty-bubble {
@@ -1533,11 +1537,19 @@
                     history.replaceState({}, '', '/');
                 }
             });
-            const usuarioPresent = {{ 'true' if usuario else 'false' }};
-            const hasFlashedMessages = {{ 'true' if get_flashed_messages() | length > 0 else 'false' }};
+            // Safely pass data from Flask to JavaScript
+            const appData = {};
+            {% if usuario %}
+            appData.usuarioPresent = true;
+            appData.usuarioName = "{{ (usuario.name.split(" ")[0] if usuario.name else "") | e }}";
+            {% else %}
+            appData.usuarioPresent = false;
+            appData.usuarioName = "";
+            {% endif %}
+            appData.hasFlashedMessages = {% if has_flashed_messages %}true{% else %}false{% endif %};
 
-            if (usuarioPresent && !hasFlashedMessages) {
-                showToast('Bienvenido de vuelta, {{ usuario.name.split(" ")[0] }}!', 'info');
+            if (appData.usuarioPresent && !appData.hasFlashedMessages) {
+                showToast(`Bienvenido de vuelta, ${appData.usuarioName}!`, 'info');
             }
         });
     </script>
