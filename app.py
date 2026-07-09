@@ -248,20 +248,17 @@ def forgot_password():
     if request.method == 'POST':
         email = request.form.get('email')
         if email not in USERS:
-            flash("Si tu correo está registrado, recibirás un enlace para restablecer tu contraseña.", "info")
+            flash("Si tu correo está registrado, recibirás un enlace para recuperar tu contraseña.")
             return redirect(url_for('login_page'))
-
-        # Generate a token
+        
+        # Lógica del token (déjela como la tiene)
         token = s.dumps(email, salt='password-reset-salt')
         reset_link = url_for('reset_password', token=token, _external=True)
-
-        # In a real application, send this link via email.
-        # For this demo, we'll print it to the console.
-        print(f"Password reset link for {email}: {reset_link}")
-        flash("Se ha enviado un enlace de recuperación de contraseña a tu correo electrónico.", "success")
+        
+        flash("Se ha enviado un enlace de recuperación.")
         return redirect(url_for('login_page'))
-    return render_template('recuperar.html') # Need to create this template
-
+        
+    return render_template('recuperar.html')
 
 @app.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
