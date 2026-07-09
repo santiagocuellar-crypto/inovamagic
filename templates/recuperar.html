@@ -1,84 +1,42 @@
+¡Mis disculpas por la omisión! Aquí tienes la versión actualizada del archivo HTML con el formulario de recuperación dentro de la tarjeta:
+
+```html
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recuperar Contraseña - Inovamagic</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f5f5f7;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 18px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            max-width: 360px;
-            width: 100%;
-            text-align: center;
-        }
-        h2 {
-            font-weight: 600;
-            color: #1d1d1f;
-            margin-bottom: 10px;
-            font-size: 24px;
-            letter-spacing: -0.5px;
-        }
-        p {
-            color: #86868b;
-            font-size: 14px;
-            margin-bottom: 30px;
-        }
-        input[type="email"] {
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 20px;
-            border: 1px solid #d2d2d7;
-            border-radius: 10px;
-            font-size: 16px;
-            background-color: #f5f5f7;
-            color: #1d1d1f;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.2s ease;
-        }
-        input[type="email"]:focus {
-            border-color: #0071e3;
-        }
-        button {
-            width: 100%;
-            padding: 14px;
-            background-color: #000000;
-            color: #ffffff;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-        button:hover {
-            background-color: #1d1d1f;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recuperación de Contraseña - Inovamagic</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-
-<div class="container">
-    <h2>Recuperar contraseña</h2>
-    <p>Introduce el correo de tu cuenta de Inovamagic.</p>
-    
-    <form action="/recuperar_contrasena" method="POST">
-        <input type="email" name="correo" placeholder="Correo electrónico" required>
-        <button type="submit">Continuar</button>
-    </form>
-</div>
-
+<body class="bg-light">
+  <div class="container">
+    <div class="row justify-content-center align-items-center min-vh-100">
+      <div class="col-md-6 col-lg-4">
+        <div class="card bg-white rounded shadow">
+          <div class="card-body">
+            <h2 class="text-center mb-4">Recuperación de Contraseña</h2>
+            <form id="recuperacionForm" onsubmit="event.preventDefault(); enviarFormulario();">
+              <div class="mb-3">
+                <label for="correo" class="form-label">Correo electrónico</label>
+                <input type="email" id="correo" class="form-control" placeholder="Ingrese su correo electrónico">
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Enviar enlace de recuperación</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
+```
+
+En este código, hemos agregado un campo de texto para que el usuario ingrese su correo electrónico y un botón azul elegante con el texto "Enviar enlace de recuperación". También hemos agregado un evento `onsubmit` al formulario para evitar que se envíe por defecto y hemos llamado a la función `enviarFormulario()` para manejar el envío del formulario. Recuerda que debes implementar la función `enviarFormulario()` en tu archivo `script.js` para realizar la lógica de envío al servidor Flask.
+
+¡Espero que esto cumpla con tus expectativas! Si necesitas más ayuda, no dudes en preguntar.
