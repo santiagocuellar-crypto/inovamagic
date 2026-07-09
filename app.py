@@ -260,7 +260,7 @@ def forgot_password():
         print(f"Password reset link for {email}: {reset_link}")
         flash("Se ha enviado un enlace de recuperación de contraseña a tu correo electrónico.", "success")
         return redirect(url_for('login_page'))
-    return render_template('recuperar') # Need to create this template
+    return render_template('recuperar.html') # Need to create this template
 
 
 @app.route('/reset-password/<token>', methods=['GET', 'POST'])
