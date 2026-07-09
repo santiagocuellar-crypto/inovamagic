@@ -160,7 +160,9 @@ def index():
     carrusel_items = [productos[0], productos[5], productos[15]]
     user_email = session.get('user_email')
     usuario_logueado = USERS.get(user_email) if user_email else None
+    # Check for flashed messages directly in the template context
     has_flashed_messages = bool(get_flashed_messages())
+
     return render_template(
         'index.html',
         productos=productos,
@@ -241,7 +243,7 @@ def logout():
     return redirect(url_for('index'))
 
 # Password reset functionality
-@app.route('/forgot-password', methods=['GET', 'POST'])
+@app.route('/recuperar', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -258,7 +260,7 @@ def forgot_password():
         print(f"Password reset link for {email}: {reset_link}")
         flash("Se ha enviado un enlace de recuperación de contraseña a tu correo electrónico.", "success")
         return redirect(url_for('login_page'))
-    return render_template('forgot_password.html') # Need to create this template
+    return render_template('recuperar') # Need to create this template
 
 
 @app.route('/reset-password/<token>', methods=['GET', 'POST'])
@@ -516,11 +518,3 @@ def finalizar_compra():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-@app.route('/recuperar_contrasena', methods=['GET', 'POST'])
-def recuperar_contrasena():
-    if request.method == 'POST':
-        correo = request.form.get('correo')
-        # Aquí Windsurf te sugerirá cómo buscar el correo en tu base de datos
-        return "Te enviamos un enlace de recuperación", 200
-    return render_template('recuperar.html')
