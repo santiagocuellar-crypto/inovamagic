@@ -14,9 +14,9 @@ app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'tu_correo_personal@gmail.com'  # <-- PON TU GMAIL PERSONAL AQUÍ
-app.config['MAIL_PASSWORD'] = 'pzbp mkmo oenq cnsa'  # <-- PEGA AQUÍ LAS 16 LETRAS AMARILLAS SIN ESPACIOS
-app.config['MAIL_DEFAULT_SENDER'] = 'tu_correo_personal@gmail.com'  # <-- VUELVE A PONER TU GMAIL PERSONAL AQUÍ
+app.config['MAIL_USERNAME'] = 'santiagocuellar535@gmail.com'  # <-- PON TU GMAIL PERSONAL AQUÍ
+app.config['MAIL_PASSWORD'] = 'pzbpmkmooenqcnsa'# <-- PEGA AQUÍ LAS 16 LETRAS AMARILLAS SIN ESPACIOS
+app.config['MAIL_DEFAULT_SENDER'] = 'santiagocuellar535@gmail.com'  # <-- VUELVE A PONER TU GMAIL PERSONAL AQUÍ
 
 mail = Mail(app)
 
