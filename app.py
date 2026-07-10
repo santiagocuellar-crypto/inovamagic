@@ -5,10 +5,20 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from authlib.integrations.flask_client import OAuth
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
 from functools import wraps
-
+from flask_mail import Mail, Message
 app = Flask(__name__)
 app.secret_key = 'inovamagic_secret_key_2026'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
+
+# Configuración para el envío de correos
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'tu_correo_personal@gmail.com'  # <-- PON TU GMAIL PERSONAL AQUÍ
+app.config['MAIL_PASSWORD'] = 'pzbp mkmo oenq cnsa'  # <-- PEGA AQUÍ LAS 16 LETRAS AMARILLAS SIN ESPACIOS
+app.config['MAIL_DEFAULT_SENDER'] = 'tu_correo_personal@gmail.com'  # <-- VUELVE A PONER TU GMAIL PERSONAL AQUÍ
+
+mail = Mail(app)
 
 # Configuration for Google OAuth
 app.config['GOOGLE_CLIENT_ID'] = 'YOUR_GOOGLE_CLIENT_ID' # Placeholder
@@ -242,21 +252,30 @@ def logout():
     flash("Has cerrado sesión exitosamente.", "success")
     return redirect(url_for('index'))
 
-# Password reset functionality
 @app.route('/recuperar', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
         email = request.form.get('email')
-        if email not in USERS:
-            flash("Si tu correo está registrado, recibirás un enlace para recuperar tu contraseña.")
-            return redirect(url_for('login_page'))
         
-        # Lógica del token (déjela como la tiene)
+        # Generar el token de seguridad para el enlace
         token = s.dumps(email, salt='password-reset-salt')
         reset_link = url_for('reset_password', token=token, _external=True)
         
-        flash("Se ha enviado un enlace de recuperación.")
-        return redirect(url_for('login_page'))
+        # --- AQUÍ SE MANDA EL CORREO REAL ---
+        try:
+            msg = Message(
+                subject="Recuperación de Contraseña - Inovamagic",
+                recipients=[email],
+                body=f"Hola,\n\nPara restablecer tu contraseña en Inovamagic, dale clic al siguiente enlace:\n{reset_link}\n\nSi no solicitaste esto, ignora este correo."
+            )
+            mail.send(msg)
+            flash("Se ha enviado un enlace de recuperación a tu correo.")
+        except Exception as e:
+            print(f"Error enviando correo: {e}")
+            flash("Hubo un error al enviar el correo. Inténtalo más tarde.")
+        # -------------------------------------
+        
+        return redirect(url_for('forgot_password'))
         
     return render_template('recuperar.html')
 
