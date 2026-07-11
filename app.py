@@ -600,17 +600,6 @@ def finalizar_compra():
 
     return jsonify({"ok": True, "recibo": recibo})
 
-@app.route('/admin/usuarios')
-def panel_usuarios():
-    # Aquí simulamos que jalan de la base de datos. 
-    # Cambia esto por tu consulta real si usas SQLite o SQLAlchemy (ej: Usuarios.query.all())
-    # Por ahora, te dejo un ejemplo de cómo pasarlos a la vista:
-    usuarios_registrados = [
-        {"id": 1, "correo": "santiago@evaristogarcia.com", "fecha": "2026-07-11"},
-        {"id": 2, "correo": "alejandra@correo.com", "fecha": "2026-07-11"},
-        {"id": 3, "correo": "duvan@correo.com", "fecha": "2026-07-11"}
-    ]
-    return render_template('admin_usuarios.html', usuarios=usuarios_registrados)
 
 @app.route('/admin/usuarios')
 def panel_usuarios():
