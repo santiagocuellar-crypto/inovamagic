@@ -257,16 +257,16 @@ def login():
 
 @app.route('/register', methods=['POST'])
 def register():
-    global USERS # Esto le dice a la función que use el cuaderno global
-    
-    # ... (aquí recibes los datos del formulario como ya lo tienes) ...
+    global USERS  # <--- Esto es lo que le permite a Flask acceder al diccionario global
+    nombre = request.form.get('name')
     correo = request.form.get('email')
-    
-    # Esta es la parte del Paso 3: Guardar el nuevo usuario
+    contrasena = request.form.get('password')
+    # ... (tus otros campos) ...
+
     if correo not in USERS:
         USERS[correo] = {
-            "name": request.form.get('name'),
-            "password": generate_password_hash(request.form.get('password')),
+            "name": nombre,
+            "password": generate_password_hash(contrasena),
             "role": request.form.get('role'),
             "institution": request.form.get('institution'),
             "address": request.form.get('address'),
@@ -278,8 +278,24 @@ def register():
         flash("¡Registro exitoso!", "success")
         return redirect(url_for('login_page'))
     else:
-        flash("El correo ya existe.", "error")
+        flash("El correo ya está registrado.", "error")
         return redirect(url_for('login_page'))
+
+@app.route('/restablecer/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    global USERS  # <--- Fundamental para actualizar la contraseña del usuario real
+    try:
+        email = s.loads(token, salt='password-reset-salt', max_age=3600)
+    except:
+        return "El enlace ha expirado."
+
+    if request.method == 'POST':
+        nueva_password = request.form.get('password')
+        if email in USERS:
+            USERS[email]["password"] = generate_password_hash(nueva_password)
+            flash("Contraseña actualizada.", "success")
+            return redirect(url_for('login_page'))
+    return render_template('restablecer.html', token=token)
 
     # ---- AQUÍ SE GUARDA AUTOMÁTICAMENTE EN TU DICCIONARIO REAL DE USUARIOS ----
     if correo not in USERS:
