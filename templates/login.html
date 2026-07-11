@@ -303,16 +303,14 @@
         }
 
         // Si se viene de un intento de registro fallido o exitoso, mantener la pestaña correcta
-        window.onload = function() {
-            const activeTab = "{{ active_tab }}";
-            if (activeTab === 'register') {
-                switchForm('register');
-            } else if (activeTab === 'forgot_password') {
-                // Optionally add logic to open forgot password modal/section if needed
-            } else if (activeTab === 'reset_password') {
-                // Optionally add logic to open reset password modal/section if needed
-            }
-        }
+       window.onload = function() {
+    const activeTab = "{{ active_tab }}";
+    if (activeTab === 'register') {
+        switchForm('register');
+    } else if (activeTab === 'recuperar_password_directo') {
+        // Aquí puedes meter la lógica si necesitas abrir la sección de recuperar
+    }
+}
     </script>
 </body>
 </html>
