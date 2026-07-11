@@ -298,7 +298,7 @@ def forgot_password():
         
     return render_template('recuperar.html')
 
-@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+@app.route('/restablecer/<token>', methods=['GET', 'POST'])
 def cambiar_password_final(token):
     try:
         # Verificar el token de seguridad
