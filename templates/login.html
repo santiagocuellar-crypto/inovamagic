@@ -174,7 +174,7 @@
 </head>
 <body>
 
-    <div class="login-card" style="border-radius: 24px; display: flex; flex-direction: column;">
+    <div class="login-card" style="border-radius: 24px; display: flex; flex-direction: column; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);">
         <h2>Inovamagic Store</h2>
         <p>Gestiona tus compras institucionales</p>
         
@@ -212,11 +212,11 @@
             <form action="{{ url_for('login') }}" method="POST">
                 <div class="form-group">
                     <label for="login-email">Correo Electrónico</label>
-                    <input type="email" id="login-email" name="email" style="background-color: #fcfcfc; color: #495057; border: 1px solid #e0e0e0; border-radius: 50px; padding: 10px 20px; font-size: 14px;" placeholder="santiago@evaristogarcia.com" required>
+                    <input type="email" id="login-email" name="email" style="background-color: rgba(255, 255, 255, 0.35); color: #495057; border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 50px; padding: 10px 20px; font-size: 14px; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);" placeholder="santiago@evaristogarcia.com" required>
                 </div>
                 <div class="form-group">
                     <label for="login-password">Contraseña</label>
-                    <input type="password" id="login-password" name="password" style="background-color: #fcfcfc; color: #495057; border: 1px solid #e0e0e0; border-radius: 50px; padding: 10px 20px; font-size: 14px;" placeholder="12345" required>
+                    <input type="password" id="login-password" name="password" style="background-color: rgba(255, 255, 255, 0.35); color: #495057; border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 50px; padding: 10px 20px; font-size: 14px; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);" placeholder="12345" required>
                     <span class="password-toggle" onclick="togglePasswordVisibility('login-password')"><i class="fas fa-eye"></i></span>
                 </div>
                 <a href="{{ url_for('recuperar_password_directo') }}" class="forgot-password-link">¿Olvidaste tu contraseña?</a>
