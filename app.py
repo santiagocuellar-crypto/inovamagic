@@ -35,7 +35,7 @@ def reset_password(token):
         # ---- VALIDACIÓN CON TU DICCIONARIO REAL DE USUARIOS ----
         if email not in USERS:
             flash("El correo ingresado no está registrado en el sistema.", "error")
-            return redirect(url_for('login_page')) # Te manda automático al login/registro
+            return redirect(url_for('login_page'))
 
         # ---- SI SÍ EXISTE, ACTUALIZA LA CONTRASEÑA EN EL DICCIONARIO ----
         USERS[email]["password"] = generate_password_hash(nueva_password)
