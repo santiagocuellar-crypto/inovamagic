@@ -309,11 +309,11 @@ def cambiar_password_final(token):
 
     if request.method == 'POST':
         nueva_password = request.form.get('password')
-        
-        # Encriptar la contraseña para proteger al usuario
         hashed_password = generate_password_hash(nueva_password)
         
-        # Guardamos la confirmación en la pantalla
+        # 💡 NOTA: Aquí guardaremos en tu base de datos más adelante.
+        # Por ahora, forzamos el redireccionamiento para verificar que funcione:
+        
         flash("Tu contraseña ha sido actualizada con éxito. Ya puedes iniciar sesión.")
         return redirect(url_for('login'))
 
