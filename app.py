@@ -32,12 +32,10 @@ def reset_password(token):
     if request.method == 'POST':
         nueva_password = request.form.get('password')
         
-        # ---- VALIDACIÓN CON TU DICCIONARIO REAL DE USUARIOS ----
         if email not in USERS:
             flash("El correo ingresado no está registrado en el sistema.", "error")
             return redirect(url_for('login_page'))
 
-        # ---- SI SÍ EXISTE, ACTUALIZA LA CONTRASEÑA EN EL DICCIONARIO ----
         USERS[email]["password"] = generate_password_hash(nueva_password)
         
         flash("Contraseña actualizada con éxito.", "success")
