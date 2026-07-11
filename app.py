@@ -272,30 +272,24 @@ def logout():
     return redirect(url_for('index'))
 
 @app.route('/recuperar', methods=['GET', 'POST'])
-def forgot_password():
+def recuperar_password_directo():
     if request.method == 'POST':
-        email = request.form.get('email')
+        correo = request.form.get('email')
+        nueva_password = request.form.get('password')
         
-        # Generar el token de seguridad para el enlace
-        token = s.dumps(email, salt='password-reset-salt')
-        link = url_for('cambiar_password_final', token=token, _external=True)
+        # Buscamos si el correo existe en tu diccionario USERS
+        user = USERS.get(correo)
         
-        # --- AQUÍ SE MANDA EL CORREO REAL ---
-        try:
-            msg = Message(
-                subject="Recuperación de Contraseña - Inovamagic",
-                recipients=[email],
-                body=f"Hola,\n\nPara restablecer tu contraseña en Inovamagic, dale clic al siguiente enlace:\n{reset_link}\n\nSi no solicitaste esto, ignora este correo."
-            )
-            mail.send(msg)
-            flash("Se ha enviado un enlace de recuperación a tu correo.")
-        except Exception as e:
-            print(f"Error enviando correo: {e}")
-            flash("Hubo un error al enviar el correo. Inténtalo más tarde.")
-        # -------------------------------------
-        
-        return redirect(url_for('forgot_password'))
-        
+        if user:
+            # Si existe, le encriptamos y actualizamos la contraseña de una
+            user['password'] = generate_password_hash(nueva_password)
+            flash("Tu contraseña ha sido actualizada con éxito. Ya puedes iniciar sesión.", "success")
+            return redirect(url_for('login_page'))
+        else:
+            # Si el correo no está registrado, le avisamos
+            flash("El correo electrónico no se encuentra registrado.", "error")
+            return redirect(url_for('recuperar_password_directo'))
+            
     return render_template('recuperar.html')
 
 @app.route('/actualizar-password/<token>', methods=['GET', 'POST'])
