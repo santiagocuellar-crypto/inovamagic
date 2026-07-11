@@ -22,20 +22,26 @@ mail = Mail(app)
 
 @app.route('/restablecer/<token>', methods=['GET', 'POST'])
 def reset_password(token):
+    global USERS
     try:
         email = s.loads(token, salt='password-reset-salt', max_age=3600)
     except (SignatureExpired, BadTimeSignature):
-        flash("El enlace de recuperación ha expirado o es inválido.")
+        flash("El enlace de recuperación ha expirado o es inválido.", "error")
         return redirect(url_for('recuperar_password_directo'))
 
     if request.method == 'POST':
         nueva_password = request.form.get('password')
-        hashed_password = generate_password_hash(nueva_password)
         
-        # (Aquí va la lógica para actualizar tu base de datos)
+        # ---- VALIDACIÓN CON TU DICCIONARIO REAL DE USUARIOS ----
+        if email not in USERS:
+            flash("El correo ingresado no está registrado en el sistema.", "error")
+            return redirect(url_for('login_page')) # Te manda automático al login/registro
+
+        # ---- SI SÍ EXISTE, ACTUALIZA LA CONTRASEÑA EN EL DICCIONARIO ----
+        USERS[email]["password"] = generate_password_hash(nueva_password)
         
-        flash("Tu contraseña ha sido actualizada con éxito.")
-        return redirect(url_for('login'))
+        flash("Contraseña actualizada con éxito.", "success")
+        return redirect(url_for('login_page'))
 
     return render_template('restablecer.html', token=token)
 
@@ -227,6 +233,9 @@ def login():
 
 @app.route('/register', methods=['POST'])
 def register():
+    # Suponiendo que tu diccionario de la línea 66 se llama USERS (mira la línea 66 para confirmar el nombre exacto si algo)
+    global USERS  
+    
     nombre = request.form.get('name')
     correo = request.form.get('email')
     contrasena = request.form.get('password')
@@ -240,6 +249,35 @@ def register():
         flash("Todos los campos son obligatorios para el registro.", "error")
         session['active_tab'] = 'register'
         return redirect(url_for('login_page'))
+
+    # ---- AQUÍ SE GUARDA AUTOMÁTICAMENTE EN TU DICCIONARIO REAL DE USUARIOS ----
+    if correo not in USERS:
+        USERS[correo] = {
+            "name": nombre,
+            "password": generate_password_hash(contrasena),  # Guardamos la clave protegida
+            "role": rol,
+            "institution": institucion,
+            "address": direccion,
+            "neighborhood": barrio,
+            "phone": telefono,
+            "is_admin": False,
+            "google_id": None
+        }
+        flash("¡Registro exitoso! Ya puedes iniciar sesión.", "success")
+    else:
+        flash("El correo electrónico ya se encuentra registrado.", "error")
+        session['active_tab'] = 'register'
+        return redirect(url_for('login_page'))
+
+    session['active_tab'] = 'login'
+    return redirect(url_for('login_page'))
+    # ---- AQUÍ SE GUARDA AUTOMÁTICAMENTE EL CORREO ----
+    if correo not in correos_existentes:
+        correos_existentes.append(correo)
+
+    flash("¡Registro exitoso! Ya puedes iniciar sesión.", "success")
+    session['active_tab'] = 'login'
+    return redirect(url_for('login_page'))
 
     if correo in USERS:
         flash("Este correo electrónico ya se encuentra registrado.", "error")
@@ -536,6 +574,23 @@ def finalizar_compra():
 
     return jsonify({"ok": True, "recibo": recibo})
 
+@app.route('/admin/usuarios')
+def panel_usuarios():
+    # Aquí simulamos que jalan de la base de datos. 
+    # Cambia esto por tu consulta real si usas SQLite o SQLAlchemy (ej: Usuarios.query.all())
+    # Por ahora, te dejo un ejemplo de cómo pasarlos a la vista:
+    usuarios_registrados = [
+        {"id": 1, "correo": "santiago@evaristogarcia.com", "fecha": "2026-07-11"},
+        {"id": 2, "correo": "alejandra@correo.com", "fecha": "2026-07-11"},
+        {"id": 3, "correo": "duvan@correo.com", "fecha": "2026-07-11"}
+    ]
+    return render_template('admin_usuarios.html', usuarios=usuarios_registrados)
+
+@app.route('/admin/usuarios')
+def panel_usuarios():
+    global USERS
+    # Pasamos el diccionario de usuarios directamente a la plantilla HTML
+    return render_template('panel.html', usuarios=USERS)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Inovamagic</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        th {
+            padding: 16px;
+            font-weight: 600;
+            color: #86868b;
+            border-bottom: 1px solid #d2d2d7;
+        }
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #f5f5f7;
+            font-size: 15px;
+        }
+        tr:hover {
+            background-color: #fafafa;
+        }
+        .badge {
+            background-color: #e8e8ed;
+            color: #1d1d1f;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .badge-admin {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Panel de Control de Usuarios</h1>
+    
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Correo Electrónico</th>
+                    <th>Nombre Completo</th>
+                    <th>Rol</th>
+                    <th>Institución</th>
+                    <th>Teléfono</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for correo, datos in usuarios.items() %}
+                <tr>
+                    <td><strong>{{ correo }}</strong></td>
+                    <td>{{ datos.name }}</td>
+                    <td>
+                        <span class="badge {% if datos.role == 'Administrador' %}badge-admin{% endif %}">
+                            {{ datos.role }}
+                        </span>
+                    </td>
+                    <td>{{ datos.institution }}</td>
+                    <td>{{ datos.phone }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
