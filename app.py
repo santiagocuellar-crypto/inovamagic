@@ -20,6 +20,25 @@ app.config['MAIL_DEFAULT_SENDER'] = 'santiagocuellar535@gmail.com'  # <-- VUELVE
 
 mail = Mail(app)
 
+@app.route('/restablecer/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    try:
+        email = s.loads(token, salt='password-reset-salt', max_age=3600)
+    except (SignatureExpired, BadTimeSignature):
+        flash("El enlace de recuperación ha expirado o es inválido.")
+        return redirect(url_for('forgot_password'))
+
+    if request.method == 'POST':
+        nueva_password = request.form.get('password')
+        hashed_password = generate_password_hash(nueva_password)
+        
+        # (Aquí va la lógica para actualizar tu base de datos)
+        
+        flash("Tu contraseña ha sido actualizada con éxito.")
+        return redirect(url_for('login'))
+
+    return render_template('restablecer.html', token=token)
+
 # Configuration for Google OAuth
 app.config['GOOGLE_CLIENT_ID'] = 'YOUR_GOOGLE_CLIENT_ID' # Placeholder
 app.config['GOOGLE_CLIENT_SECRET'] = 'YOUR_GOOGLE_CLIENT_SECRET' # Placeholder
