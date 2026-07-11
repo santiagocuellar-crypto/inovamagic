@@ -1,6 +1,32 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash, get_flashed_messages
 from datetime import datetime
 import uuid
+# DEFINICIÓN GLOBAL DE USUARIOS (El motor de tu página)
+USERS = {
+    "santiago@evaristogarcia.com": {
+        "name": "Santiago Cuellar",
+        "password": generate_password_hash("12345"),
+        "role": "Administrador",
+        "institution": "I.E. Evaristo García",
+        "address": "Calle 1 # 2-3, Cali",
+        "neighborhood": "Centro",
+        "phone": "+57 300 1234567",
+        "is_admin": True,
+        "google_id": None
+    },
+    "maria@evaristogarcia.com": {
+        "name": "Maria Lopez",
+        "password": generate_password_hash("password123"),
+        "role": "Estudiante",
+        "institution": "I.E. Evaristo García",
+        "address": "Carrera 4 # 5-6, Cali",
+        "neighborhood": "Versalles",
+        "phone": "+57 310 9876543",
+        "is_admin": False,
+        "google_id": None
+    }
+}
+
 from werkzeug.security import generate_password_hash, check_password_hash
 from authlib.integrations.flask_client import OAuth
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
@@ -231,21 +257,28 @@ def login():
 
 @app.route('/register', methods=['POST'])
 def register():
-    # Suponiendo que tu diccionario de la línea 66 se llama USERS (mira la línea 66 para confirmar el nombre exacto si algo)
-    global USERS  
+    global USERS # Esto le dice a la función que use el cuaderno global
     
-    nombre = request.form.get('name')
+    # ... (aquí recibes los datos del formulario como ya lo tienes) ...
     correo = request.form.get('email')
-    contrasena = request.form.get('password')
-    rol = request.form.get('role')
-    institucion = request.form.get('institution')
-    direccion = request.form.get('address')
-    barrio = request.form.get('neighborhood')
-    telefono = request.form.get('phone')
-
-    if not all([nombre, correo, contrasena, rol, institucion, direccion, barrio, telefono]):
-        flash("Todos los campos son obligatorios para el registro.", "error")
-        session['active_tab'] = 'register'
+    
+    # Esta es la parte del Paso 3: Guardar el nuevo usuario
+    if correo not in USERS:
+        USERS[correo] = {
+            "name": request.form.get('name'),
+            "password": generate_password_hash(request.form.get('password')),
+            "role": request.form.get('role'),
+            "institution": request.form.get('institution'),
+            "address": request.form.get('address'),
+            "neighborhood": request.form.get('neighborhood'),
+            "phone": request.form.get('phone'),
+            "is_admin": False,
+            "google_id": None
+        }
+        flash("¡Registro exitoso!", "success")
+        return redirect(url_for('login_page'))
+    else:
+        flash("El correo ya existe.", "error")
         return redirect(url_for('login_page'))
 
     # ---- AQUÍ SE GUARDA AUTOMÁTICAMENTE EN TU DICCIONARIO REAL DE USUARIOS ----
