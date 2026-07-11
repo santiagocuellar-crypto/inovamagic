@@ -278,7 +278,7 @@ def forgot_password():
         
         # Generar el token de seguridad para el enlace
         token = s.dumps(email, salt='password-reset-salt')
-        reset_link = url_for('reset_password', token=token, _external=True)
+        link = url_for('cambiar_password_final', token=token, _external=True)
         
         # --- AQUÍ SE MANDA EL CORREO REAL ---
         try:
@@ -298,7 +298,7 @@ def forgot_password():
         
     return render_template('recuperar.html')
 
-@app.route('/restablecer/<token>', methods=['GET', 'POST'])
+@app.route('/actualizar-password/<token>', methods=['GET', 'POST'])
 def cambiar_password_final(token):
     try:
         # Verificar el token de seguridad
@@ -310,9 +310,6 @@ def cambiar_password_final(token):
     if request.method == 'POST':
         nueva_password = request.form.get('password')
         hashed_password = generate_password_hash(nueva_password)
-        
-        # 💡 NOTA: Aquí guardaremos en tu base de datos más adelante.
-        # Por ahora, forzamos el redireccionamiento para verificar que funcione:
         
         flash("Tu contraseña ha sido actualizada con éxito. Ya puedes iniciar sesión.")
         return redirect(url_for('login'))
