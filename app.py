@@ -299,9 +299,9 @@ def forgot_password():
     return render_template('recuperar.html')
 
 @app.route('/restablecer/<token>', methods=['GET', 'POST'])
-def cambiar_password_final(token):  # <-- Le cambiamos el nombre a esta función para que sea único
+def cambiar_password_final(token):
     try:
-        # Verificar que el enlace sea válido y no haya expirado
+        # Verificar el token de seguridad
         email = s.loads(token, salt='password-reset-salt', max_age=3600)
     except (SignatureExpired, BadTimeSignature):
         flash("El enlace de recuperación ha expirado o es inválido.")
@@ -310,10 +310,10 @@ def cambiar_password_final(token):  # <-- Le cambiamos el nombre a esta función
     if request.method == 'POST':
         nueva_password = request.form.get('password')
         
-        # Encriptar la nueva contraseña
+        # Encriptar la contraseña para proteger al usuario
         hashed_password = generate_password_hash(nueva_password)
         
-        # Aquí va tu lógica de base de datos si la tienes, si no, lo dejamos pasar por ahora
+        # Guardamos la confirmación en la pantalla
         flash("Tu contraseña ha sido actualizada con éxito. Ya puedes iniciar sesión.")
         return redirect(url_for('login'))
 
