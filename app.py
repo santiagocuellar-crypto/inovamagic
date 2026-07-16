@@ -1,10 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash, get_flashed_messages
-from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from authlib.integrations.flask_client import OAuth
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
 import uuid
+from functools import wraps
+from flask_mail import Mail, Message
+app = Flask(__name__)
+app.secret_key = 'inovamagic_secret_key_2026'
+app.config['SESSION_COOKIE_HTTPONLY'] = True
 # DEFINICIÓN GLOBAL DE USUARIOS (El motor de tu página)
 USERS = {
     "santiago@evaristogarcia.com": {
@@ -44,14 +48,6 @@ def panel_usuarios():
     
     # Si pasa el "filtro", mostramos los usuarios
     return render_template('panel.html', usuarios=USERS)
-from werkzeug.security import generate_password_hash, check_password_hash
-from authlib.integrations.flask_client import OAuth
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
-from functools import wraps
-from flask_mail import Mail, Message
-app = Flask(__name__)
-app.secret_key = 'inovamagic_secret_key_2026'
-app.config['SESSION_COOKIE_HTTPONLY'] = True
 
 # Configuración para el envío de correos
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
