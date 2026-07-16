@@ -16,19 +16,6 @@ USERS = {
         "google_id": None
     },
     
-    # --- CONFIGURACIÓN DEL ADMINISTRADOR ---
-ADMIN_EMAIL = "santiagocuellar535@gmail.com"
-
-@app.route('/admin/usuarios')
-def panel_usuarios():
-    # Verificamos: ¿Hay alguien conectado y es el administrador?
-    if session.get('email') != ADMIN_EMAIL:
-        flash("Acceso denegado: No tienes permisos de administrador.", "error")
-        return redirect(url_for('login')) # O a la página principal
-    
-    # Si pasa el "filtro", mostramos los usuarios
-    return render_template('panel.html', usuarios=USERS)
-    
     "maria@evaristogarcia.com": {
         "name": "Maria Lopez",
         "password": generate_password_hash("password123"),
@@ -42,6 +29,18 @@ def panel_usuarios():
     }
 }
 
+    # --- CONFIGURACIÓN DEL ADMINISTRADOR ---
+ADMIN_EMAIL = "santiagocuellar535@gmail.com"
+
+@app.route('/admin/usuarios')
+def panel_usuarios():
+    # Verificamos: ¿Hay alguien conectado y es el administrador?
+    if session.get('email') != ADMIN_EMAIL:
+        flash("Acceso denegado: No tienes permisos de administrador.", "error")
+        return redirect(url_for('login')) # O a la página principal
+    
+    # Si pasa el "filtro", mostramos los usuarios
+    return render_template('panel.html', usuarios=USERS)
 from werkzeug.security import generate_password_hash, check_password_hash
 from authlib.integrations.flask_client import OAuth
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
