@@ -612,13 +612,4 @@ def finalizar_compra():
     return jsonify({"ok": True, "recibo": recibo})
 
 
-@app.route('/admin/usuarios')
-def panel_usuarios():
-    # 1. Verificamos: ¿El usuario que está conectado es el administrador?
-    # Usamos 'email' porque es la llave que guardaste en session durante el login
-    if session.get('email') != ADMIN_EMAIL:
-        flash("Acceso denegado: No tienes permisos de administrador.", "error")
-        return redirect(url_for('index')) # O te manda al login si prefieres
-    
-    # 2. Si el correo SÍ coincide, renderizamos el panel
-    return render_template('panel.html', usuarios=USERS)
+
