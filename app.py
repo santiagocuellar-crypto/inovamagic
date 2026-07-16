@@ -341,6 +341,14 @@ def reset_password(token):
 
     return redirect(url_for('login_page'))
 
+@app.route('/solicitar-recuperacion', methods=['GET', 'POST'])
+def solicitar_recuperacion():
+    if request.method == 'POST':
+        # Aquí irá tu lógica para enviar el correo después
+        flash("Se ha enviado un enlace de recuperación a tu correo.", "success")
+        return redirect(url_for('login_page'))
+    return render_template('recuperar.html')
+
 
 @app.route('/logout')
 def logout():
