@@ -309,10 +309,6 @@ def actualizar_password_directo():
 
 # --- BUSCA DONDE ESTÁN TUS OTRAS RUTAS Y PÉGALO AHÍ ---
 
-@app.route('/index')
-def index():
-    return render_template('index.html')
-
 # AQUÍ LO AGREGAS:
 @app.route('/panel-control')
 def panel_control():
