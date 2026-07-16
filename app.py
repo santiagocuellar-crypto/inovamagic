@@ -391,20 +391,21 @@ def recuperar():
     return render_template('recuperar.html')
 
 # --- RUTA PARA ACTUALIZAR CONTRASEÑA DIRECTAMENTE ---
-@app.route('/actualizar-password-directo', methods=['POST'])
+# --- RUTA PARA ACTUALIZAR CONTRASEÑA DIRECTAMENTE ---
+@app.route('/actualizar-password-directo', methods=['GET', 'POST'])
 def actualizar_password_directo():
-    correo = request.form.get('email')
-    nueva_clave = request.form.get('password')
-    
-    # Verificamos si el usuario existe en tu diccionario global USERS
-    if correo in USERS:
-        # Actualizamos directamente en el diccionario con hash
-        USERS[correo]['password'] = generate_password_hash(nueva_clave)
-        flash("Contraseña actualizada con éxito.", "success")
-    else:
-        flash("El correo no está registrado.", "error")
+    if request.method == 'POST':
+        correo = request.form.get('email')
+        nueva_clave = request.form.get('password')
         
-    return redirect(url_for('login_page')) # O la ruta de tu login
+        if correo in USERS:
+            USERS[correo]['password'] = generate_password_hash(nueva_clave)
+            flash("Contraseña actualizada con éxito.", "success")
+            return redirect(url_for('login_page')) # <--- CORREGIDO AQUÍ
+        else:
+            flash("El correo no está registrado.", "error")
+            
+    return render_template('recuperar.html')
 
 # Google OAuth2 Setup
 oauth.register(
