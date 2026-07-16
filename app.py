@@ -215,6 +215,7 @@ def index():
     )
 
 
+
 @app.route('/login-page', methods=['GET', 'POST'])
 def login_page():
     if request.method == 'POST':
@@ -305,6 +306,19 @@ def actualizar_password_directo():
             flash("Ese correo no está registrado.", "error")
             
     return render_template('recuperar.html')
+
+# --- BUSCA DONDE ESTÁN TUS OTRAS RUTAS Y PÉGALO AHÍ ---
+
+@app.route('/index')
+def index():
+    return render_template('index.html')
+
+# AQUÍ LO AGREGAS:
+@app.route('/panel-control')
+def panel_control():
+    # Aquí estamos enviando el diccionario 'USERS' a la variable 'usuarios' que usa el HTML
+    return render_template('panel.html', usuarios=USERS)
+# --- FIN DE LAS RUTAS ---
 
     # ---- AQUÍ SE GUARDA AUTOMÁTICAMENTE EN TU DICCIONARIO REAL DE USUARIOS ----
     if correo not in USERS:
