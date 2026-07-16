@@ -237,12 +237,18 @@ def login_page():
 # Busca esto en tu app.py y reemplázalo:
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # Aquí dentro sigue toda tu lógica de verificar correo y contraseña...
     if request.method == 'POST':
-        # ... tu código actual ...
-        pass
-    
-    # IMPORTANTE: Esto es lo que hace que deje de salir "Método no permitido"
+        correo = request.form.get('email')
+        contrasena = request.form.get('password')
+        
+        user = USERS.get(correo)
+        if user and check_password_hash(user["password"], contrasena):
+            session['user_email'] = correo
+            return redirect(url_for('index')) # O la ruta de tu panel
+        else:
+            flash("Datos incorrectos.", "error")
+            return redirect(url_for('login')) # Vuelve al login si falla
+            
     return render_template('login.html')
 
     user = USERS.get(correo)
