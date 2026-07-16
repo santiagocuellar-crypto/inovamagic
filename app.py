@@ -9,6 +9,9 @@ from flask_mail import Mail, Message
 app = Flask(__name__)
 app.secret_key = 'inovamagic_secret_key_2026'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
+
+mail = Mail(app)
+
 # DEFINICIÓN GLOBAL DE USUARIOS (El motor de tu página)
 USERS = {
     "santiago@evaristogarcia.com": {
