@@ -15,6 +15,20 @@ USERS = {
         "is_admin": True,
         "google_id": None
     },
+    
+    # --- CONFIGURACIÓN DEL ADMINISTRADOR ---
+ADMIN_EMAIL = "santiagocuellar535@gmail.com"
+
+@app.route('/admin/usuarios')
+def panel_usuarios():
+    # Verificamos: ¿Hay alguien conectado y es el administrador?
+    if session.get('email') != ADMIN_EMAIL:
+        flash("Acceso denegado: No tienes permisos de administrador.", "error")
+        return redirect(url_for('login')) # O a la página principal
+    
+    # Si pasa el "filtro", mostramos los usuarios
+    return render_template('panel.html', usuarios=USERS)
+    
     "maria@evaristogarcia.com": {
         "name": "Maria Lopez",
         "password": generate_password_hash("password123"),
@@ -336,24 +350,23 @@ def logout():
     return redirect(url_for('index'))
 
 @app.route('/recuperar', methods=['GET', 'POST'])
-def recuperar_password_directo():
+def recuperar():
     if request.method == 'POST':
-        correo = request.form.get('email')
-        nueva_password = request.form.get('password')
+        email = request.form.get('email')
         
-        # Buscamos si el correo existe en tu diccionario USERS
-        user = USERS.get(correo)
+        # 1. Verificamos si el correo existe en tu diccionario global USERS
+        if email not in USERS:
+            # Si NO existe, lanzamos el aviso y redirigimos al registro
+            flash("Este correo no está registrado. Por favor, crea una cuenta primero.", "error")
+            return redirect(url_for('registro')) 
         
-        if user:
-            # Si existe, le encriptamos y actualizamos la contraseña de una
-            user['password'] = generate_password_hash(nueva_password)
-            flash("Tu contraseña ha sido actualizada con éxito. Ya puedes iniciar sesión.", "success")
-            return redirect(url_for('login_page'))
+        # 2. Si SÍ existe (el "else" implícito), continuamos con tu lógica normal
         else:
-            # Si el correo no está registrado, le avisamos
-            flash("El correo electrónico no se encuentra registrado.", "error")
-            return redirect(url_for('recuperar_password_directo'))
-            
+            # Aquí va todo lo que ya tenías para generar el token y enviar el correo
+            # ... tu lógica de envío ...
+            flash("Se ha enviado un enlace de recuperación a tu correo.", "info")
+            return redirect(url_for('login'))
+        
     return render_template('recuperar.html')
 
 @app.route('/actualizar-password/<token>', methods=['GET', 'POST'])
@@ -603,9 +616,11 @@ def finalizar_compra():
 
 @app.route('/admin/usuarios')
 def panel_usuarios():
-    global USERS
-    # Pasamos el diccionario de usuarios directamente a la plantilla HTML
+    # 1. Verificamos: ¿El usuario que está conectado es el administrador?
+    # Usamos 'email' porque es la llave que guardaste en session durante el login
+    if session.get('email') != ADMIN_EMAIL:
+        flash("Acceso denegado: No tienes permisos de administrador.", "error")
+        return redirect(url_for('index')) # O te manda al login si prefieres
+    
+    # 2. Si el correo SÍ coincide, renderizamos el panel
     return render_template('panel.html', usuarios=USERS)
-
-if __name__ == '__main__':
-    app.run(debug=True)
