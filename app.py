@@ -367,43 +367,6 @@ def logout():
     flash("Has cerrado sesión exitosamente.", "success")
     return redirect(url_for('index'))
 
-@app.route('/recuperar', methods=['GET', 'POST'])
-def recuperar():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        
-        # 1. Verificamos si el correo existe en tu diccionario global USERS
-        if email not in USERS:
-            # Si NO existe, lanzamos el aviso y redirigimos al registro
-            flash("Este correo no está registrado. Por favor, crea una cuenta primero.", "error")
-            return redirect(url_for('registro')) 
-        
-        # 2. Si SÍ existe (el "else" implícito), continuamos con tu lógica normal
-        else:
-            # Aquí va todo lo que ya tenías para generar el token y enviar el correo
-            # ... tu lógica de envío ...
-            flash("Se ha enviado un enlace de recuperación a tu correo.", "info")
-            return redirect(url_for('login'))
-        
-    return render_template('recuperar.html')
-
-# --- RUTA PARA ACTUALIZAR CONTRASEÑA DIRECTAMENTE ---
-# --- RUTA PARA ACTUALIZAR CONTRASEÑA DIRECTAMENTE ---
-@app.route('/actualizar-password-directo', methods=['GET', 'POST'])
-def actualizar_password_directo():
-    if request.method == 'POST':
-        correo = request.form.get('email')
-        nueva_clave = request.form.get('password')
-        
-        if correo in USERS:
-            USERS[correo]['password'] = generate_password_hash(nueva_clave)
-            flash("Contraseña actualizada con éxito.", "success")
-            return redirect(url_for('login_page')) # <--- CORREGIDO AQUÍ
-        else:
-            flash("El correo no está registrado.", "error")
-            
-    return render_template('recuperar.html')
-
 # Google OAuth2 Setup
 oauth.register(
     'google',
