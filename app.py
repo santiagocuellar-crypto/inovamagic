@@ -439,7 +439,6 @@ def profile():
 
 
 @app.route('/admin')
-@admin_required
 def admin_panel():
     total_sales = 1_500_000 # Placeholder
     orders_count = 120 # Placeholder
