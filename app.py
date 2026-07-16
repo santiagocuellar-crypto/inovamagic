@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash, get_flashed_messages
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+from authlib.integrations.flask_client import OAuth
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
 import uuid
 # DEFINICIÓN GLOBAL DE USUARIOS (El motor de tu página)
 USERS = {
