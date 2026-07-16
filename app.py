@@ -110,15 +110,7 @@ def login_required(f):
     return decorated_function
 
 # Decorator to check if user is admin
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user_email' not in session:
-            flash("Necesitas iniciar sesión.")
-            return redirect(url_for('login_page'))
-        # Solo verificamos que esté logueado, quitamos la exigencia de is_admin
-        return f(*args, **kwargs)
-    return decorated_function
+
 
 productos = [
     {"id": 1, "categoria": "diario-masculino", "nombre": "Pantalón de Diario Lino (Talla 14)", "descripcion": "Pantalón gris de lino institucional para hombre. Confección clásica, tela resistente y cómoda.", "precio": 75000, "imagen": "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=500&auto=format&fit=crop"},
@@ -232,7 +224,7 @@ def login_page():
 
 
 # Busca esto en tu app.py y reemplázalo:
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login_page', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         correo = request.form.get('email')
