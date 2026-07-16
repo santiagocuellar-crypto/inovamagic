@@ -114,12 +114,9 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user_email' not in session:
-            flash("Necesitas iniciar sesión para acceder a esta página.", "error")
+            flash("Necesitas iniciar sesión.")
             return redirect(url_for('login_page'))
-        user = USERS.get(session['user_email'])
-        if not user or not user.get('is_admin'):
-            flash("No tienes permisos de administrador para acceder a esta página.", "error")
-            return redirect(url_for('index'))
+        # Solo verificamos que esté logueado, quitamos la exigencia de is_admin
         return f(*args, **kwargs)
     return decorated_function
 
@@ -249,7 +246,7 @@ def login():
             flash("Datos incorrectos.", "error")
             return redirect(url_for('login')) # Vuelve al login si falla
             
-    return render_template('login.html')
+    
 
     user = USERS.get(correo)
     if user and check_password_hash(user["password"], contrasena):
@@ -286,22 +283,22 @@ def register():
     else:
         flash("El correo ya está registrado.", "error")
         return redirect(url_for('login_page'))
-
-@app.route('/restablecer/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    global USERS  # <--- Fundamental para actualizar la contraseña del usuario real
-    try:
-        email = s.loads(token, salt='password-reset-salt', max_age=3600)
-    except:
-        return "El enlace ha expirado."
-
+    
+@app.route('/actualizar-password-directo', methods=['GET', 'POST'])
+def actualizar_password_directo():
     if request.method == 'POST':
-        nueva_password = request.form.get('password')
+        email = request.form.get('email')
+        nueva_clave = request.form.get('password')
+        
+        # Actualizamos en tu diccionario USERS
         if email in USERS:
-            USERS[email]["password"] = generate_password_hash(nueva_password)
-            flash("Contraseña actualizada.", "success")
+            USERS[email]['password'] = generate_password_hash(nueva_clave)
+            flash("Contraseña actualizada con éxito.", "success")
             return redirect(url_for('login_page'))
-    return render_template('restablecer.html', token=token)
+        else:
+            flash("Ese correo no está registrado.", "error")
+            
+    return render_template('recuperar.html')
 
     # ---- AQUÍ SE GUARDA AUTOMÁTICAMENTE EN TU DICCIONARIO REAL DE USUARIOS ----
     if correo not in USERS:
