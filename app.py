@@ -217,11 +217,25 @@ def index():
 
 @app.route('/login-page', methods=['GET', 'POST'])
 def login_page():
-    error_auth = session.pop('error_auth', None)
-    success_auth = session.pop('success_auth', None)
-    active_tab = session.pop('active_tab', 'login')
-    return render_template('login.html', error=error_auth, success=success_auth, active_tab=active_tab)
-
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        # 1. ¿Existe el usuario?
+        user = USERS.get(email)
+        
+        if user:
+            # 2. ¿La contraseña es correcta?
+            if check_password_hash(user['password'], password):
+                session['user_email'] = email
+                flash("¡Bienvenido!", "success")
+                return redirect(url_for('index'))
+            else:
+                flash("Contraseña incorrecta.", "error")
+        else:
+            flash("El correo no está registrado.", "error")
+            
+    return render_template('login.html')
 
 # Busca esto en tu app.py y reemplázalo:
 @app.route('/login_page', methods=['GET', 'POST'])
