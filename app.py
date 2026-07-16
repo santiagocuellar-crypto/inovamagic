@@ -234,10 +234,16 @@ def login_page():
     return render_template('login.html', error=error_auth, success=success_auth, active_tab=active_tab)
 
 
-@app.route('/login', methods=['POST'])
+# Busca esto en tu app.py y reemplázalo:
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    correo = request.form.get('email')
-    contrasena = request.form.get('password')
+    # Aquí dentro sigue toda tu lógica de verificar correo y contraseña...
+    if request.method == 'POST':
+        # ... tu código actual ...
+        pass
+    
+    # IMPORTANTE: Esto es lo que hace que deje de salir "Método no permitido"
+    return render_template('login.html')
 
     user = USERS.get(correo)
     if user and check_password_hash(user["password"], contrasena):
@@ -378,23 +384,21 @@ def recuperar():
         
     return render_template('recuperar.html')
 
-@app.route('/actualizar-password/<token>', methods=['GET', 'POST'])
-def cambiar_password_final(token):
-    try:
-        # Verificar el token de seguridad
-        email = s.loads(token, salt='password-reset-salt', max_age=3600)
-    except (SignatureExpired, BadTimeSignature):
-        flash("El enlace de recuperación ha expirado o es inválido.")
-        return redirect(url_for('reset_password'))
-
-    if request.method == 'POST':
-        nueva_password = request.form.get('password')
-        hashed_password = generate_password_hash(nueva_password)
+# --- RUTA PARA ACTUALIZAR CONTRASEÑA DIRECTAMENTE ---
+@app.route('/actualizar-password-directo', methods=['POST'])
+def actualizar_password_directo():
+    correo = request.form.get('email')
+    nueva_clave = request.form.get('password')
+    
+    # Verificamos si el usuario existe en tu diccionario global USERS
+    if correo in USERS:
+        # Actualizamos directamente en el diccionario con hash
+        USERS[correo]['password'] = generate_password_hash(nueva_clave)
+        flash("Contraseña actualizada con éxito.", "success")
+    else:
+        flash("El correo no está registrado.", "error")
         
-        flash("Tu contraseña ha sido actualizada con éxito. Ya puedes iniciar sesión.")
-        return redirect(url_for('login'))
-
-    return render_template('restablecer.html', token=token)
+    return redirect(url_for('login_page')) # O la ruta de tu login
 
 # Google OAuth2 Setup
 oauth.register(
