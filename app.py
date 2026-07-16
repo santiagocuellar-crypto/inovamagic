@@ -377,7 +377,7 @@ def cambiar_password_final(token):
         email = s.loads(token, salt='password-reset-salt', max_age=3600)
     except (SignatureExpired, BadTimeSignature):
         flash("El enlace de recuperación ha expirado o es inválido.")
-        return redirect(url_for('recuperar_password_directo'))
+        return redirect(url_for('reset_password'))
 
     if request.method == 'POST':
         nueva_password = request.form.get('password')
