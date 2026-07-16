@@ -215,7 +215,7 @@ def index():
     )
 
 
-@app.route('/login-page')
+@app.route('/login-page', methods=['GET', 'POST'])
 def login_page():
     error_auth = session.pop('error_auth', None)
     success_auth = session.pop('success_auth', None)
