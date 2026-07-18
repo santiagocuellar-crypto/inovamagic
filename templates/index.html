@@ -8,6 +8,52 @@
     <title>Inovamagic Store</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+/* Asegura que el contenido principal tenga espacio */
+.main-content {
+    padding: 20px;
+    background: var(--ios-bg);
+}
+
+/* Espaciado para el catálogo */
+.catalog-section {
+    margin-top: 20px;
+}
+
+/* Estilo para el botón de agregar */
+.add-btn {
+    background: var(--ios-blue);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+}
+.add-btn:hover { background: var(--ios-blue-pressed); }
+/* Esto hace que las tarjetas se pongan una al lado de la otra */
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+/* Estilo de la tarjeta */
+.product-card {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.product-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
         /* ── iOS 17 Design Tokens ── */
         :root {
             --sf: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
@@ -1082,33 +1128,80 @@
         }
     </style>
 </head>
+
 <body>
-
-    <div id="toast-container"></div>
-
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-container">
+    <div class="app-layout">
+        <!-- Barra lateral -->
+        <aside class="sidebar">
             <div class="nav-logo">Inova<span>magic</span></div>
-            <div class="nav-actions">
-                {% if usuario %}
-                    <button class="nav-btn" onclick="showProfileModal()">
-                        <i class="fas fa-user-circle"></i> Perfil
-                    </button>
-                    {% if usuario.is_admin %}
-                    <a href="{{ url_for('admin_panel') }}" class="nav-btn"><i class="fas fa-user-gear"></i> Admin</a>
-                    {% endif %}
-                    <a href="{{ url_for('logout') }}" class="nav-btn btn-logout"><i class="fas fa-sign-out-alt"></i></a>
-                {% else %}
-                    <a href="{{ url_for('login_page') }}" class="nav-btn btn-login">Iniciar Sesión</a>
-                {% endif %}
-                <button class="cart-btn" onclick="openCart()" aria-label="Abrir carrito">
-                    <i class="fas fa-bag-shopping"></i>
-                    <span class="apple-badge" id="cart-badge">0</span>
-                </button>
+            <nav class="sidebar-links">
+                <a href="#"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="#"><i class="fas fa-book"></i> Biblioteca</a>
+                <a href="#"><i class="fas fa-folder"></i> Proyectos</a>
+            </nav>
+        </aside>
+
+        <!-- Contenido principal -->
+        <main class="main-content">
+            <div id="toast-container"></div>
+
+            <!-- Navbar -->
+            <nav class="navbar">
+                <div class="nav-container">
+                    <div class="nav-logo">Inova<span>magic</span></div>
+                    <div class="nav-actions">
+                        {% if usuario %}
+                            <button class="nav-btn" onclick="showProfileModal()"><i class="fas fa-user-circle"></i> Perfil</button>
+                            {% if usuario.is_admin %}
+                                <a href="{{ url_for('admin_panel') }}" class="nav-btn"><i class="fas fa-user-gear"></i> Admin</a>
+                            {% endif %}
+                            <a href="{{ url_for('logout') }}" class="nav-btn btn-logout"><i class="fas fa-sign-out-alt"></i></a>
+                        {% else %}
+                            <a href="{{ url_for('login_page') }}" class="nav-btn btn-login">Iniciar Sesión</a>
+                        {% endif %}
+                        <button class="cart-btn" onclick="openCart()" aria-label="Abrir carrito">
+                            <i class="fas fa-bag-shopping"></i>
+                            <span class="apple-badge" id="cart-badge">0</span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- VENTANA MAC -->
+            <div class="mac-window">
+                <div class="window-header">
+                    <div class="mac-buttons">
+                        <span class="dot red" onclick="history.back()"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green" onclick="history.forward()"></span>
+                    </div>
+                    <div class="profile-preview">
+                        <i class="fas fa-user-circle"></i>
+                        <span>{{ usuario.name if usuario else 'Invitado' }}</span>
+                    </div>
+                </div>
             </div>
-        </div>
-    </nav>
+
+            <!-- CATÁLOGO DE PRODUCTOS (Ahora está adentro) -->
+            <section class="catalog-section">
+                <h2 class="section-title">Productos Destacados</h2>
+                <div class="catalog-grid">
+                    {% for producto in productos %}
+                    <div class="product-card">
+                        <img src="{{ producto.imagen }}" alt="{{ producto.nombre }}">
+                        <h3>{{ producto.nombre }}</h3>
+                        <p>${{ "{:,.0f}".format(producto.precio) }}</p>
+                        <button class="add-btn" onclick="addToCart('{{ producto.id }}')">Agregar</button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+        </main> <!-- Cierra main-content -->
+    </div> <!-- Cierra app-layout -->
+</body>
+</html>
+
 
     <!-- Nuevo contenedor estilo Mac -->
 <div class="mac-window">
@@ -1125,6 +1218,8 @@
         </div>
     </div>
 </div>
+
+
 
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
