@@ -1232,22 +1232,51 @@ body {
     <!-- Nuevo contenedor estilo Mac -->
 <main class="main-content">
     <div class="mac-window">
-        <!-- Puntitos estilo Mac -->
-        <div class="window-header">
-            <div class="mac-buttons" style="display: flex; gap: 8px; margin-bottom: 15px;">
+        <!-- Header con puntos Mac a la izquierda y Perfil a la derecha -->
+        <div class="window-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+            
+            <div class="mac-buttons" style="display: flex; gap: 8px;">
                 <span class="dot" style="width:12px; height:12px; border-radius:50%; background:#ff5f56;"></span>
                 <span class="dot" style="width:12px; height:12px; border-radius:50%; background:#ffbd2e;"></span>
                 <span class="dot" style="width:12px; height:12px; border-radius:50%; background:#27c93f;"></span>
             </div>
-        </div>
-        <!-- Aquí metemos el perfil arriba a la izquierda como querías -->
-        <div class="profile-preview">
-            <i class="fas fa-user-circle"></i>
-            <span>{{ usuario.name if usuario else 'Invitado' }}</span>
-        </div>
-    </div>
-</div>
 
+            <div class="profile-preview">
+                <i class="fas fa-user-circle"></i>
+                <span>{{ usuario.name if usuario else 'Invitado' }}</span>
+            </div>
+            
+        </div>
+
+<!-- AQUÍ VA TU CONTENIDO ACTUAL -->
+        
+        <!-- Carrusel -->
+        <section class="carousel-section">
+            <p class="section-label">Destacados</p>
+            <div class="carousel-track">
+                {% for c in carrusel %}
+                <div class="carousel-item">
+                    <img src="{{ c.imagen }}" class="carousel-img" alt="{{ c.nombre }}" loading="lazy">
+                    <div class="carousel-info">
+                        <h4>{{ c.nombre }}</h4>
+                        <span>${{ "{:,.0f}".format(c.precio) }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Buscador -->
+        <div class="search-area">
+            <h2>Catálogo Institucional</h2>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="search" id="txt-search" placeholder="Buscar prenda, talla, categoría…" autocomplete="off">
+            </div>
+        </div>
+
+        </div> 
+</main>
 
 
     <!-- Flash Messages -->
