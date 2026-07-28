@@ -1086,6 +1086,28 @@
 
 <body>
 
+    <!-- Tarjeta de producto con Vista 3D (Inovamagic) -->
+<div class="mac-window" style="max-width: 400px; padding: 15px;">
+    <div style="font-weight: 600; margin-bottom: 10px; font-size: 16px;">Producto 3D de Prueba</div>
+    
+    <!-- Aquí metemos el visor 3D con un modelo público de Google -->
+    <model-viewer src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+                  alt="Astronauta 3D"
+                  auto-rotate
+                  camera-controls
+                  ar
+                  style="width: 100%; height: 300px; background-color: var(--ios-bg); border-radius: 12px;">
+    </model-viewer>
+    
+    <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-weight: 700; color: var(--ios-blue);">$ 150.000 COP</span>
+        <button style="background: var(--ios-blue); color: white; border: none; padding: 8px 16px; border-radius: var(--radius-pill); font-weight: 600; cursor: pointer;">Ver detalles</button>
+    </div>
+</div>
+
+<!-- Importante: Esta librería debe ir al final de tu HTML para que funcione el visor -->
+<script type="module" src="https://unpkg.com/@model-viewer/public/model-viewer.min.js"></script>
+
     <div class="app-layout">
     <!-- Barra lateral estilo guía -->
     <aside class="sidebar">
