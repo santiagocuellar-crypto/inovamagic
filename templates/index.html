@@ -47,6 +47,28 @@
     padding: 10px;
 }
 
+/* Estructura para poner la barra a la izquierda y el contenido al lado */
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 260px;
+    background: var(--ios-bg-elevated);
+    border-right: 1px solid var(--ios-separator);
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+    padding: 30px;
+    background: var(--ios-bg);
+    overflow-y: auto;
+}
+
 .sidebar-link {
     display: flex;
     align-items: center;
