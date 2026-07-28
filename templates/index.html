@@ -39,6 +39,43 @@
             --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
+        /* Transición suave para esconder la barra lateral */
+.sidebar {
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Clase que se activa para esconder la barra */
+.app-layout.sidebar-hidden .sidebar {
+    transform: translateX(-100%);
+    position: absolute;
+    height: 100%;
+    z-index: 100;
+}
+
+/* Botón flotante para abrir y cerrar el menú */
+.btn-toggle-sidebar {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background: var(--ios-bg-elevated);
+    border: 1px solid var(--ios-separator);
+    color: var(--ios-label);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.btn-toggle-sidebar:hover {
+    transform: scale(1.05);
+}
+
         /* Estilo para los enlaces de la barra lateral de Inovamagic */
 .sidebar-links {
     display: flex;
@@ -1141,8 +1178,19 @@
 
 
 <body>
+
+    <script>
+    function toggleSidebar() {
+        const layout = document.querySelector('.app-layout');
+        layout.classList.toggle('sidebar-hidden');
+    }
+</script>
   
    <div class="app-layout">
+    <!-- Botón para mostrar/ocultar la barra -->
+<button class="btn-toggle-sidebar" onclick="toggleSidebar()">
+    <i class="fa-solid fa-bars"></i>
+</button>
     <!-- Barra lateral estilo guía -->
     <aside class="sidebar">
         <div class="nav-logo">Inova<span>magic</span></div>
