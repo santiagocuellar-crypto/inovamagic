@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inovamagic - Vista 3D</title>
+    
+    <!-- Librería oficial de Google para modelos 3D -->
+    <script type="module" src="https://unpkg.com/@model-viewer/public/model-viewer.min.js"></script>
+
+    <style>
+        /* Variables iOS 17 & Estilos base que ya traíamos */
+        :root {
+            --sf: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
+            --ios-bg: #F2F2F7;
+            --ios-bg-elevated: #FFFFFF;
+            --ios-label: #000000;
+            --ios-separator: rgba(60, 60, 67, 0.12);
+            --ios-blue: #007AFF;
+            --radius-md: 18px;
+            --radius-pill: 999px;
+        }
+
+        body {
+            font-family: var(--sf);
+            background: var(--ios-bg);
+            color: var(--ios-label);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        /* Tarjeta Estilo Mac */
+        .mac-window {
+            background: var(--ios-bg-elevated);
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 420px;
+            overflow: hidden;
+            border: 1px solid var(--ios-separator);
+        }
+
+        .window-header {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--ios-separator);
+        }
+
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .red { background: #FF5F56; }
+        .yellow { background: #FFBD2E; }
+        .green { background: #27C93F; }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .product-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .product-subtitle {
+            font-size: 13px;
+            color: rgba(60, 60, 67, 0.6);
+            margin-bottom: 15px;
+        }
+
+        /* Visor 3D */
+        model-viewer {
+            width: 100%;
+            height: 320px;
+            background-color: #F8F8FA;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--ios-label);
+        }
+
+        .btn-buy {
+            background: var(--ios-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius-pill);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-buy:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ventana de Inovamagic -->
+    <div class="mac-window">
+        <!-- Barra superior estilo Mac -->
+        <div class="window-header">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+            <span style="font-size: 13px; font-weight: 500; margin-left: 5px; color: rgba(60,60,67,0.6);">Inovamagic 3D Preview</span>
+        </div>
+
+        <!-- Contenido de la tarjeta -->
+        <div class="card-body">
+            <div class="product-title">Innovación en Pantalla</div>
+            <div class="product-subtitle">Modelo interactivo en tiempo real</div>
+
+            <!-- Aquí carga el visor 3D (el astronauta de prueba) -->
+            <model-viewer src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+                          alt="Modelo 3D Inovamagic"
+                          auto-rotate
+                          camera-controls
+                          ar>
+            </model-viewer>
+
+            <!-- Pie de tarjeta con precio y botón -->
+            <div class="card-footer">
+                <span class="price">$ 150.000 COP</span>
+                <button class="btn-buy">Añadir al carrito</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
