@@ -1230,53 +1230,71 @@
     }
 </script>
 
+  
+   <div class="app-layout">
+    <!-- Botón para mostrar/ocultar la barra -->
+<button class="btn-toggle-sidebar" onclick="toggleSidebar()">
+    <i class="fa-solid fa-bars"></i>
+</button>
+   <aside class="sidebar">
+    <div class="nav-logo">Inova<span>magic</span></div>
+    
+    <nav class="sidebar-links">
+        <!-- Enlaces de categorías (Sin emojis) -->
+        <a href="#" onclick="filtrarCategoria('todos', event)" class="sidebar-link active">Todos los productos</a>
+        <a href="#" onclick="filtrarCategoria('camisas', event)" class="sidebar-link">Camisas</a>
+        <a href="#" onclick="filtrarCategoria('pantalones', event)" class="sidebar-link">Pantalones</a>
+        <a href="#" onclick="filtrarCategoria('accesorios', event)" class="sidebar-link">Accesorios</a>
+        <a href="#" onclick="filtrarCategoria('electronica', event)" class="sidebar-link">Tecnología</a>
+    </nav>
 
-        <!-- Botón flotante para abrir y cerrar la barra lateral en celular -->
-        <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-
-        <!-- Contenedor principal de cuerpo y sidebar -->
-        <div style="display: flex; flex: 1; width: 100%; position: relative; align-items: flex-start;">
-
-            <!-- Barra lateral (Sidebar) estática -->
-            <aside class="sidebar" style="position: sticky; top: 65px; height: calc(100vh - 65px); overflow-y: auto;">
-                <div class="sidebar-links" style="margin-top: 20px;">
-                    <a href="#" class="sidebar-link active" onclick="filtrarCategoria('todos', event)">Todos los Productos</a>
-                    <a href="#" class="sidebar-link" onclick="filtrarCategoria('camisas', event)">Camisas</a>
-                    <a href="#" class="sidebar-link" onclick="filtrarCategoria('pantalones', event)">Pantalones</a>
-                    <a href="#" class="sidebar-link" onclick="filtrarCategoria('accesorios', event)">Accesorios</a>
-                    <a href="#" class="sidebar-link" onclick="filtrarCategoria('electronica', event)">Tecnología</a>
-                </div>
-
-                <div style="flex: 1;"></div>
-
-                <!-- Footer de la barra lateral -->
-                <div class="sidebar-footer" style="padding-top: 15px; border-top: 0.5px solid var(--ios-separator);">
-                    <p style="font-weight: 600; color: #1C1C1E;">Inovamagic Store</p>
-                    <span style="font-size: 12px; color: #8E8E93;">Catálogo oficial activo.</span>
-                </div>
-            </aside>
-
-            <!-- Contenido Principal -->
-            <main class="main-content" style="flex: 1; padding: 20px;">
-
-                <!-- Ventana estilo Mac integrada -->
-                <div class="mac-window" style="margin-bottom: 20px;">
-                    <div class="window-header">
-                        <div class="mac-buttons">
-                            <span class="dot red"></span>
-                            <span class="dot yellow"></span>
-                            <span class="dot green"></span>
-                        </div>
-                        <div class="profile-preview">
-                            <i class="fas fa-user-circle"></i>
-                            <span>{{ usuario.name if usuario else 'Invitado' }}</span>
-                        </div>
-                    </div>
-                </div>
-
+    <!-- Espacio inferior aprovechado para rellenar el vacío -->
+    <div class="sidebar-footer">
+        <p>Inovamagic v1.0</p>
+        <span>Catálogo oficial de gestión y ventas activo.</span>
     </div>
+</aside>
+
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">Inova<span>magic</span></div>
+            <div class="nav-actions">
+                {% if usuario %}
+                    <button class="nav-btn" onclick="showProfileModal()">
+                        <i class="fas fa-user-circle"></i> Perfil
+                    </button>
+                    {% if usuario.is_admin %}
+                    <a href="{{ url_for('admin_panel') }}" class="nav-btn"><i class="fas fa-user-gear"></i> Admin</a>
+                    {% endif %}
+                    <a href="{{ url_for('logout') }}" class="nav-btn btn-logout"><i class="fas fa-sign-out-alt"></i></a>
+                {% else %}
+                    <a href="{{ url_for('login_page') }}" class="nav-btn btn-login">Iniciar Sesión</a>
+                {% endif %}
+                <button class="cart-btn" onclick="openCart()" aria-label="Abrir carrito">
+                    <i class="fas fa-bag-shopping"></i>
+                    <span class="apple-badge" id="cart-badge">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Nuevo contenedor estilo Mac -->
+<div class="mac-window">
+    <div class="window-header">
+        <div class="mac-buttons">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+        </div>
+        <!-- Aquí metemos el perfil arriba a la izquierda como querías -->
+        <div class="profile-preview">
+            <i class="fas fa-user-circle"></i>
+            <span>{{ usuario.name if usuario else 'Invitado' }}</span>
+        </div>
+    </div>
+</div>
 
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -1291,8 +1309,6 @@
         </div>
     {% endif %}
     {% endwith %}
-       
-
 
     <!-- Carrusel -->
     <section class="carousel-section">
