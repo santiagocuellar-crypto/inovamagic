@@ -76,55 +76,79 @@
     color: #3A3A3C; /* Gris oscuro elegante, cero azul */
 }
 
-      /* Estructura para poner la barra a la izquierda y el contenido al lado */
+     /* ==========================================
+   1. DISEÑO GENERAL Y LAYOUT (PC y Celular)
+   ========================================== */
 .app-layout {
     display: flex;
     min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
 }
 
+/* Barra lateral fija en PC y oculta/desplegable en celular */
 .sidebar {
     width: 260px;
-    background: var(--ios-bg-elevated);
-    border-right: 1px solid var(--ios-separator);
-    padding: 20px 10px;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-/* Ocultar la barra cuando se active la clase */
-.app-layout.sidebar-hidden .sidebar {
-    transform: translateX(-100%);
-    position: absolute;
-    height: 100%;
+    background: rgba(245, 245, 247, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 0.5px solid rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
     z-index: 100;
 }
 
+/* Contenido principal al lado de la barra */
 .main-content {
     flex: 1;
-    padding: 30px;
-    background: var(--ios-bg);
-    overflow-y: auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Botón flotante para abrir y cerrar el menú */
-.btn-toggle-sidebar {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1000;
-    background: var(--ios-bg-elevated);
-    border: 1px solid var(--ios-separator);
-    color: var(--ios-label);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
+
+/* ==========================================
+   2. ENCABEZADO CON EFECTO DESVANECIDO ESTILO APPLE
+   ========================================== */
+.main-content header, 
+.catalog-header-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    /* Fondo translúcido sólido arriba que se vuelve vaporoso abajo para el efecto nube */
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.92) 60%, rgba(255, 255, 255, 0.6) 85%, rgba(255, 255, 255, 0) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
+    padding: 16px 24px;
+    transition: all 0.3s ease;
+}
+
+
+/* ==========================================
+   3. ADAPTACIÓN PARA CELULARES (Pantallas < 768px)
+   ========================================== */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        transform: translateX(-100%);
+    }
+
+    /* Cuando se activa con el botón en el celular */
+    .app-layout.sidebar-visible .sidebar {
+        transform: translateX(0);
+    }
+
+    /* Ocultar barra por defecto al cargar en móvil */
+    .app-layout:not(.sidebar-visible) .sidebar {
+        transform: translateX(-100%);
+    }
 }
 
 .btn-toggle-sidebar:hover {
