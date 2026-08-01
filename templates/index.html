@@ -782,6 +782,19 @@
     transition: all 0.3s ease;
 }
 
+/* Efecto frosted glass limpio y elegante estilo Apple al hacer scroll */
+.main-content header, 
+.catalog-header-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
         @keyframes itemSlideIn {
             from { opacity: 0; transform: translateX(16px); }
             to { opacity: 1; transform: translateX(0); }
@@ -1205,6 +1218,15 @@
             flex-shrink: 0;
         }
 
+        /* Barra lateral fija y estática mientras navegas */
+.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
         /* Forzar que la barra se esconda por defecto en celulares al cargar la página */
 @media (max-width: 768px) {
     .app-layout:not(.sidebar-hidden) .sidebar {
@@ -1214,19 +1236,13 @@
         z-index: 100;
     }
 
-    /* Barra lateral estática/fija mientras navegas */
-.sidebar {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow-y: auto;
+    
 }
     
     /* Cuando se active la clase para mostrarla */
     .app-layout.sidebar-visible .sidebar {
         transform: translateX(0);
     }
-}
 
         .apple-toast.success .apple-toast-icon { background: rgba(52,199,89,0.15); color: var(--ios-green); }
         .apple-toast.error .apple-toast-icon { background: rgba(255,59,48,0.12); color: var(--ios-red); }
