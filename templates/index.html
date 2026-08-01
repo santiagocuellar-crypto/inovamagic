@@ -1230,55 +1230,102 @@
     }
 </script>
 
+<div id="toast-container"></div>
   
-   <div class="app-layout">
-    <!-- Botón para mostrar/ocultar la barra -->
-<button class="btn-toggle-sidebar" onclick="toggleSidebar()">
-    <i class="fa-solid fa-bars"></i>
-</button>
-   <aside class="sidebar">
-    <div class="nav-logo">Inova<span>magic</span></div>
-    
-    <nav class="sidebar-links">
-        <!-- Enlaces de categorías (Sin emojis) -->
-        <a href="#" onclick="filtrarCategoria('todos', event)" class="sidebar-link active">Todos los productos</a>
-        <a href="#" onclick="filtrarCategoria('camisas', event)" class="sidebar-link">Camisas</a>
-        <a href="#" onclick="filtrarCategoria('pantalones', event)" class="sidebar-link">Pantalones</a>
-        <a href="#" onclick="filtrarCategoria('accesorios', event)" class="sidebar-link">Accesorios</a>
-        <a href="#" onclick="filtrarCategoria('electronica', event)" class="sidebar-link">Tecnología</a>
-    </nav>
+<div class="app-layout">
 
-    <!-- Espacio inferior aprovechado para rellenar el vacío -->
-    <div class="sidebar-footer">
-        <p>Inovamagic v1.0</p>
-        <span>Catálogo oficial de gestión y ventas activo.</span>
-    </div>
-</aside>
+    <!-- 1. Botón flotante para abrir/cerrar la barra -->
+    <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars"></i>
+    </button>
 
+    <!-- 2. Barra lateral izquierda -->
+    <aside class="sidebar">
+        <div class="nav-logo">Inova<span>magic</span></div>
+        
+        <nav class="sidebar-links">
+            <a href="#" onclick="filtrarCategoria('todos', event)" class="sidebar-link active">Todos los productos</a>
+            <a href="#" onclick="filtrarCategoria('camisas', event)" class="sidebar-link">Camisas</a>
+            <a href="#" onclick="filtrarCategoria('pantalones', event)" class="sidebar-link">Pantalones</a>
+            <a href="#" onclick="filtrarCategoria('accesorios', event)" class="sidebar-link">Accesorios</a>
+            <a href="#" onclick="filtrarCategoria('electronica', event)" class="sidebar-link">Tecnología</a>
+        </nav>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">Inova<span>magic</span></div>
-            <div class="nav-actions">
-                {% if usuario %}
-                    <button class="nav-btn" onclick="showProfileModal()">
-                        <i class="fas fa-user-circle"></i> Perfil
-                    </button>
-                    {% if usuario.is_admin %}
-                    <a href="{{ url_for('admin_panel') }}" class="nav-btn"><i class="fas fa-user-gear"></i> Admin</a>
+        <div class="sidebar-footer">
+            <p>Inovamagic v1.0</p>
+            <span>Catálogo oficial activo.</span>
+        </div>
+    </aside>
+
+    <!-- 3. Contenido principal a la derecha -->
+    <main class="main-content">
+        <div id="toast-container"></div>
+
+        <!-- Navbar superior dentro del panel derecho -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">Inova<span>magic</span></div>
+                <div class="nav-actions">
+                    {% if usuario %}
+                        <button class="nav-btn" onclick="showProfileModal()">
+                            <i class="fas fa-user-circle"></i> Perfil
+                        </button>
+                        {% if usuario.is_admin %}
+                        <a href="{{ url_for('admin_panel') }}" class="nav-btn"><i class="fas fa-user-gear"></i> Admin</a>
+                        {% endif %}
+                        <a href="{{ url_for('logout') }}" class="nav-btn btn-logout"><i class="fas fa-sign-out-alt"></i></a>
+                    {% else %}
+                        <a href="{{ url_for('login_page') }}" class="nav-btn btn-login">Iniciar Sesión</a>
                     {% endif %}
-                    <a href="{{ url_for('logout') }}" class="nav-btn btn-logout"><i class="fas fa-sign-out-alt"></i></a>
-                {% else %}
-                    <a href="{{ url_for('login_page') }}" class="nav-btn btn-login">Iniciar Sesión</a>
-                {% endif %}
-                <button class="cart-btn" onclick="openCart()" aria-label="Abrir carrito">
-                    <i class="fas fa-bag-shopping"></i>
-                    <span class="apple-badge" id="cart-badge">0</span>
-                </button>
+                    <button class="cart-btn" onclick="openCart()" aria-label="Abrir carrito">
+                        <i class="fas fa-bag-shopping"></i>
+                        <span class="apple-badge" id="cart-badge">0</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Ventana estilo Mac -->
+        <div class="mac-window">
+            <div class="window-header">
+                <div class="mac-buttons">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <div class="profile-preview">
+                    <i class="fas fa-user-circle"></i>
+                    <span>{{ usuario.name if usuario else 'Invitado' }}</span>
+                </div>
             </div>
         </div>
-    </nav>
+
+        <!-- Catálogo de productos -->
+        <div class="products-grid" style="margin-top: 20px;">
+            <div class="product-card" data-categoria="camisas">
+                <h3>Camisa Formal Oxford</h3>
+                <p>$ 65.000 COP</p>
+            </div>
+            <div class="product-card" data-categoria="camisas">
+                <h3>Camisa Oversize Urbana</h3>
+                <p>$ 70.000 COP</p>
+            </div>
+            <div class="product-card" data-categoria="pantalones">
+                <h3>Pantalón Cargo Deportivo</h3>
+                <p>$ 95.000 COP</p>
+            </div>
+            <div class="product-card" data-categoria="accesorios">
+                <h3>Gorra Minimalista</h3>
+                <p>$ 35.000 COP</p>
+            </div>
+            <div class="product-card" data-categoria="electronica">
+                <h3>Audífonos Bluetooth Pro</h3>
+                <p>$ 120.000 COP</p>
+            </div>
+        </div>
+
+    </main>
+</div>
 
     <!-- Nuevo contenedor estilo Mac -->
 <div class="mac-window">
