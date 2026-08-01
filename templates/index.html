@@ -1319,29 +1319,36 @@
         <i class="fa-solid fa-bars"></i>
     </button>
 
-   <aside class="sidebar">
-    <!-- Lo que tengas arriba (como el logo o perfil) -->
-    <div class="sidebar-header">
-        <h3>Inovamagic</h3>
-    </div>
+  <!-- 1. Botón flotante para abrir/cerrar la barra -->
+    <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars"></i>
+    </button>
 
-    <!-- Espacio flexible o separador -->
-    <div style="flex: 1;"></div>
+    <aside class="sidebar">
 
-    <!-- Opciones de categorías movidas al final -->
-    <div class="sidebar-links">
-        <a href="#" class="sidebar-link active" onclick="filtrarCategoria('todos', event)">Todos los Productos</a>
-        <a href="#" class="sidebar-link" onclick="filtrarCategoria('camisas', event)">Camisas</a>
-        <a href="#" class="sidebar-link" onclick="filtrarCategoria('pantalones', event)">Pantalones</a>
-        <a href="#" class="sidebar-link" onclick="filtrarCategoria('accesorios', event)">Accesorios</a>
-        <a href="#" class="sidebar-link" onclick="filtrarCategoria('electronica', event)">Tecnología</a>
-    </div>
+        <!-- Encabezado con el logo arriba -->
+        <div class="sidebar-header">
+            <h3>Inova<span>magic</span></h3>
+        </div>
 
-    <div class="sidebar-footer">
-        <p>Inovamagic Store</p>
-        <span>Catálogo oficial activo.</span>
-    </div>
-</aside>
+        <!-- Opciones de categorías con "Todos los Productos" de primero -->
+        <div class="sidebar-links">
+            <a href="#" class="sidebar-link active" onclick="filtrarCategoria('todos', event)">Todos los Productos</a>
+            <a href="#" class="sidebar-link" onclick="filtrarCategoria('camisas', event)">Camisas</a>
+            <a href="#" class="sidebar-link" onclick="filtrarCategoria('pantalones', event)">Pantalones</a>
+            <a href="#" class="sidebar-link" onclick="filtrarCategoria('accesorios', event)">Accesorios</a>
+            <a href="#" class="sidebar-link" onclick="filtrarCategoria('electronica', event)">Tecnología</a>
+        </div>
+
+        <!-- Espacio flexible si lo necesitas para empujar elementos -->
+        <div style="flex: 1;"></div>
+
+        <!-- Pie de página de la barra -->
+        <div class="sidebar-footer">
+            <p>Inovamagic Store</p>
+            <span>Catálogo oficial activo.</span>
+        </div>
+    </aside>
 
     <!-- 3. Contenido principal a la derecha -->
     <main class="main-content">
