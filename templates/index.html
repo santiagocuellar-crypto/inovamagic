@@ -1384,22 +1384,18 @@
 
     <div id="toast-container"></div>
      
-    <div class="app-layout">
+   <div class="app-layout">
 
-        <!-- Único botón flotante para abrir/cerrar la barra -->
-        <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
-            <i class="fa-solid fa-bars"></i>
-        </button>
+    <!-- Botón flotante para el menú en celular -->
+    <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars"></i>
+    </button>
 
+    <!-- Barra lateral (Sidebar) -->
     <aside class="sidebar">
-
-        <!-- Encabezado con el logo arriba -->
-        <div class="sidebar-header">
-            <h3>Inova<span>magic</span></h3>
-        </div>
-
+        
         <!-- Opciones de categorías con "Todos los Productos" de primero -->
-        <div class="sidebar-links">
+        <div class="sidebar-links" style="margin-top: 20px;">
             <a href="#" class="sidebar-link active" onclick="filtrarCategoria('todos', event)">Todos los Productos</a>
             <a href="#" class="sidebar-link" onclick="filtrarCategoria('camisas', event)">Camisas</a>
             <a href="#" class="sidebar-link" onclick="filtrarCategoria('pantalones', event)">Pantalones</a>
@@ -1407,19 +1403,58 @@
             <a href="#" class="sidebar-link" onclick="filtrarCategoria('electronica', event)">Tecnología</a>
         </div>
 
-        <!-- Espacio flexible si lo necesitas para empujar elementos -->
+        <!-- Espacio flexible para empujar el footer hacia abajo -->
         <div style="flex: 1;"></div>
 
-        <!-- Pie de página de la barra -->
-        <div class="sidebar-footer">
-            <p>Inovamagic Store</p>
-            <span>Catálogo oficial activo.</span>
+        <!-- "Inovamagic Store" ubicado correctamente en la parte final de la barra -->
+        <div class="sidebar-footer" style="padding-top: 15px; border-top: 0.5px solid var(--ios-separator);">
+            <p style="font-weight: 600; color: #1C1C1E;">Inovamagic Store</p>
+            <span style="font-size: 12px; color: #8E8E93;">Catálogo oficial activo.</span>
         </div>
     </aside>
 
-    <!-- 3. Contenido principal a la derecha -->
+    <!-- Contenido Principal -->
     <main class="main-content">
-        <div id="toast-container"></div>
+        <h1 style="font-size: 24px; font-weight: 700; color: #1C1C1E; margin-bottom: 20px;">Catálogo de Productos</h1>
+
+        <!-- Cuadrícula limpia con todos los productos -->
+        <div class="products-grid">
+            <div class="product-card" data-categoria="camisas">
+                <h3>Camisa Formal Oxford</h3>
+                <p>$ 65.000 COP</p>
+            </div>
+            <div class="product-card" data-categoria="camisas">
+                <h3>Camisa Oversize Urbana</h3>
+                <p>$ 70.000 COP</p>
+            </div>
+            <div class="product-card" data-categoria="camisas">
+                <h3>Camiseta Polo Técnica Sistemas (Talla S)</h3>
+                <p>$ 44.000 COP</p>
+            </div>
+            <div class="product-card" data-categoria="pantalones">
+                <h3>Pantalón Cargo Deportivo</h3>
+                <p>$ 95.000 COP</p>
+            </div>
+            <div class="product-card" data-categoria="pantalones">
+                <h3>Pantalón de Diario Lino (Talla 14)</h3>
+                <p>$ 75.000 COP</p>
+            </div>
+            <div class="product-card" data-categoria="accesorios">
+                <h3>Gorra Minimalista</h3>
+                <p>$ 35.000 COP</p>
+            </div>
+            <div class="product-card" data-categoria="accesorios">
+                <h3>Jardinera Escolar Plisada (Talla 14)</h3>
+                <p>$ 78.000 COP</p>
+            </div>
+            <div class="product-card" data-categoria="electronica">
+                <h3>Audífonos Bluetooth Pro</h3>
+                <p>$ 120.000 COP</p>
+            </div>
+        </div>
+    </main>
+
+</div>
 
 
         <!-- Navbar superior dentro del panel derecho -->
