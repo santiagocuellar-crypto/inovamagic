@@ -768,6 +768,20 @@
             animation: itemSlideIn 0.35s var(--spring) both;
         }
 
+/* Efecto de desvanecimiento estilo Apple en la barra superior o encabezado al hacer scroll */
+.main-content header, 
+.catalog-header-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px); /* Para soporte en Safari/iOS */
+    mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+    transition: all 0.3s ease;
+}
+
         @keyframes itemSlideIn {
             from { opacity: 0; transform: translateX(16px); }
             to { opacity: 1; transform: translateX(0); }
@@ -1199,6 +1213,14 @@
         height: 100%;
         z-index: 100;
     }
+
+    /* Barra lateral estática/fija mientras navegas */
+.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
     
     /* Cuando se active la clase para mostrarla */
     .app-layout.sidebar-visible .sidebar {
