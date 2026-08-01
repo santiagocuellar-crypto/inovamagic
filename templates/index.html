@@ -135,29 +135,42 @@
     cursor: pointer;
 }
 
+/* ==========================================
+   ESTILOS DE LA BARRA LATERAL Y RESPONSIVE
+   ========================================== */
+
+/* Por defecto (Computador): La barra es visible y ocupa su espacio normal */
+.sidebar {
+    width: 260px;
+    background: rgba(245, 245, 247, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: none;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 100;
+}
+
+/* Adaptación exclusiva para celulares (Pantallas menores a 768px) */
 @media (max-width: 768px) {
-    .btn-toggle-sidebar {
-        display: flex; /* Aparece solo en celulares */
-    }
-    
+    /* En celular la barra pasa a ser flotante fija y se esconde a la izquierda por defecto */
     .sidebar {
         position: fixed;
         left: 0;
         top: 0;
         transform: translateX(-100%);
+        height: 100%;
     }
 
+    /* Cuando se activa la clase en el celular, se desliza hacia la pantalla */
     .app-layout.sidebar-visible .sidebar {
         transform: translateX(0);
     }
 }
-
-    /* Ocultar barra por defecto al cargar en móvil */
-    .app-layout:not(.sidebar-visible) .sidebar {
-        transform: translateX(-100%);
-    }
-}
-
 .btn-toggle-sidebar:hover {
     transform: scale(1.05);
 }
