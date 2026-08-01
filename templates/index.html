@@ -76,7 +76,9 @@
     color: #3A3A3C; /* Gris oscuro elegante, cero azul */
 }
 
-   /* Contenedor principal sin líneas extrañas */
+     /* ==========================================
+   1. DISEÑO GENERAL Y LAYOUT (PC y Celular)
+   ========================================== */
 .app-layout {
     display: flex;
     min-height: 100vh;
@@ -84,13 +86,13 @@
     overflow-x: hidden;
 }
 
-/* Barra lateral limpia sin bordes feos al lado */
+/* Barra lateral fija en PC y oculta/desplegable en celular */
 .sidebar {
     width: 260px;
-    background: rgba(245, 245, 247, 0.95);
+    background: rgba(245, 245, 247, 0.92);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-right: none; /* Quitamos cualquier borde lateral asqueroso */
+    border-right: 0.5px solid rgba(0, 0, 0, 0.08);
     position: sticky;
     top: 0;
     height: 100vh;
@@ -100,77 +102,55 @@
     z-index: 100;
 }
 
-/* Encabezado limpio sin que se monte el título por fuera */
+/* Contenido principal al lado de la barra */
+.main-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* ==========================================
+   2. ENCABEZADO CON EFECTO DESVANECIDO ESTILO APPLE
+   ========================================== */
 .main-content header, 
 .catalog-header-sticky {
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgba(255, 255, 255, 0.9);
+    /* Fondo translúcido sólido arriba que se vuelve vaporoso abajo para el efecto nube */
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.92) 60%, rgba(255, 255, 255, 0.6) 85%, rgba(255, 255, 255, 0) 100%);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-bottom: none; /* Sin líneas abajo */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03); /* Sombra muy sutil estilo nube */
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
     padding: 16px 24px;
     transition: all 0.3s ease;
 }
 
-/* Botón flotante siempre visible en celulares para abrir/cerrar la barra */
-.btn-toggle-sidebar {
-    display: none; /* Por defecto oculto en PC */
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    z-index: 200;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: var(--ios-blue, #007AFF);
-    color: white;
-    border: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    cursor: pointer;
-}
 
 /* ==========================================
-   ESTILOS DE LA BARRA LATERAL Y RESPONSIVE
+   3. ADAPTACIÓN PARA CELULARES (Pantallas < 768px)
    ========================================== */
-
-/* Por defecto (Computador): La barra es visible y ocupa su espacio normal */
-.sidebar {
-    width: 260px;
-    background: rgba(245, 245, 247, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-right: none;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow-y: auto;
-    flex-shrink: 0;
-    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-    z-index: 100;
-}
-
-/* Adaptación exclusiva para celulares (Pantallas menores a 768px) */
 @media (max-width: 768px) {
-    /* En celular la barra pasa a ser flotante fija y se esconde a la izquierda por defecto */
     .sidebar {
         position: fixed;
         left: 0;
         top: 0;
         transform: translateX(-100%);
-        height: 100%;
     }
 
-    /* Cuando se activa la clase en el celular, se desliza hacia la pantalla */
+    /* Cuando se activa con el botón en el celular */
     .app-layout.sidebar-visible .sidebar {
         transform: translateX(0);
     }
+
+    /* Ocultar barra por defecto al cargar en móvil */
+    .app-layout:not(.sidebar-visible) .sidebar {
+        transform: translateX(-100%);
+    }
 }
+
 .btn-toggle-sidebar:hover {
     transform: scale(1.05);
 }
@@ -1382,15 +1362,50 @@
         }
     </script>
 
- <div id="toast-container"></div>
+    <div id="toast-container"></div>
      
-    <!-- Contenedor general de toda la aplicación -->
     <div class="app-layout">
 
-        <!-- Barra de navegación superior -->
-        <nav class="navbar" style="grid-column: 1 / -1; width: 100%;">
-            <div class="nav-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 10px 20px;">
-                <div class="nav-logo" style="font-weight: 700; font-size: 18px;">Inova<span style="color: #0071E3;">magic</span></div>
+        <!-- Único botón flotante para abrir/cerrar la barra -->
+        <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+    <aside class="sidebar">
+
+        <!-- Encabezado con el logo arriba -->
+        <div class="sidebar-header">
+            <h3>Inova<span>magic</span></h3>
+        </div>
+
+        <!-- Opciones de categorías con "Todos los Productos" de primero -->
+        <div class="sidebar-links">
+            <a href="#" class="sidebar-link active" onclick="filtrarCategoria('todos', event)">Todos los Productos</a>
+            <a href="#" class="sidebar-link" onclick="filtrarCategoria('camisas', event)">Camisas</a>
+            <a href="#" class="sidebar-link" onclick="filtrarCategoria('pantalones', event)">Pantalones</a>
+            <a href="#" class="sidebar-link" onclick="filtrarCategoria('accesorios', event)">Accesorios</a>
+            <a href="#" class="sidebar-link" onclick="filtrarCategoria('electronica', event)">Tecnología</a>
+        </div>
+
+        <!-- Espacio flexible si lo necesitas para empujar elementos -->
+        <div style="flex: 1;"></div>
+
+        <!-- Pie de página de la barra -->
+        <div class="sidebar-footer">
+            <p>Inovamagic Store</p>
+            <span>Catálogo oficial activo.</span>
+        </div>
+    </aside>
+
+    <!-- 3. Contenido principal a la derecha -->
+    <main class="main-content">
+        <div id="toast-container"></div>
+
+
+        <!-- Navbar superior dentro del panel derecho -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">Inova<span>magic</span></div>
                 <div class="nav-actions">
                     {% if usuario %}
                         <button class="nav-btn" onclick="showProfileModal()">
@@ -1401,7 +1416,7 @@
                         {% endif %}
                         <a href="{{ url_for('logout') }}" class="nav-btn btn-logout"><i class="fas fa-sign-out-alt"></i></a>
                     {% else %}
-                        <a href="{{ url_for('login_page') }}" class="nav-btn btn-login" style="background: #0071E3; color: white; padding: 8px 16px; border-radius: 20px; text-decoration: none;">Iniciar Sesión</a>
+                        <a href="{{ url_for('login_page') }}" class="nav-btn btn-login">Iniciar Sesión</a>
                     {% endif %}
                     <button class="cart-btn" onclick="openCart()" aria-label="Abrir carrito">
                         <i class="fas fa-bag-shopping"></i>
@@ -1411,88 +1426,54 @@
             </div>
         </nav>
 
-        <!-- Botón flotante para abrir y cerrar la barra lateral en celular -->
-        <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-
-        <!-- Barra lateral (Sidebar) con las categorías -->
-        <aside class="sidebar">
-            <div class="sidebar-links" style="margin-top: 20px;">
-                <a href="#" class="sidebar-link active" onclick="filtrarCategoria('todos', event)">Todos los Productos</a>
-                <a href="#" class="sidebar-link" onclick="filtrarCategoria('camisas', event)">Camisas</a>
-                <a href="#" class="sidebar-link" onclick="filtrarCategoria('pantalones', event)">Pantalones</a>
-                <a href="#" class="sidebar-link" onclick="filtrarCategoria('accesorios', event)">Accesorios</a>
-                <a href="#" class="sidebar-link" onclick="filtrarCategoria('electronica', event)">Tecnología</a>
-            </div>
-
-            <div style="flex: 1;"></div>
-
-            <!-- Footer de la barra lateral -->
-            <div class="sidebar-footer" style="padding-top: 15px; border-top: 0.5px solid var(--ios-separator);">
-                <p style="font-weight: 600; color: #1C1C1E;">Inovamagic Store</p>
-                <span style="font-size: 12px; color: #8E8E93;">Catálogo oficial activo.</span>
-            </div>
-        </aside>
-
-        <!-- Contenido Principal -->
-        <main class="main-content">
-
-            <!-- Ventana estilo Mac integrada de forma limpia -->
-            <div class="mac-window" style="margin-bottom: 20px;">
-                <div class="window-header">
-                    <div class="mac-buttons">
-                        <span class="dot red"></span>
-                        <span class="dot yellow"></span>
-                        <span class="dot green"></span>
-                    </div>
-                    <div class="profile-preview">
-                        <i class="fas fa-user-circle"></i>
-                        <span>{{ usuario.name if usuario else 'Invitado' }}</span>
-                    </div>
+        <!-- Ventana estilo Mac -->
+        <div class="mac-window">
+            <div class="window-header">
+                <div class="mac-buttons">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <div class="profile-preview">
+                    <i class="fas fa-user-circle"></i>
+                    <span>{{ usuario.name if usuario else 'Invitado' }}</span>
                 </div>
             </div>
+        </div>
 
-            <h1 style="font-size: 24px; font-weight: 700; color: #1C1C1E; margin-bottom: 20px;">Catálogo de Productos</h1>
+      <main class="main-content">
+    <h1>Catálogo de Productos</h1>
 
-            <!-- Cuadrícula única con todos los productos -->
-            <div class="products-grid">
-                <div class="product-card" data-categoria="camisas">
-                    <h3>Camisa Formal Oxford</h3>
-                    <p>$ 65.000 COP</p>
-                </div>
-                <div class="product-card" data-categoria="camisas">
-                    <h3>Camisa Oversize Urbana</h3>
-                    <p>$ 70.000 COP</p>
-                </div>
-                <div class="product-card" data-categoria="camisas">
-                    <h3>Camiseta Polo Técnica Sistemas (Talla S)</h3>
-                    <p>$ 44.000 COP</p>
-                </div>
-                <div class="product-card" data-categoria="pantalones">
-                    <h3>Pantalón Cargo Deportivo</h3>
-                    <p>$ 95.000 COP</p>
-                </div>
-                <div class="product-card" data-categoria="pantalones">
-                    <h3>Pantalón de Diario Lino (Talla 14)</h3>
-                    <p>$ 75.000 COP</p>
-                </div>
-                <div class="product-card" data-categoria="accesorios">
-                    <h3>Gorra Minimalista</h3>
-                    <p>$ 35.000 COP</p>
-                </div>
-                <div class="product-card" data-categoria="accesorios">
-                    <h3>Jardinera Escolar Plisada (Talla 14)</h3>
-                    <p>$ 78.000 COP</p>
-                </div>
-                <div class="product-card" data-categoria="electronica">
-                    <h3>Audífonos Bluetooth Pro</h3>
-                    <p>$ 120.000 COP</p>
-                </div>
-            </div>
-        </main>
+    <!-- Contenedor en cuadrícula -->
+    <div class="products-grid">
+
+        <div class="product-card" data-categoria="camisas">
+            <h3>Camisa Formal Oxford</h3>
+            <p>$ 65.000 COP</p>
+        </div>
+
+        <div class="product-card" data-categoria="camisas">
+            <h3>Camisa Oversize Urbana</h3>
+            <p>$ 70.000 COP</p>
+        </div>
+
+        <div class="product-card" data-categoria="pantalones">
+            <h3>Pantalón Cargo Deportivo</h3>
+            <p>$ 95.000 COP</p>
+        </div>
+
+        <div class="product-card" data-categoria="accesorios">
+            <h3>Gorra Minimalista</h3>
+            <p>$ 35.000 COP</p>
+        </div>
+
+        <div class="product-card" data-categoria="electronica">
+            <h3>Audífonos Bluetooth Pro</h3>
+            <p>$ 120.000 COP</p>
+        </div>
 
     </div>
+</main>
 
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
