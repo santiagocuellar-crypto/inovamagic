@@ -1203,6 +1203,35 @@
             font-size: 15px;
         }
 
+        /* Adaptación limpia y fluida para celulares */
+@media (max-width: 768px) {
+    /* La barra lateral se oculta al inicio en pantallas pequeñas */
+    .app-layout .sidebar {
+        transform: translateX(-100%);
+        position: absolute;
+        height: 100%;
+        z-index: 100;
+    }
+
+    /* El contenido principal ocupa todo el ancho de la pantalla del celular */
+    .main-content {
+        padding: 15px;
+        width: 100%;
+    }
+
+    /* Las tarjetas de productos se ponen una debajo de otra de forma limpia y amplia */
+    .products-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    /* El botón flotante queda bien ubicado para abrir el menú sin estorbar */
+    .btn-toggle-sidebar {
+        top: 15px;
+        left: 15px;
+    }
+}
+
         .profile-sheet .profile-row span:first-child { color: var(--ios-label-secondary); }
         .profile-sheet .profile-row span:last-child { font-weight: 500; text-align: right; }
 
@@ -1336,7 +1365,39 @@
             </div>
         </div>
 
-      
+      <main class="main-content">
+    <h1>Catálogo de Productos</h1>
+
+    <!-- Contenedor en cuadrícula -->
+    <div class="products-grid">
+
+        <div class="product-card" data-categoria="camisas">
+            <h3>Camisa Formal Oxford</h3>
+            <p>$ 65.000 COP</p>
+        </div>
+
+        <div class="product-card" data-categoria="camisas">
+            <h3>Camisa Oversize Urbana</h3>
+            <p>$ 70.000 COP</p>
+        </div>
+
+        <div class="product-card" data-categoria="pantalones">
+            <h3>Pantalón Cargo Deportivo</h3>
+            <p>$ 95.000 COP</p>
+        </div>
+
+        <div class="product-card" data-categoria="accesorios">
+            <h3>Gorra Minimalista</h3>
+            <p>$ 35.000 COP</p>
+        </div>
+
+        <div class="product-card" data-categoria="electronica">
+            <h3>Audífonos Bluetooth Pro</h3>
+            <p>$ 120.000 COP</p>
+        </div>
+
+    </div>
+</main>
 
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
