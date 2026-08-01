@@ -768,18 +768,22 @@
             animation: itemSlideIn 0.35s var(--spring) both;
         }
 
-/* Efecto de desvanecimiento tipo nube/transparencia total abajo estilo Apple */
+/* Espacio para que el contenido no quede pegado al encabezado fijo */
+.main-content {
+    padding-top: 20px;
+}
+
+/* Efecto de desvanecimiento superior flotante estilo nube */
 .main-content header, 
 .catalog-header-sticky {
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    /* Esto es lo que desvanece el borde inferior de forma difusa */
-    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); /* Simula la sombra flotante en las nubes */
     transition: all 0.3s ease;
 }
         @keyframes itemSlideIn {
@@ -1298,57 +1302,50 @@
     </style>
 </head>
 
-
 <body>
 
     <script>
-    function toggleSidebar() {
-        const layout = document.querySelector('.app-layout');
-        layout.classList.toggle('sidebar-hidden');
-    }
-</script>
-
-
-<script>
-    function filtrarCategoria(categoria, event) {
-        // Previene comportamientos extraños del enlace
-        if (event) event.preventDefault();
-
-        const productos = document.querySelectorAll('.product-card');
-        const enlaces = document.querySelectorAll('.sidebar-link');
-
-        // Cambia la clase activa en el menú
-        enlaces.forEach(enlace => enlace.classList.remove('active'));
-        if (event && event.currentTarget) {
-            event.currentTarget.classList.add('active');
+        // Función única y limpia para abrir/cerrar la barra lateral en celulares
+        function toggleSidebar() {
+            const appLayout = document.querySelector('.app-layout');
+            if (appLayout) {
+                appLayout.classList.toggle('sidebar-visible');
+                appLayout.classList.toggle('sidebar-hidden');
+            }
         }
 
-        // Filtra los productos según la categoría seleccionada
-        productos.forEach(producto => {
-            const categoriaProducto = producto.getAttribute('data-categoria');
-            
-            if (categoria === 'todos' || categoriaProducto === categoria) {
-                producto.style.display = 'block';
-            } else {
-                producto.style.display = 'none';
+        // Función para filtrar los productos según la categoría seleccionada
+        function filtrarCategoria(categoria, event) {
+            if (event) event.preventDefault();
+
+            // Quitar la clase 'active' de todos los enlaces del menú y ponérsela al presionado
+            const links = document.querySelectorAll('.sidebar-link');
+            links.forEach(link => link.classList.remove('active'));
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
             }
-        });
-    }
-</script>
 
-<div id="toast-container"></div>
-  
-<div class="app-layout">
+            // Mostrar u ocultar las tarjetas de productos según la categoría
+            const productos = document.querySelectorAll('.product-card');
+            productos.forEach(prod => {
+                const catProd = prod.getAttribute('data-categoria');
+                if (categoria === 'todos' || catProd === categoria) {
+                    prod.style.display = 'block';
+                } else {
+                    prod.style.display = 'none';
+                }
+            });
+        }
+    </script>
 
-    <!-- 1. Botón flotante para abrir/cerrar la barra -->
-    <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
-        <i class="fa-solid fa-bars"></i>
-    </button>
+    <div id="toast-container"></div>
+     
+    <div class="app-layout">
 
-  <!-- 1. Botón flotante para abrir/cerrar la barra -->
-    <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
-        <i class="fa-solid fa-bars"></i>
-    </button>
+        <!-- Único botón flotante para abrir/cerrar la barra -->
+        <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
 
     <aside class="sidebar">
 
