@@ -1190,6 +1190,21 @@
             flex-shrink: 0;
         }
 
+        /* Forzar que la barra se esconda por defecto en celulares al cargar la página */
+@media (max-width: 768px) {
+    .app-layout:not(.sidebar-hidden) .sidebar {
+        transform: translateX(-100%);
+        position: absolute;
+        height: 100%;
+        z-index: 100;
+    }
+    
+    /* Cuando se active la clase para mostrarla */
+    .app-layout.sidebar-visible .sidebar {
+        transform: translateX(0);
+    }
+}
+
         .apple-toast.success .apple-toast-icon { background: rgba(52,199,89,0.15); color: var(--ios-green); }
         .apple-toast.error .apple-toast-icon { background: rgba(255,59,48,0.12); color: var(--ios-red); }
         .apple-toast.info .apple-toast-icon { background: rgba(0,122,255,0.15); color: var(--ios-blue); }
@@ -1304,23 +1319,29 @@
         <i class="fa-solid fa-bars"></i>
     </button>
 
-    <!-- 2. Barra lateral izquierda -->
-    <aside class="sidebar">
-        <div class="nav-logo">Inova<span>magic</span></div>
-        
-        <nav class="sidebar-links">
-            <a href="#" onclick="filtrarCategoria('todos', event)" class="sidebar-link active">Todos los productos</a>
-            <a href="#" onclick="filtrarCategoria('camisas', event)" class="sidebar-link">Camisas</a>
-            <a href="#" onclick="filtrarCategoria('pantalones', event)" class="sidebar-link">Pantalones</a>
-            <a href="#" onclick="filtrarCategoria('accesorios', event)" class="sidebar-link">Accesorios</a>
-            <a href="#" onclick="filtrarCategoria('electronica', event)" class="sidebar-link">Tecnología</a>
-        </nav>
+   <aside class="sidebar">
+    <!-- Lo que tengas arriba (como el logo o perfil) -->
+    <div class="sidebar-header">
+        <h3>Inovamagic</h3>
+    </div>
 
-        <div class="sidebar-footer">
-            <p>Inovamagic v1.0</p>
-            <span>Catálogo oficial activo.</span>
-        </div>
-    </aside>
+    <!-- Espacio flexible o separador -->
+    <div style="flex: 1;"></div>
+
+    <!-- Opciones de categorías movidas al final -->
+    <div class="sidebar-links">
+        <a href="#" class="sidebar-link active" onclick="filtrarCategoria('todos', event)">Todos los Productos</a>
+        <a href="#" class="sidebar-link" onclick="filtrarCategoria('camisas', event)">Camisas</a>
+        <a href="#" class="sidebar-link" onclick="filtrarCategoria('pantalones', event)">Pantalones</a>
+        <a href="#" class="sidebar-link" onclick="filtrarCategoria('accesorios', event)">Accesorios</a>
+        <a href="#" class="sidebar-link" onclick="filtrarCategoria('electronica', event)">Tecnología</a>
+    </div>
+
+    <div class="sidebar-footer">
+        <p>Inovamagic Store</p>
+        <span>Catálogo oficial activo.</span>
+    </div>
+</aside>
 
     <!-- 3. Contenido principal a la derecha -->
     <main class="main-content">
