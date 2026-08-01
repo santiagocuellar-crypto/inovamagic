@@ -1231,40 +1231,14 @@
 </script>
 
 <div id="toast-container"></div>
-  
-<div class="app-layout">
+     
+    <!-- Contenedor general de toda la aplicación -->
+    <div class="app-layout" style="display: flex; flex-direction: column; min-height: 100vh;">
 
-    <!-- 1. Botón flotante para abrir/cerrar la barra -->
-    <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
-        <i class="fa-solid fa-bars"></i>
-    </button>
-
-    <!-- 2. Barra lateral izquierda -->
-    <aside class="sidebar">
-        <div class="nav-logo">Inova<span>magic</span></div>
-        
-        <nav class="sidebar-links">
-            <a href="#" onclick="filtrarCategoria('todos', event)" class="sidebar-link active">Todos los productos</a>
-            <a href="#" onclick="filtrarCategoria('camisas', event)" class="sidebar-link">Camisas</a>
-            <a href="#" onclick="filtrarCategoria('pantalones', event)" class="sidebar-link">Pantalones</a>
-            <a href="#" onclick="filtrarCategoria('accesorios', event)" class="sidebar-link">Accesorios</a>
-            <a href="#" onclick="filtrarCategoria('electronica', event)" class="sidebar-link">Tecnología</a>
-        </nav>
-
-        <div class="sidebar-footer">
-            <p>Inovamagic v1.0</p>
-            <span>Catálogo oficial activo.</span>
-        </div>
-    </aside>
-
-    <!-- 3. Contenido principal a la derecha -->
-    <main class="main-content">
-        <div id="toast-container"></div>
-
-        <!-- Navbar superior dentro del panel derecho -->
-        <nav class="navbar">
-            <div class="nav-container">
-                <div class="nav-logo">Inova<span>magic</span></div>
+        <!-- Barra de navegación superior -->
+        <nav class="navbar" style="width: 100%; position: sticky; top: 0; z-index: 1000; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);">
+            <div class="nav-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 10px 20px;">
+                <div class="nav-logo" style="font-weight: 700; font-size: 18px;">Inova<span style="color: #0071E3;">magic</span></div>
                 <div class="nav-actions">
                     {% if usuario %}
                         <button class="nav-btn" onclick="showProfileModal()">
@@ -1275,7 +1249,7 @@
                         {% endif %}
                         <a href="{{ url_for('logout') }}" class="nav-btn btn-logout"><i class="fas fa-sign-out-alt"></i></a>
                     {% else %}
-                        <a href="{{ url_for('login_page') }}" class="nav-btn btn-login">Iniciar Sesión</a>
+                        <a href="{{ url_for('login_page') }}" class="nav-btn btn-login" style="background: #0071E3; color: white; padding: 8px 16px; border-radius: 20px; text-decoration: none;">Iniciar Sesión</a>
                     {% endif %}
                     <button class="cart-btn" onclick="openCart()" aria-label="Abrir carrito">
                         <i class="fas fa-bag-shopping"></i>
@@ -1285,22 +1259,93 @@
             </div>
         </nav>
 
-        <!-- Ventana estilo Mac -->
-        <div class="mac-window">
-            <div class="window-header">
-                <div class="mac-buttons">
-                    <span class="dot red"></span>
-                    <span class="dot yellow"></span>
-                    <span class="dot green"></span>
+        <!-- Botón flotante para abrir y cerrar la barra lateral en celular -->
+        <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <!-- Contenedor principal de cuerpo y sidebar -->
+        <div style="display: flex; flex: 1; width: 100%; position: relative; align-items: flex-start;">
+
+            <!-- Barra lateral (Sidebar) estática -->
+            <aside class="sidebar" style="position: sticky; top: 65px; height: calc(100vh - 65px); overflow-y: auto;">
+                <div class="sidebar-links" style="margin-top: 20px;">
+                    <a href="#" class="sidebar-link active" onclick="filtrarCategoria('todos', event)">Todos los Productos</a>
+                    <a href="#" class="sidebar-link" onclick="filtrarCategoria('camisas', event)">Camisas</a>
+                    <a href="#" class="sidebar-link" onclick="filtrarCategoria('pantalones', event)">Pantalones</a>
+                    <a href="#" class="sidebar-link" onclick="filtrarCategoria('accesorios', event)">Accesorios</a>
+                    <a href="#" class="sidebar-link" onclick="filtrarCategoria('electronica', event)">Tecnología</a>
                 </div>
-                <div class="profile-preview">
-                    <i class="fas fa-user-circle"></i>
-                    <span>{{ usuario.name if usuario else 'Invitado' }}</span>
+
+                <div style="flex: 1;"></div>
+
+                <!-- Footer de la barra lateral -->
+                <div class="sidebar-footer" style="padding-top: 15px; border-top: 0.5px solid var(--ios-separator);">
+                    <p style="font-weight: 600; color: #1C1C1E;">Inovamagic Store</p>
+                    <span style="font-size: 12px; color: #8E8E93;">Catálogo oficial activo.</span>
                 </div>
-            </div>
+            </aside>
+
+            <!-- Contenido Principal -->
+            <main class="main-content" style="flex: 1; padding: 20px;">
+
+                <!-- Ventana estilo Mac integrada -->
+                <div class="mac-window" style="margin-bottom: 20px;">
+                    <div class="window-header">
+                        <div class="mac-buttons">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                        </div>
+                        <div class="profile-preview">
+                            <i class="fas fa-user-circle"></i>
+                            <span>{{ usuario.name if usuario else 'Invitado' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h1 style="font-size: 24px; font-weight: 700; color: #1C1C1E; margin-bottom: 20px;">Catálogo de Productos</h1>
+
+                <!-- Cuadrícula única con todos los productos -->
+                <div class="products-grid">
+                    <div class="product-card" data-categoria="camisas">
+                        <h3>Camisa Formal Oxford</h3>
+                        <p>$ 65.000 COP</p>
+                    </div>
+                    <div class="product-card" data-categoria="camisas">
+                        <h3>Camisa Oversize Urbana</h3>
+                        <p>$ 70.000 COP</p>
+                    </div>
+                    <div class="product-card" data-categoria="camisas">
+                        <h3>Camiseta Polo Técnica Sistemas (Talla S)</h3>
+                        <p>$ 44.000 COP</p>
+                    </div>
+                    <div class="product-card" data-categoria="pantalones">
+                        <h3>Pantalón Cargo Deportivo</h3>
+                        <p>$ 95.000 COP</p>
+                    </div>
+                    <div class="product-card" data-categoria="pantalones">
+                        <h3>Pantalón de Diario Lino (Talla 14)</h3>
+                        <p>$ 75.000 COP</p>
+                    </div>
+                    <div class="product-card" data-categoria="accesorios">
+                        <h3>Gorra Minimalista</h3>
+                        <p>$ 35.000 COP</p>
+                    </div>
+                    <div class="product-card" data-categoria="accesorios">
+                        <h3>Jardinera Escolar Plisada (Talla 14)</h3>
+                        <p>$ 78.000 COP</p>
+                    </div>
+                    <div class="product-card" data-categoria="electronica">
+                        <h3>Audífonos Bluetooth Pro</h3>
+                        <p>$ 120.000 COP</p>
+                    </div>
+                </div>
+            </main>
+
         </div>
 
-       
+    </div>
 
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -1315,6 +1360,8 @@
         </div>
     {% endif %}
     {% endwith %}
+       
+
 
     <!-- Carrusel -->
     <section class="carousel-section">
