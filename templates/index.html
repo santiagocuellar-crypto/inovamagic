@@ -1230,34 +1230,6 @@
     }
 </script>
 
-<div id="toast-container"></div>
-     
-    <!-- Contenedor general de toda la aplicación -->
-    <div class="app-layout" style="display: flex; flex-direction: column; min-height: 100vh;">
-
-        <!-- Barra de navegación superior -->
-        <nav class="navbar" style="width: 100%; position: sticky; top: 0; z-index: 1000; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);">
-            <div class="nav-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 10px 20px;">
-                <div class="nav-logo" style="font-weight: 700; font-size: 18px;">Inova<span style="color: #0071E3;">magic</span></div>
-                <div class="nav-actions">
-                    {% if usuario %}
-                        <button class="nav-btn" onclick="showProfileModal()">
-                            <i class="fas fa-user-circle"></i> Perfil
-                        </button>
-                        {% if usuario.is_admin %}
-                        <a href="{{ url_for('admin_panel') }}" class="nav-btn"><i class="fas fa-user-gear"></i> Admin</a>
-                        {% endif %}
-                        <a href="{{ url_for('logout') }}" class="nav-btn btn-logout"><i class="fas fa-sign-out-alt"></i></a>
-                    {% else %}
-                        <a href="{{ url_for('login_page') }}" class="nav-btn btn-login" style="background: #0071E3; color: white; padding: 8px 16px; border-radius: 20px; text-decoration: none;">Iniciar Sesión</a>
-                    {% endif %}
-                    <button class="cart-btn" onclick="openCart()" aria-label="Abrir carrito">
-                        <i class="fas fa-bag-shopping"></i>
-                        <span class="apple-badge" id="cart-badge">0</span>
-                    </button>
-                </div>
-            </div>
-        </nav>
 
         <!-- Botón flotante para abrir y cerrar la barra lateral en celular -->
         <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
