@@ -1556,11 +1556,20 @@
 
     <script>
         function toggleSidebar() {
+            const appLayout = document.querySelector('.app-layout');
             const sidebar = document.querySelector('.sidebar');
-            if (sidebar) {
-                sidebar.classList.toggle('active');
+
+            if (window.innerWidth >= 768) {
+                if (appLayout) {
+                    appLayout.classList.toggle('sidebar-hidden');
+                }
+            } else {
+                if (sidebar) {
+                    sidebar.classList.toggle('active');
+                }
             }
         }
+    </script>
     </script>
 
     <script>
@@ -1618,173 +1627,169 @@
         <!-- Contenedor principal que contiene todo lo que ya tenías -->
         <main class="main-content">
             <div id="toast-container"></div>
-            <!-- Contenedor principal que contiene todo lo que ya tenías -->
-            <main class="main-content">
 
-                <div id="toast-container"></div>
-
-                <!-- Navbar -->
-                <nav class="navbar">
-                    <!-- Botón para ocultar/mostrar la barra lateral en PC -->
-                    <button class="nav-btn pc-sidebar-toggle" onclick="toggleSidebar()">
-                        <i class="fas fa-bars"></i> Menú
-                    </button>
-                    <div class="nav-container">
-                        <div class="nav-logo">Inova<span>magic</span></div>
-                        <div class="nav-actions">
-                            {% if usuario %}
-                            <button class="nav-btn" onclick="showProfileModal()">
-                                <i class="fas fa-user-circle"></i> Perfil
-                            </button>
-                            {% if usuario.is_admin %}
-                            <a href="{{ url_for('admin_panel') }}" class="nav-btn"><i class="fas fa-user-gear"></i>
-                                Admin</a>
-                            {% endif %}
-                            <a href="{{ url_for('logout') }}" class="nav-btn btn-logout"><i
-                                    class="fas fa-sign-out-alt"></i></a>
-                            {% else %}
-                            <a href="{{ url_for('login_page') }}" class="nav-btn btn-login">Iniciar Sesión</a>
-                            {% endif %}
-                            <button class="cart-btn" onclick="openCart()" aria-label="Abrir carrito">
-                                <i class="fas fa-bag-shopping"></i>
-                                <span class="apple-badge" id="cart-badge">0</span>
-                            </button>
-                        </div>
-                    </div>
-                </nav>
-
-                <!-- Nuevo contenedor estilo Mac -->
-                <div class="mac-window">
-                    <div class="window-header">
-                        <div class="mac-buttons">
-                            <span class="dot red"></span>
-                            <span class="dot yellow"></span>
-                            <span class="dot green"></span>
-                        </div>
-                        <!-- Aquí metemos el perfil arriba a la izquierda como querías -->
-                        <div class="profile-preview">
-                            <i class="fas fa-user-circle"></i>
-                            <span>{{ usuario.name if usuario else 'Invitado' }}</span>
-                        </div>
+            <!-- Navbar -->
+            <nav class="navbar">
+                <!-- Botón para ocultar/mostrar la barra lateral en PC -->
+                <button class="nav-btn pc-sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i> Menú
+                </button>
+                <div class="nav-container">
+                    <div class="nav-logo">Inova<span>magic</span></div>
+                    <div class="nav-actions">
+                        {% if usuario %}
+                        <button class="nav-btn" onclick="showProfileModal()">
+                            <i class="fas fa-user-circle"></i> Perfil
+                        </button>
+                        {% if usuario.is_admin %}
+                        <a href="{{ url_for('admin_panel') }}" class="nav-btn"><i class="fas fa-user-gear"></i>
+                            Admin</a>
+                        {% endif %}
+                        <a href="{{ url_for('logout') }}" class="nav-btn btn-logout"><i
+                                class="fas fa-sign-out-alt"></i></a>
+                        {% else %}
+                        <a href="{{ url_for('login_page') }}" class="nav-btn btn-login">Iniciar Sesión</a>
+                        {% endif %}
+                        <button class="cart-btn" onclick="openCart()" aria-label="Abrir carrito">
+                            <i class="fas fa-bag-shopping"></i>
+                            <span class="apple-badge" id="cart-badge">0</span>
+                        </button>
                     </div>
                 </div>
+            </nav>
 
-                <!-- Flash Messages -->
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                <div style="max-width: 1200px; margin: 20px auto 0; padding: 0 20px;">
-                    {% for category, message in messages %}
-                    <div class="apple-toast {{ category }}"
-                        style="position: relative; top: 0; left: 0; transform: none; opacity: 1; margin-bottom: 10px;">
-                        <div class="apple-toast-icon"><i
-                                class="fas {{ 'fa-exclamation-circle' if category == 'error' else 'fa-check-circle' if category == 'success' else 'fa-info-circle' }}"></i>
+            <!-- Nuevo contenedor estilo Mac -->
+            <div class="mac-window">
+                <div class="window-header">
+                    <div class="mac-buttons">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                    </div>
+                    <!-- Aquí metemos el perfil arriba a la izquierda como querías -->
+                    <div class="profile-preview">
+                        <i class="fas fa-user-circle"></i>
+                        <span>{{ usuario.name if usuario else 'Invitado' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div style="max-width: 1200px; margin: 20px auto 0; padding: 0 20px;">
+                {% for category, message in messages %}
+                <div class="apple-toast {{ category }}"
+                    style="position: relative; top: 0; left: 0; transform: none; opacity: 1; margin-bottom: 10px;">
+                    <div class="apple-toast-icon"><i
+                            class="fas {{ 'fa-exclamation-circle' if category == 'error' else 'fa-check-circle' if category == 'success' else 'fa-info-circle' }}"></i>
+                    </div>
+                    <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <!-- Carrusel -->
+            <section class="carousel-section">
+                <p class="section-label">Destacados</p>
+                <div class="carousel-track">
+                    {% for c in carrusel %}
+                    <div class="carousel-item">
+                        <img src="{{ c.imagen }}" class="carousel-img" alt="{{ c.nombre }}" loading="lazy">
+                        <div class="carousel-info">
+                            <h4>{{ c.nombre }}</h4>
+                            <span>${{ "{:,.0f}".format(c.precio) }}</span>
                         </div>
-                        <span>{{ message }}</span>
                     </div>
                     {% endfor %}
                 </div>
-                {% endif %}
-                {% endwith %}
+            </section>
 
-                <!-- Carrusel -->
-                <section class="carousel-section">
-                    <p class="section-label">Destacados</p>
-                    <div class="carousel-track">
-                        {% for c in carrusel %}
-                        <div class="carousel-item">
-                            <img src="{{ c.imagen }}" class="carousel-img" alt="{{ c.nombre }}" loading="lazy">
-                            <div class="carousel-info">
-                                <h4>{{ c.nombre }}</h4>
-                                <span>${{ "{:,.0f}".format(c.precio) }}</span>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </section>
-
-                <!-- Buscador -->
-                <div class="search-area">
-                    <h2>Catálogo Institucional</h2>
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="search" id="txt-search" placeholder="Buscar prenda, talla, categoría…"
-                            autocomplete="off">
-                    </div>
+            <!-- Buscador -->
+            <div class="search-area">
+                <h2>Catálogo Institucional</h2>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="search" id="txt-search" placeholder="Buscar prenda, talla, categoría…"
+                        autocomplete="off">
                 </div>
+            </div>
 
-                <!-- Catálogo -->
-                <main class="grid-section">
-                    <div class="products-grid" id="main-products-view">
-                        {% for p in productos %}
-                        <article class="product-card" data-id="{{ p.id }}"
-                            data-search="{{ p.nombre | lower }} {{ p.descripcion | lower }} {{ p.categoria | replace('-', ' ') }}">
-                            <div class="img-container">
-                                <img src="{{ p.imagen }}" alt="{{ p.nombre }}" loading="lazy">
-                            </div>
-                            <div class="product-body">
-                                <span class="p-category">{{ p.categoria | replace('-', ' ') }}</span>
-                                <h3 class="p-name">{{ p.nombre }}</h3>
-                                <div class="p-price">${{ "{:,.0f}".format(p.precio) }}</div>
-                                <button class="btn-add" data-add="{{ p.id }}">
-                                    <i class="fas fa-plus"></i> Añadir
-                                </button>
-                            </div>
-                        </article>
-                        {% endfor %}
-                    </div>
-                </main>
-
-                <!-- Modal producto -->
-                <div class="modal-view" id="pop-modal">
-                    <div class="modal-sheet" id="modal-sheet">
-                        <div class="sheet-handle"></div>
-                        <img src="" id="pop-img" class="modal-picture" alt="">
-                        <h3 id="pop-title" class="modal-title"></h3>
-                        <p id="pop-desc" class="modal-desc"></p>
-                        <div class="modal-footer">
-                            <span id="pop-price" class="modal-price"></span>
-                            <button class="btn-add" style="width:auto;padding:13px 24px;" id="btn-pop-buy">
-                                <i class="fas fa-bag-shopping"></i> Comprar
+            <!-- Catálogo -->
+            <main class="grid-section">
+                <div class="products-grid" id="main-products-view">
+                    {% for p in productos %}
+                    <article class="product-card" data-id="{{ p.id }}"
+                        data-search="{{ p.nombre | lower }} {{ p.descripcion | lower }} {{ p.categoria | replace('-', ' ') }}">
+                        <div class="img-container">
+                            <img src="{{ p.imagen }}" alt="{{ p.nombre }}" loading="lazy">
+                        </div>
+                        <div class="product-body">
+                            <span class="p-category">{{ p.categoria | replace('-', ' ') }}</span>
+                            <h3 class="p-name">{{ p.nombre }}</h3>
+                            <div class="p-price">${{ "{:,.0f}".format(p.precio) }}</div>
+                            <button class="btn-add" data-add="{{ p.id }}">
+                                <i class="fas fa-plus"></i> Añadir
                             </button>
                         </div>
-                    </div>
+                    </article>
+                    {% endfor %}
                 </div>
+            </main>
 
-                <!-- Modal perfil -->
-                <div class="modal-view" id="profile-modal">
-                    <div class="modal-sheet profile-sheet">
-                        <div class="sheet-handle"></div>
-                        <div style="text-align:center;margin-bottom:24px;">
-                            <div
-                                style="width:64px;height:64px;margin:0 auto 12px;background:var(--ios-fill);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--ios-blue);">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.03em;">Mi Perfil</h3>
-                            {% if usuario %}
-                            <p style="font-size:14px;color:var(--ios-label-secondary);margin-top:4px;">{{ usuario.role
-                                }}</p>
-                        </div>
-                        <div class="profile-row"><span>Nombre</span><span>{{ usuario.name }}</span></div>
-                        <div class="profile-row"><span>Correo</span><span>{{ usuario.email }}</span></div>
-                        <div class="profile-row"><span>Rol</span><span>{{ usuario.role }}</span></div>
-                        <div class="profile-row"><span>Institución</span><span>{{ usuario.institution }}</span></div>
-                        <div class="profile-row"><span>Dirección</span><span>{{ usuario.address }}</span></div>
-                        <div class="profile-row"><span>Barrio</span><span>{{ usuario.neighborhood }}</span></div>
-                        <div class="profile-row"><span>Teléfono</span><span>{{ usuario.phone }}</span></div>
-                        {% if usuario.is_admin %}
-                        <div class="profile-row"><span>Administrador</span><span
-                                style="color: var(--ios-green);">Sí</span></div>
-                        {% endif %}
-                        <button class="btn-receipt-close" style="margin-top:20px;"
-                            onclick="hideProfileModal()">Cerrar</button>
-                        {% else %}
-                        <p style="font-size:14px;color:var(--ios-label-secondary);margin-top:4px;">No has iniciado
-                            sesión</p>
+            <!-- Modal producto -->
+            <div class="modal-view" id="pop-modal">
+                <div class="modal-sheet" id="modal-sheet">
+                    <div class="sheet-handle"></div>
+                    <img src="" id="pop-img" class="modal-picture" alt="">
+                    <h3 id="pop-title" class="modal-title"></h3>
+                    <p id="pop-desc" class="modal-desc"></p>
+                    <div class="modal-footer">
+                        <span id="pop-price" class="modal-price"></span>
+                        <button class="btn-add" style="width:auto;padding:13px 24px;" id="btn-pop-buy">
+                            <i class="fas fa-bag-shopping"></i> Comprar
+                        </button>
                     </div>
-                    <a href="{{ url_for('login_page') }}" class="btn-receipt-close" style="margin-top:20px;">Iniciar
-                        Sesión</a>
-                    {% endif %}
                 </div>
+            </div>
+
+            <!-- Modal perfil -->
+            <div class="modal-view" id="profile-modal">
+                <div class="modal-sheet profile-sheet">
+                    <div class="sheet-handle"></div>
+                    <div style="text-align:center;margin-bottom:24px;">
+                        <div
+                            style="width:64px;height:64px;margin:0 auto 12px;background:var(--ios-fill);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--ios-blue);">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.03em;">Mi Perfil</h3>
+                        {% if usuario %}
+                        <p style="font-size:14px;color:var(--ios-label-secondary);margin-top:4px;">{{ usuario.role
+                            }}</p>
+                    </div>
+                    <div class="profile-row"><span>Nombre</span><span>{{ usuario.name }}</span></div>
+                    <div class="profile-row"><span>Correo</span><span>{{ usuario.email }}</span></div>
+                    <div class="profile-row"><span>Rol</span><span>{{ usuario.role }}</span></div>
+                    <div class="profile-row"><span>Institución</span><span>{{ usuario.institution }}</span></div>
+                    <div class="profile-row"><span>Dirección</span><span>{{ usuario.address }}</span></div>
+                    <div class="profile-row"><span>Barrio</span><span>{{ usuario.neighborhood }}</span></div>
+                    <div class="profile-row"><span>Teléfono</span><span>{{ usuario.phone }}</span></div>
+                    {% if usuario.is_admin %}
+                    <div class="profile-row"><span>Administrador</span><span style="color: var(--ios-green);">Sí</span>
+                    </div>
+                    {% endif %}
+                    <button class="btn-receipt-close" style="margin-top:20px;"
+                        onclick="hideProfileModal()">Cerrar</button>
+                    {% else %}
+                    <p style="font-size:14px;color:var(--ios-label-secondary);margin-top:4px;">No has iniciado
+                        sesión</p>
+                </div>
+                <a href="{{ url_for('login_page') }}" class="btn-receipt-close" style="margin-top:20px;">Iniciar
+                    Sesión</a>
+                {% endif %}
+            </div>
     </div>
 
     <!-- Carrito glassmorphic -->
