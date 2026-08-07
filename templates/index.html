@@ -84,10 +84,29 @@
     }
 }
 
-/* En PC lo ocultamos porque la barra ya está fija a la vista */
+/* Botón flotante del menú para celulares */
+.btn-toggle-sidebar {
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    z-index: 99999 !important;
+    background: #0071E3 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 50px !important;
+    height: 50px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+    cursor: pointer !important;
+}
+
+/* Solo se oculta en pantallas grandes de PC */
 @media (min-width: 768px) {
     .btn-toggle-sidebar {
-        display: none;
+        display: none !important;
     }
 }
 
