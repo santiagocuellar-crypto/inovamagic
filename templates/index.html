@@ -96,23 +96,36 @@
     }
 }
 
-/* Botón flotante del menú para celulares */
+/* --- ESTILO ÚNICO PARA EL BOTÓN DEL MENÚ (Sirve para PC y Celular) --- */
 .btn-toggle-sidebar {
-    position: fixed !important;
-    bottom: 20px !important;
-    right: 20px !important;
-    z-index: 99999 !important;
-    background: #0071E3 !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 50% !important;
-    width: 50px !important;
-    height: 50px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
-    cursor: pointer !important;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 99999;
+    background: #0071E3;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+}
+
+/* Cuando estemos en COMPUTADOR (PC), sacamos el botón del modo flotante y lo ponemos arriba en la barra */
+@media (min-width: 768px) {
+    .btn-toggle-sidebar {
+        position: static !important; /* Deja de flotar */
+        width: auto !important;
+        height: auto !important;
+        border-radius: 6px !important;
+        padding: 8px 14px !important;
+        margin-right: 15px;
+        box-shadow: none !important;
+    }
 }
 
 /* Solo se oculta en pantallas grandes de PC */
