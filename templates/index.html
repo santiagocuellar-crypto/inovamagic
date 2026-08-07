@@ -51,20 +51,18 @@
     margin-right: 15px;
 }
 
-   /* --- BOTÓN DE MENÚ ADAPTABLE (CELULAR Y PC) --- */
-
-/* Por defecto (para Celular): Flota abajo a la derecha */
+    /* --- ÚNICO BOTÓN PARA ABRIR Y CERRAR LA BARRA (PC y Celular) --- */
 .btn-toggle-sidebar {
     position: fixed !important;
-    bottom: 20px !important;
-    right: 20px !important;
-    z-index: 999999 !important;
+    top: 15px !important;
+    left: 15px !important;
+    z-index: 999999 !important; /* Súper alto para que ninguna barra lateral lo tape */
     background: #0071E3 !important;
     color: white !important;
     border: none !important;
-    border-radius: 50% !important;
-    width: 50px !important;
-    height: 50px !important;
+    border-radius: 8px !important;
+    width: 45px !important;
+    height: 45px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -72,12 +70,37 @@
     cursor: pointer !important;
 }
 
-/* En Computador (PC): Deja de flotar y se acomoda arriba en la barra de navegación */
+
+/* En computadores (PC) ocultamos este botón flotante porque la barra ya está fija a la izquierda */
 @media (min-width: 768px) {
     .btn-toggle-sidebar {
-        position: static !important;
-        bottom: auto !important;
-        right: auto !important;
+        display: none !important;
+    }
+}
+
+/* --- ESTILO ÚNICO PARA EL BOTÓN DEL MENÚ (Sirve para PC y Celular) --- */
+.btn-toggle-sidebar {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 99999;
+    background: #0071E3;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+}
+
+/* Cuando estemos en COMPUTADOR (PC), sacamos el botón del modo flotante y lo ponemos arriba en la barra */
+@media (min-width: 768px) {
+    .btn-toggle-sidebar {
+        position: static !important; /* Deja de flotar */
         width: auto !important;
         height: auto !important;
         border-radius: 6px !important;
@@ -87,11 +110,11 @@
     }
 }
 
-/* Estructura general de la aplicación */
-.app-layout {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+/* Solo se oculta en pantallas grandes de PC */
+@media (min-width: 768px) {
+    .btn-toggle-sidebar {
+        display: none !important;
+    }
 }
 
      /* Por defecto para celulares y pantallas pequeñas */
