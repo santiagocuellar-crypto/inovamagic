@@ -58,6 +58,32 @@
     cursor: pointer;
 }
 
+/* Botón flotante para el menú en celulares */
+.btn-toggle-sidebar {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 99999; /* Siempre por encima de la barra lateral para que no lo tapen */
+    background: #0071E3;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+}
+
+/* En computadores (PC) ocultamos este botón flotante porque la barra ya está fija a la izquierda */
+@media (min-width: 768px) {
+    .btn-toggle-sidebar {
+        display: none !important;
+    }
+}
+
 /* En PC lo ocultamos porque la barra ya está fija a la vista */
 @media (min-width: 768px) {
     .btn-toggle-sidebar {
