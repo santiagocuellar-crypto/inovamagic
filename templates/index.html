@@ -51,34 +51,7 @@
     margin-right: 15px;
 }
 
-    /* --- ÚNICO BOTÓN PARA ABRIR Y CERRAR LA BARRA (PC y Celular) --- */
-.btn-toggle-sidebar {
-    position: fixed !important;
-    top: 15px !important;
-    left: 15px !important;
-    z-index: 999999 !important; /* Súper alto para que ninguna barra lateral lo tape */
-    background: #0071E3 !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 8px !important;
-    width: 45px !important;
-    height: 45px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-    cursor: pointer !important;
-}
-
-
-/* En computadores (PC) ocultamos este botón flotante porque la barra ya está fija a la izquierda */
-@media (min-width: 768px) {
-    .btn-toggle-sidebar {
-        display: none !important;
-    }
-}
-
-/* --- ESTILO ÚNICO PARA EL BOTÓN DEL MENÚ (Sirve para PC y Celular) --- */
+/* --- BOTÓN SIDEBAR TOGGLE (PC y Celular) --- */
 .btn-toggle-sidebar {
     position: fixed;
     bottom: 20px;
@@ -97,10 +70,9 @@
     cursor: pointer;
 }
 
-/* Cuando estemos en COMPUTADOR (PC), sacamos el botón del modo flotante y lo ponemos arriba en la barra */
 @media (min-width: 768px) {
     .btn-toggle-sidebar {
-        position: static !important; /* Deja de flotar */
+        position: static !important;
         width: auto !important;
         height: auto !important;
         border-radius: 6px !important;
@@ -149,7 +121,7 @@
 @media (min-width: 768px) {
     /* Mostramos el botón de texto arriba */
     .pc-sidebar-toggle {
-        display: flex; 
+        display: flex;
     }
     /* Ocultamos el botón flotante redondo */
     .btn-toggle-sidebar-mobile {
@@ -177,7 +149,7 @@
 
 /* Cuando se active con el botón flotante en móvil */
 .sidebar.active {
-    left: 0; 
+    left: 0;
 }
 
 
@@ -290,7 +262,7 @@
     background: var(--ios-bg-elevated);
     border-radius: 18px;
 }
- 
+
         /* ── Ventana estilo Mac (Inovamagic) ── */
         .mac-window {
             background: var(--ios-bg-elevated);
@@ -1364,7 +1336,7 @@
         // Filtra los productos según la categoría seleccionada
         productos.forEach(producto => {
             const categoriaProducto = producto.getAttribute('data-categoria');
-            
+
             if (categoria === 'todos' || categoriaProducto === categoria) {
                 producto.style.display = 'block';
             } else {
@@ -1373,7 +1345,7 @@
         });
     }
 </script>
-  
+
    <div class="app-layout">
     <!-- Botón para mostrar/ocultar la barra -->
 <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
@@ -1381,7 +1353,7 @@
 </button>
    <aside class="sidebar">
     <div class="nav-logo">Inova<span>magic</span></div>
-    
+
     <nav class="sidebar-links">
         <!-- Enlaces de categorías (Sin emojis) -->
         <a href="#" onclick="filtrarCategoria('todos', event)" class="sidebar-link active">Todos los productos</a>
@@ -1835,6 +1807,18 @@
         });
 
         /* ── Product modal ── */
+        function toggleModalState(modalId, isOpen) {
+            const el = document.getElementById(modalId);
+            if (!el) return;
+            if (isOpen) {
+                el.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } else {
+                el.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
         function showModal(id) {
             const p = CATALOG_MAP[id];
             if (!p) return;
@@ -1843,13 +1827,11 @@
             document.getElementById('pop-img').src = p.imagen;
             document.getElementById('pop-price').textContent = fmt(p.precio);
             document.getElementById('btn-pop-buy').onclick = () => { hideModal(); addItem(p.id); };
-            document.getElementById('pop-modal').classList.add('active');
-            document.body.style.overflow = 'hidden';
+            toggleModalState('pop-modal', true);
         }
 
         function hideModal() {
-            document.getElementById('pop-modal').classList.remove('active');
-            document.body.style.overflow = '';
+            toggleModalState('pop-modal', false);
         }
 
         document.getElementById('pop-modal').addEventListener('click', e => {
@@ -1857,13 +1839,11 @@
         });
 
         function showProfileModal() {
-            document.getElementById('profile-modal').classList.add('active');
-            document.body.style.overflow = 'hidden';
+            toggleModalState('profile-modal', true);
         }
 
         function hideProfileModal() {
-            document.getElementById('profile-modal').classList.remove('active');
-            document.body.style.overflow = '';
+            toggleModalState('profile-modal', false);
         }
 
         document.getElementById('profile-modal').addEventListener('click', e => {
@@ -1893,10 +1873,14 @@
         /* ── Keyboard ── */
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') {
-                if (document.getElementById('receipt-overlay').classList.contains('active')) closeReceipt();
-                else if (document.getElementById('cart-drawer').classList.contains('active')) closeCart();
-                else if (document.getElementById('pop-modal').classList.contains('active')) hideModal();
-                else if (document.getElementById('profile-modal').classList.contains('active')) hideProfileModal();
+                const activeModal = document.querySelector('.modal-view.active, .cart-drawer.active, .receipt-overlay.active');
+                if (!activeModal) return;
+                switch (activeModal.id) {
+                    case 'receipt-overlay': closeReceipt(); break;
+                    case 'cart-drawer': closeCart(); break;
+                    case 'pop-modal': hideModal(); break;
+                    case 'profile-modal': hideProfileModal(); break;
+                }
             }
         });
 
