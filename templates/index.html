@@ -51,74 +51,33 @@
     margin-right: 15px;
 }
 
-        /* Asegurar que el botón del menú flotante esté siempre por encima de todo y sea fácil de tocar en el celular */
+   /* --- BOTÓN DE MENÚ ADAPTABLE (CELULAR Y PC) --- */
+
+/* Por defecto (para Celular): Flota abajo a la derecha */
 .btn-toggle-sidebar {
-    position: fixed;
-    bottom: 20px;       /* O ponlo arriba `top: 75px;` si prefieres que flote en una esquina superior */
-    right: 20px;
-    z-index: 99999;     /* Súper alto para que ninguna otra capa lo tape */
-    background: #0071E3;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    cursor: pointer;
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    z-index: 999999 !important;
+    background: #0071E3 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 50px !important;
+    height: 50px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    cursor: pointer !important;
 }
 
-/* Botón flotante para el menú en celulares */
-.btn-toggle-sidebar {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 99999; /* Siempre por encima de la barra lateral para que no lo tapen */
-    background: #0071E3;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-}
-
-/* En computadores (PC) ocultamos este botón flotante porque la barra ya está fija a la izquierda */
+/* En Computador (PC): Deja de flotar y se acomoda arriba en la barra de navegación */
 @media (min-width: 768px) {
     .btn-toggle-sidebar {
-        display: none !important;
-    }
-}
-
-/* --- ESTILO ÚNICO PARA EL BOTÓN DEL MENÚ (Sirve para PC y Celular) --- */
-.btn-toggle-sidebar {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 99999;
-    background: #0071E3;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-}
-
-/* Cuando estemos en COMPUTADOR (PC), sacamos el botón del modo flotante y lo ponemos arriba en la barra */
-@media (min-width: 768px) {
-    .btn-toggle-sidebar {
-        position: static !important; /* Deja de flotar */
+        position: static !important;
+        bottom: auto !important;
+        right: auto !important;
         width: auto !important;
         height: auto !important;
         border-radius: 6px !important;
@@ -128,11 +87,11 @@
     }
 }
 
-/* Solo se oculta en pantallas grandes de PC */
-@media (min-width: 768px) {
-    .btn-toggle-sidebar {
-        display: none !important;
-    }
+/* Estructura general de la aplicación */
+.app-layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
      /* Por defecto para celulares y pantallas pequeñas */
@@ -210,25 +169,6 @@
     overflow-y: auto;
 }
 
-/* Botón flotante para abrir y cerrar el menú */
-.btn-toggle-sidebar {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1000;
-    background: var(--ios-bg-elevated);
-    border: 1px solid var(--ios-separator);
-    color: var(--ios-label);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
-}
 
 .btn-toggle-sidebar:hover {
     transform: scale(1.05);
