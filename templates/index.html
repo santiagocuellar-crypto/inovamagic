@@ -110,9 +110,49 @@
     }
 }
 
-/* Solo se oculta en pantallas grandes de PC */
+/* --- ESTILOS FINALES DE BOTONES --- */
+
+/* 1. El botón de texto del PC (en el navbar) */
+.pc-sidebar-toggle {
+    display: none; /* Oculto por defecto en celular */
+    background: #0071E3;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 15px;
+    font-weight: 500;
+}
+
+/* 2. El botón flotante del celular (tres rayitas) */
+.btn-toggle-sidebar-mobile {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 99999; /* ¡Muy importante! */
+    background: #0071E3;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex; /* Visible por defecto en celular */
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    font-size: 20px;
+}
+
+/* 3. Ajustes para COMPUTADOR (PC) */
 @media (min-width: 768px) {
-    .btn-toggle-sidebar {
+    /* Mostramos el botón de texto arriba */
+    .pc-sidebar-toggle {
+        display: flex; 
+    }
+    /* Ocultamos el botón flotante redondo */
+    .btn-toggle-sidebar-mobile {
         display: none !important;
     }
 }
