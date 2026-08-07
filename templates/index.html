@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -29,7 +28,7 @@
             --glass-bg: rgba(255, 255, 255, 0.72);
             --glass-bg-heavy: rgba(255, 255, 255, 0.85);
             --glass-border: rgba(255, 255, 255, 0.6);
-            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 1px 0 rgba(255,255,255,0.8) inset;
             --radius-xs: 8px;
             --radius-sm: 12px;
             --radius-md: 16px;
@@ -41,279 +40,234 @@
         }
 
         .navbar {
-            display: flex;
-            align-items: center;
-            padding: 10px 20px;
-            /* ... lo que ya tengas de color o altura ... */
-        }
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    /* ... lo que ya tengas de color o altura ... */
+}
 
-        /* Para darle un poquito de aire al botón y que no se pegue al logo */
-        .pc-sidebar-toggle {
-            margin-right: 15px;
-        }
+/* Para darle un poquito de aire al botón y que no se pegue al logo */
+.pc-sidebar-toggle {
+    margin-right: 15px;
+}
 
-        /* --- BOTÓN SIDEBAR TOGGLE (PC y Celular) --- */
-        .btn-toggle-sidebar {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 99999;
-            background: #0071E3;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-            cursor: pointer;
-        }
+        /* Asegurar que el botón del menú flotante esté siempre por encima de todo y sea fácil de tocar en el celular */
+.btn-toggle-sidebar {
+    position: fixed;
+    bottom: 20px;       /* O ponlo arriba `top: 75px;` si prefieres que flote en una esquina superior */
+    right: 20px;
+    z-index: 99999;     /* Súper alto para que ninguna otra capa lo tape */
+    background: #0071E3;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+}
 
-        @media (min-width: 768px) {
-            .btn-toggle-sidebar {
-                position: static !important;
-                width: auto !important;
-                height: auto !important;
-                border-radius: 6px !important;
-                padding: 8px 14px !important;
-                margin-right: 15px;
-                box-shadow: none !important;
-            }
-        }
+/* Botón flotante para el menú en celulares */
+.btn-toggle-sidebar {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 99999; /* Siempre por encima de la barra lateral para que no lo tapen */
+    background: #0071E3;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+}
 
-        /* --- ESTILOS FINALES DE BOTONES --- */
-
-        /* 1. El botón de texto del PC (en el navbar) */
-        .pc-sidebar-toggle {
-            display: none;
-            /* Oculto por defecto en celular */
-            background: #0071E3;
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-right: 15px;
-            font-weight: 500;
-        }
-
-        /* 2. El botón flotante del celular (tres rayitas) */
-        .btn-toggle-sidebar-mobile {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 99999;
-            /* ¡Muy importante! */
-            background: #0071E3;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            /* Visible por defecto en celular */
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            font-size: 20px;
-        }
-
-        /* 3. Ajustes para COMPUTADOR (PC) */
-        @media (min-width: 768px) {
-
-            /* Mostramos el botón de texto arriba */
-            .pc-sidebar-toggle {
-                display: flex;
-            }
-
-            /* Ocultamos el botón flotante redondo */
-            .btn-toggle-sidebar-mobile {
-                display: none !important;
-            }
-        }
-
-        /* Por defecto para celulares y pantallas pequeñas */
-        .app-layout {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-        }
-
-        .sidebar {
-            position: fixed;
-            left: -280px;
-            /* Oculta a la izquierda por defecto en celulares */
-            top: 0;
-            height: 100vh;
-            width: 280px;
-            background: #ffffff;
-            transition: left 0.3s ease;
-            z-index: 1100;
-        }
-
-        /* Cuando se active con el botón flotante en móvil */
-        .sidebar.active {
-            left: 0;
-        }
-
-        /* ==========================================
-   AJUSTES DEFINITIVOS PARA COMPUTADOR (PC)
-========================================== */
+/* En computadores (PC) ocultamos este botón flotante porque la barra ya está fija a la izquierda */
 @media (min-width: 768px) {
-    /* 1. Convertimos el layout principal en grid (Menú lateral + Contenido) */
-    .app-layout {
-        display: grid !important;
-        grid-template-columns: 280px 1fr !important; /* Columna fija para la barra y 1fr para el resto */
-        transition: grid-template-columns 0.3s ease;
-    }
-
-    /* 2. Hacemos que en PC la barra ya no sea "fixed" flotante, sino que se quede estática en su columna */
-    .sidebar {
-        position: static !important;
-        left: auto !important;
-        height: 100vh;
-        width: 280px;
-        transition: transform 0.3s ease, width 0.3s ease;
-    }
-
-    /* 3. CLASE MÁGICA: Cuando la barra esté oculta en PC, la columna se vuelve de 0 y el contenido ocupa todo */
-    .app-layout.sidebar-collapsed {
-        grid-template-columns: 0px 1fr !important;
-    }
-
-    .app-layout.sidebar-collapsed .sidebar {
-        transform: translateX(-100%);
-        overflow: hidden;
+    .btn-toggle-sidebar {
+        display: none !important;
     }
 }
 
 
-        .main-content {
-            width: 100%;
-            padding: 15px;
-        }
+
+/* Solo se oculta en pantallas grandes de PC */
+@media (min-width: 768px) {
+    .btn-toggle-sidebar {
+        display: none !important;
+    }
+}
+
+     /* Por defecto para celulares y pantallas pequeñas */
+.app-layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.sidebar {
+    position: fixed;
+    left: -280px; /* Oculta a la izquierda por defecto en celulares */
+    top: 0;
+    height: 100vh;
+    width: 280px;
+    background: #ffffff;
+    transition: left 0.3s ease;
+    z-index: 1100;
+}
+
+/* Cuando se active con el botón flotante en móvil */
+.sidebar.active {
+    left: 0; 
+}
 
 
-        /* Para computadores y pantallas grandes (Desktop) */
-        @media (min-width: 768px) {
-            .app-layout {
-                display: grid;
-                grid-template-columns: 260px 1fr;
-                /* Sidebar a la izquierda, catálogo a la derecha */
-            }
-
-            .sidebar {
-                position: sticky;
-                left: auto;
-                top: 65px;
-                height: calc(100vh - 65px);
-                width: 100%;
-            }
-
-            .btn-toggle-sidebar {
-                display: none;
-                /* Oculta el botón de hamburguesa en PC porque ya está fija */
-            }
-        }
-
-        .sidebar {
-            width: 260px;
-            background: var(--ios-bg-elevated);
-            border-right: 1px solid var(--ios-separator);
-            padding: 20px 10px;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
-        }
-
-        /* Ocultar la barra cuando se active la clase */
-        .app-layout.sidebar-hidden .sidebar {
-            transform: translateX(-100%);
-            position: absolute;
-            height: 100%;
-            z-index: 100;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 30px;
-            background: var(--ios-bg);
-            overflow-y: auto;
-        }
+.main-content {
+    width: 100%;
+    padding: 15px;
+}
 
 
-        .btn-toggle-sidebar:hover {
-            transform: scale(1.05);
-        }
+/* Para computadores y pantallas grandes (Desktop) */
+@media (min-width: 768px) {
+    .app-layout {
+        display: grid;
+        grid-template-columns: 260px 1fr; /* Sidebar a la izquierda, catálogo a la derecha */
+    }
 
-        /* Enlaces de la barra y letras oscuras */
-        .sidebar-links {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            padding: 10px;
-            flex: 1;
-        }
+    .sidebar {
+        position: sticky;
+        left: auto;
+        top: 65px;
+        height: calc(100vh - 65px);
+        width: 100%;
+    }
 
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            color: #1C1C1E;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            border-radius: 10px;
-            transition: all 0.2s ease;
-        }
+    .btn-toggle-sidebar {
+        display: none; /* Oculta el botón de hamburguesa en PC porque ya está fija */
+    }
+}
 
-        .sidebar-link:hover {
-            background-color: rgba(0, 122, 255, 0.08);
-            color: #007AFF;
-        }
+.sidebar {
+    width: 260px;
+    background: var(--ios-bg-elevated);
+    border-right: 1px solid var(--ios-separator);
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
 
-        .sidebar-link.active {
-            background-color: #007AFF;
-            color: white;
-            font-weight: 600;
-        }
+/* Ocultar la barra cuando se active la clase */
+.app-layout.sidebar-hidden .sidebar {
+    transform: translateX(-100%);
+    position: absolute;
+    height: 100%;
+    z-index: 100;
+}
 
-        .sidebar-footer {
-            margin-top: auto;
-            padding: 15px;
-            background: var(--ios-fill-secondary);
-            border-radius: var(--radius-sm);
-            font-size: 12px;
-            color: #3A3A3C;
-        }
+.main-content {
+    flex: 1;
+    padding: 30px;
+    background: var(--ios-bg);
+    overflow-y: auto;
+}
 
-        .sidebar-footer p {
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: #1C1C1E;
-        }
+/* Botón flotante para abrir y cerrar el menú */
+.btn-toggle-sidebar {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background: var(--ios-bg-elevated);
+    border: 1px solid var(--ios-separator);
+    color: var(--ios-label);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
 
+.btn-toggle-sidebar:hover {
+    transform: scale(1.05);
+}
+
+/* Enlaces de la barra y letras oscuras */
+.sidebar-links {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    flex: 1;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    color: #1C1C1E;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.sidebar-link:hover {
+    background-color: rgba(0, 122, 255, 0.08);
+    color: #007AFF;
+}
+
+.sidebar-link.active {
+    background-color: #007AFF;
+    color: white;
+    font-weight: 600;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding: 15px;
+    background: var(--ios-fill-secondary);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    color: #3A3A3C;
+}
+
+.sidebar-footer p {
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #1C1C1E;
+}
+
+/* ── Ventana estilo Mac (Inovamagic) ── */
+.mac-window {
+    background: var(--ios-bg-elevated);
+    border-radius: 18px;
+}
+ 
         /* ── Ventana estilo Mac (Inovamagic) ── */
         .mac-window {
             background: var(--ios-bg-elevated);
             border-radius: 18px;
-        }
-
-        /* ── Ventana estilo Mac (Inovamagic) ── */
-        .mac-window {
-            background: var(--ios-bg-elevated);
-            border-radius: 18px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             margin: 20px auto;
             max-width: 1200px;
             overflow: hidden;
             border: 1px solid var(--ios-separator);
         }
-
         .window-header {
             padding: 12px 16px;
             display: flex;
@@ -321,30 +275,11 @@
             gap: 12px;
             border-bottom: 1px solid var(--ios-separator);
         }
-
-        .mac-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-
-        .red {
-            background: #FF5F56;
-        }
-
-        .yellow {
-            background: #FFBD2E;
-        }
-
-        .green {
-            background: #27C93F;
-        }
-
+        .mac-buttons { display: flex; gap: 8px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .red { background: #FF5F56; }
+        .yellow { background: #FFBD2E; }
+        .green { background: #27C93F; }
         .profile-preview {
             display: flex;
             align-items: center;
@@ -354,18 +289,9 @@
             color: var(--ios-label);
         }
 
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        html {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
+        html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
         body {
             font-family: var(--sf);
@@ -384,17 +310,14 @@
             position: fixed;
             inset: 0;
             background:
-                radial-gradient(ellipse 80% 60% at 10% 20%, rgba(0, 122, 255, 0.06) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 50% at 90% 10%, rgba(175, 82, 222, 0.05) 0%, transparent 55%),
-                radial-gradient(ellipse 70% 60% at 50% 90%, rgba(52, 199, 89, 0.04) 0%, transparent 55%);
+                radial-gradient(ellipse 80% 60% at 10% 20%, rgba(0,122,255,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 90% 10%, rgba(175,82,222,0.05) 0%, transparent 55%),
+                radial-gradient(ellipse 70% 60% at 50% 90%, rgba(52,199,89,0.04) 0%, transparent 55%);
             pointer-events: none;
             z-index: 0;
         }
 
-        body>* {
-            position: relative;
-            z-index: 1;
-        }
+        body > * { position: relative; z-index: 1; }
 
         /* ── NAVBAR — Glass bar ── */
         .navbar {
@@ -424,9 +347,7 @@
             color: var(--ios-label);
         }
 
-        .nav-logo span {
-            color: var(--ios-blue);
-        }
+        .nav-logo span { color: var(--ios-blue); }
 
         .nav-actions {
             display: flex;
@@ -451,23 +372,10 @@
             gap: 6px;
         }
 
-        .nav-btn:active {
-            transform: scale(0.96);
-        }
-
-        .nav-btn.btn-login {
-            background: var(--ios-blue);
-            color: #fff;
-        }
-
-        .nav-btn.btn-login:hover {
-            background: var(--ios-blue-pressed);
-        }
-
-        .nav-btn.btn-logout {
-            background: rgba(255, 59, 48, 0.12);
-            color: var(--ios-red);
-        }
+        .nav-btn:active { transform: scale(0.96); }
+        .nav-btn.btn-login { background: var(--ios-blue); color: #fff; }
+        .nav-btn.btn-login:hover { background: var(--ios-blue-pressed); }
+        .nav-btn.btn-logout { background: rgba(255,59,48,0.12); color: var(--ios-red); }
 
         /* Cart button with Apple bubble badge */
         .cart-btn {
@@ -487,13 +395,8 @@
             transition: background 0.2s var(--spring), transform 0.15s var(--spring);
         }
 
-        .cart-btn:active {
-            transform: scale(0.92);
-        }
-
-        .cart-btn:hover {
-            background: rgba(0, 122, 255, 0.12);
-        }
+        .cart-btn:active { transform: scale(0.92); }
+        .cart-btn:hover { background: rgba(0,122,255,0.12); }
 
         .apple-badge {
             position: absolute;
@@ -515,33 +418,16 @@
             letter-spacing: -0.02em;
         }
 
-        .apple-badge.visible {
-            display: flex;
-        }
+        .apple-badge.visible { display: flex; }
 
         @keyframes badgePop {
-            0% {
-                transform: scale(0);
-                opacity: 0;
-            }
-
-            70% {
-                transform: scale(1.15);
-            }
-
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
+            0% { transform: scale(0); opacity: 0; }
+            70% { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         /* ── CARRUSEL ── */
-        .carousel-section {
-            max-width: 1200px;
-            margin: 28px auto 0;
-            padding: 0 20px;
-            width: 100%;
-        }
+        .carousel-section { max-width: 1200px; margin: 28px auto 0; padding: 0 20px; width: 100%; }
 
         .section-label {
             font-size: 13px;
@@ -562,56 +448,42 @@
             scrollbar-width: none;
         }
 
-        .carousel-track::-webkit-scrollbar {
-            display: none;
-        }
+        .carousel-track::-webkit-scrollbar { display: none; }
 
         .carousel-item {
             min-width: 280px;
             scroll-snap-align: start;
-            /* background: var(--ios-bg-elevated); */
-            /* Removed for gradient */
+            /* background: var(--ios-bg-elevated); */ /* Removed for gradient */
             border-radius: var(--radius-lg);
             padding: 14px;
             display: flex;
             align-items: center;
             gap: 14px;
             border: 0.5px solid var(--ios-separator);
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
             transition: transform 0.2s var(--spring), box-shadow 0.2s var(--spring);
             /* Added for gradient and hover effects */
             position: relative;
             overflow: hidden;
         }
-
         .carousel-item::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, #a8ff78, #78ffd6);
-            /* Example gradient */
-            opacity: 0.8;
-            /* Adjust opacity as needed */
+            background: linear-gradient(135deg, #a8ff78, #78ffd6); /* Example gradient */
+            opacity: 0.8; /* Adjust opacity as needed */
             border-radius: var(--radius-lg);
             z-index: -1;
         }
-
-        .carousel-item:nth-child(2n)::before {
-            background: linear-gradient(135deg, #84fab0, #8fd3f4);
-        }
-
-        .carousel-item:nth-child(3n)::before {
-            background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
-        }
+        .carousel-item:nth-child(2n)::before { background: linear-gradient(135deg, #84fab0, #8fd3f4); }
+        .carousel-item:nth-child(3n)::before { background: linear-gradient(135deg, #a1c4fd, #c2e9fb); }
 
         .carousel-item:hover {
             transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.6) inset;
         }
 
-        .carousel-item:active {
-            transform: scale(0.98);
-        }
+        .carousel-item:active { transform: scale(0.98); }
 
         .carousel-img {
             width: 64px;
@@ -651,9 +523,7 @@
             margin-bottom: 16px;
         }
 
-        .search-box {
-            position: relative;
-        }
+        .search-box { position: relative; }
 
         .search-box input {
             width: 100%;
@@ -670,12 +540,10 @@
 
         .search-box input:focus {
             background: var(--ios-bg-elevated);
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+            box-shadow: 0 0 0 3px rgba(0,122,255,0.2);
         }
 
-        .search-box input::placeholder {
-            color: var(--ios-label-tertiary);
-        }
+        .search-box input::placeholder { color: var(--ios-label-tertiary); }
 
         .search-box i {
             position: absolute;
@@ -714,12 +582,10 @@
 
         .product-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.08);
         }
 
-        .product-card:active {
-            transform: scale(0.98);
-        }
+        .product-card:active { transform: scale(0.98); }
 
         .img-container {
             width: 100%;
@@ -735,16 +601,9 @@
             transition: transform 0.4s var(--spring);
         }
 
-        .product-card:hover .img-container img {
-            transform: scale(1.03);
-        }
+        .product-card:hover .img-container img { transform: scale(1.03); }
 
-        .product-body {
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
+        .product-body { padding: 16px; display: flex; flex-direction: column; flex: 1; }
 
         .p-category {
             font-size: 11px;
@@ -789,10 +648,7 @@
             transition: background 0.2s, transform 0.15s var(--spring);
         }
 
-        .btn-add:active {
-            transform: scale(0.97);
-            background: var(--ios-blue-pressed);
-        }
+        .btn-add:active { transform: scale(0.97); background: var(--ios-blue-pressed); }
 
         /* ── MODAL PRODUCTO — Glass sheet ── */
         .modal-view {
@@ -802,7 +658,7 @@
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0,0,0,0.4);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             opacity: 0;
@@ -810,10 +666,7 @@
             transition: opacity 0.35s var(--spring);
         }
 
-        .modal-view.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .modal-view.active { opacity: 1; pointer-events: auto; }
 
         .modal-sheet {
             width: 100%;
@@ -831,9 +684,7 @@
             border-top: 0.5px solid var(--glass-border);
         }
 
-        .modal-view.active .modal-sheet {
-            transform: translateY(0);
-        }
+        .modal-view.active .modal-sheet { transform: translateY(0); }
 
         .sheet-handle {
             width: 36px;
@@ -885,7 +736,7 @@
             position: fixed;
             inset: 0;
             z-index: 300;
-            background: rgba(0, 0, 0, 0.25);
+            background: rgba(0,0,0,0.25);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             opacity: 0;
@@ -893,10 +744,7 @@
             transition: opacity 0.4s var(--spring);
         }
 
-        .cart-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .cart-overlay.active { opacity: 1; pointer-events: auto; }
 
         .cart-drawer {
             position: fixed;
@@ -913,15 +761,13 @@
             -webkit-backdrop-filter: blur(40px) saturate(180%);
             border-radius: var(--radius-xl);
             border: 0.5px solid var(--glass-border);
-            box-shadow: var(--glass-shadow), 0 0 0 0.5px rgba(0, 0, 0, 0.06);
+            box-shadow: var(--glass-shadow), 0 0 0 0.5px rgba(0,0,0,0.06);
             transform: translateX(calc(100% + 24px));
             transition: transform 0.5s var(--spring);
             overflow: hidden;
         }
 
-        .cart-drawer.active {
-            transform: translateX(0);
-        }
+        .cart-drawer.active { transform: translateX(0); }
 
         .cart-header {
             padding: 20px 20px 16px;
@@ -953,9 +799,7 @@
             transition: background 0.2s, transform 0.15s;
         }
 
-        .cart-close:active {
-            transform: scale(0.9);
-        }
+        .cart-close:active { transform: scale(0.9); }
 
         .cart-body {
             flex: 1;
@@ -983,38 +827,23 @@
             color: var(--ios-label-tertiary);
         }
 
-        .cart-empty p {
-            font-size: 17px;
-            font-weight: 600;
-            color: var(--ios-label);
-            margin-bottom: 6px;
-        }
-
-        .cart-empty small {
-            font-size: 14px;
-        }
+        .cart-empty p { font-size: 17px; font-weight: 600; color: var(--ios-label); margin-bottom: 6px; }
+        .cart-empty small { font-size: 14px; }
 
         .cart-item {
             display: flex;
             gap: 12px;
             padding: 12px;
             margin-bottom: 8px;
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255,255,255,0.5);
             border-radius: var(--radius-md);
             border: 0.5px solid var(--ios-separator);
             animation: itemSlideIn 0.35s var(--spring) both;
         }
 
         @keyframes itemSlideIn {
-            from {
-                opacity: 0;
-                transform: translateX(16px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+            from { opacity: 0; transform: translateX(16px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         .cart-item-img {
@@ -1026,10 +855,7 @@
             flex-shrink: 0;
         }
 
-        .cart-item-info {
-            flex: 1;
-            min-width: 0;
-        }
+        .cart-item-info { flex: 1; min-width: 0; }
 
         .cart-item-name {
             font-size: 14px;
@@ -1083,9 +909,7 @@
             font-family: var(--sf);
         }
 
-        .qty-btn:active {
-            background: rgba(0, 122, 255, 0.12);
-        }
+        .qty-btn:active { background: rgba(0,122,255,0.12); }
 
         .qty-value {
             font-size: 15px;
@@ -1100,7 +924,7 @@
             width: 32px;
             height: 32px;
             border: none;
-            background: rgba(255, 59, 48, 0.1);
+            background: rgba(255,59,48,0.1);
             color: var(--ios-red);
             border-radius: var(--radius-pill);
             cursor: pointer;
@@ -1111,16 +935,13 @@
             transition: background 0.15s, transform 0.15s;
         }
 
-        .cart-item-remove:active {
-            transform: scale(0.9);
-            background: rgba(255, 59, 48, 0.2);
-        }
+        .cart-item-remove:active { transform: scale(0.9); background: rgba(255,59,48,0.2); }
 
         .cart-footer {
             padding: 16px 20px;
             padding-bottom: max(16px, env(safe-area-inset-bottom));
             border-top: 0.5px solid var(--ios-separator);
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255,255,255,0.4);
             flex-shrink: 0;
         }
 
@@ -1139,9 +960,7 @@
             margin-bottom: 6px;
         }
 
-        .cart-summary-row:last-child {
-            margin-bottom: 0;
-        }
+        .cart-summary-row:last-child { margin-bottom: 0; }
 
         .cart-summary-row.total {
             font-size: 18px;
@@ -1153,10 +972,7 @@
             letter-spacing: -0.03em;
         }
 
-        .text-green {
-            color: var(--ios-green);
-            font-weight: 600;
-        }
+        .text-green { color: var(--ios-green); font-weight: 600; }
 
         .btn-checkout {
             font-family: var(--sf);
@@ -1177,16 +993,8 @@
             gap: 8px;
         }
 
-        .btn-checkout:active:not(:disabled) {
-            transform: scale(0.98);
-            background: var(--ios-blue-pressed);
-        }
-
-        .btn-checkout:disabled {
-            background: var(--ios-fill);
-            color: var(--ios-label-tertiary);
-            cursor: not-allowed;
-        }
+        .btn-checkout:active:not(:disabled) { transform: scale(0.98); background: var(--ios-blue-pressed); }
+        .btn-checkout:disabled { background: var(--ios-fill); color: var(--ios-label-tertiary); cursor: not-allowed; }
 
         .btn-clear-cart {
             font-family: var(--sf);
@@ -1203,9 +1011,7 @@
             transition: background 0.15s;
         }
 
-        .btn-clear-cart:active {
-            background: rgba(255, 59, 48, 0.08);
-        }
+        .btn-clear-cart:active { background: rgba(255,59,48,0.08); }
 
         /* ── RECIBO — Apple Pay confirmation ── */
         .receipt-overlay {
@@ -1216,7 +1022,7 @@
             align-items: center;
             justify-content: center;
             padding: 24px;
-            background: rgba(0, 0, 0, 0.45);
+            background: rgba(0,0,0,0.45);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             opacity: 0;
@@ -1224,10 +1030,7 @@
             transition: opacity 0.4s var(--spring);
         }
 
-        .receipt-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .receipt-overlay.active { opacity: 1; pointer-events: auto; }
 
         .receipt-card {
             width: 100%;
@@ -1238,7 +1041,7 @@
             -webkit-backdrop-filter: blur(40px) saturate(180%);
             border-radius: var(--radius-xl);
             border: 0.5px solid var(--glass-border);
-            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18), 0 1px 0 rgba(255, 255, 255, 0.9) inset;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.18), 0 1px 0 rgba(255,255,255,0.9) inset;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -1246,14 +1049,12 @@
             transition: transform 0.5s var(--spring-bounce);
         }
 
-        .receipt-overlay.active .receipt-card {
-            transform: scale(1) translateY(0);
-        }
+        .receipt-overlay.active .receipt-card { transform: scale(1) translateY(0); }
 
         .receipt-hero {
             text-align: center;
             padding: 36px 24px 28px;
-            background: linear-gradient(180deg, rgba(52, 199, 89, 0.08) 0%, transparent 100%);
+            background: linear-gradient(180deg, rgba(52,199,89,0.08) 0%, transparent 100%);
         }
 
         .receipt-check {
@@ -1267,24 +1068,14 @@
             justify-content: center;
             font-size: 32px;
             color: #fff;
-            box-shadow: 0 8px 24px rgba(52, 199, 89, 0.35);
+            box-shadow: 0 8px 24px rgba(52,199,89,0.35);
             animation: checkSpring 0.6s var(--spring-bounce) 0.15s both;
         }
 
         @keyframes checkSpring {
-            0% {
-                transform: scale(0) rotate(-20deg);
-                opacity: 0;
-            }
-
-            60% {
-                transform: scale(1.1) rotate(5deg);
-            }
-
-            100% {
-                transform: scale(1) rotate(0);
-                opacity: 1;
-            }
+            0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
         }
 
         .receipt-hero h2 {
@@ -1338,9 +1129,7 @@
             border-bottom: 0.5px solid var(--ios-separator);
         }
 
-        .receipt-item:last-child {
-            border-bottom: none;
-        }
+        .receipt-item:last-child { border-bottom: none; }
 
         .receipt-item img {
             width: 48px;
@@ -1350,10 +1139,7 @@
             background: var(--ios-fill);
         }
 
-        .receipt-item-info {
-            flex: 1;
-            min-width: 0;
-        }
+        .receipt-item-info { flex: 1; min-width: 0; }
 
         .receipt-item-name {
             font-size: 14px;
@@ -1363,10 +1149,7 @@
             margin-bottom: 2px;
         }
 
-        .receipt-item-meta {
-            font-size: 12px;
-            color: var(--ios-label-secondary);
-        }
+        .receipt-item-meta { font-size: 12px; color: var(--ios-label-secondary); }
 
         .receipt-item-total {
             font-size: 14px;
@@ -1390,9 +1173,7 @@
             margin-bottom: 8px;
         }
 
-        .receipt-row:last-child {
-            margin-bottom: 0;
-        }
+        .receipt-row:last-child { margin-bottom: 0; }
 
         .receipt-row.grand {
             font-size: 20px;
@@ -1412,15 +1193,8 @@
             border-bottom: 0.5px solid var(--ios-separator);
         }
 
-        .receipt-meta-row span:first-child {
-            color: var(--ios-label-secondary);
-        }
-
-        .receipt-meta-row span:last-child {
-            font-weight: 500;
-            text-align: right;
-            max-width: 60%;
-        }
+        .receipt-meta-row span:first-child { color: var(--ios-label-secondary); }
+        .receipt-meta-row span:last-child { font-weight: 500; text-align: right; max-width: 60%; }
 
         .btn-receipt-close {
             font-family: var(--sf);
@@ -1437,10 +1211,7 @@
             transition: background 0.2s, transform 0.15s;
         }
 
-        .btn-receipt-close:active {
-            transform: scale(0.98);
-            background: rgba(120, 120, 128, 0.2);
-        }
+        .btn-receipt-close:active { transform: scale(0.98); background: rgba(120,120,128,0.2); }
 
         /* ── Apple Bubble Toasts ── */
         #toast-container {
@@ -1467,7 +1238,7 @@
             backdrop-filter: blur(40px) saturate(180%);
             -webkit-backdrop-filter: blur(40px) saturate(180%);
             border: 0.5px solid var(--glass-border);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.8) inset;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -1479,15 +1250,8 @@
             transition: transform 0.45s var(--spring-bounce), opacity 0.35s var(--spring);
         }
 
-        .apple-toast.active {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-        }
-
-        .apple-toast.leaving {
-            transform: translateY(-12px) scale(0.95);
-            opacity: 0;
-        }
+        .apple-toast.active { transform: translateY(0) scale(1); opacity: 1; }
+        .apple-toast.leaving { transform: translateY(-12px) scale(0.95); opacity: 0; }
 
         .apple-toast-icon {
             width: 28px;
@@ -1500,20 +1264,9 @@
             flex-shrink: 0;
         }
 
-        .apple-toast.success .apple-toast-icon {
-            background: rgba(52, 199, 89, 0.15);
-            color: var(--ios-green);
-        }
-
-        .apple-toast.error .apple-toast-icon {
-            background: rgba(255, 59, 48, 0.12);
-            color: var(--ios-red);
-        }
-
-        .apple-toast.info .apple-toast-icon {
-            background: rgba(0, 122, 255, 0.15);
-            color: var(--ios-blue);
-        }
+        .apple-toast.success .apple-toast-icon { background: rgba(52,199,89,0.15); color: var(--ios-green); }
+        .apple-toast.error .apple-toast-icon { background: rgba(255,59,48,0.12); color: var(--ios-red); }
+        .apple-toast.info .apple-toast-icon { background: rgba(0,122,255,0.15); color: var(--ios-blue); }
 
         /* Profile modal */
         .profile-sheet .profile-row {
@@ -1524,14 +1277,8 @@
             font-size: 15px;
         }
 
-        .profile-sheet .profile-row span:first-child {
-            color: var(--ios-label-secondary);
-        }
-
-        .profile-sheet .profile-row span:last-child {
-            font-weight: 500;
-            text-align: right;
-        }
+        .profile-sheet .profile-row span:first-child { color: var(--ios-label-secondary); }
+        .profile-sheet .profile-row span:last-child { font-weight: 500; text-align: right; }
 
         footer {
             text-align: center;
@@ -1542,42 +1289,15 @@
         }
 
         @media (min-width: 768px) {
-            .modal-view {
-                align-items: center;
-            }
-
-            .modal-sheet {
-                border-radius: var(--radius-xl);
-                max-height: 85vh;
-                transform: scale(0.92);
-                opacity: 0;
-            }
-
-            .modal-view.active .modal-sheet {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            .cart-drawer {
-                top: 16px;
-                right: 16px;
-                bottom: 16px;
-            }
+            .modal-view { align-items: center; }
+            .modal-sheet { border-radius: var(--radius-xl); max-height: 85vh; transform: scale(0.92); opacity: 0; }
+            .modal-view.active .modal-sheet { transform: scale(1); opacity: 1; }
+            .cart-drawer { top: 16px; right: 16px; bottom: 16px; }
         }
 
         @media (max-width: 480px) {
-            .cart-drawer {
-                top: 0;
-                right: 0;
-                bottom: 0;
-                width: 100%;
-                max-width: 100%;
-                border-radius: 0;
-            }
-
-            .search-area h2 {
-                font-size: 24px;
-            }
+            .cart-drawer { top: 0; right: 0; bottom: 0; width: 100%; max-width: 100%; border-radius: 0; }
+            .search-area h2 { font-size: 24px; }
         }
     </style>
 </head>
@@ -1585,302 +1305,225 @@
 
 <body>
 
-    <script>
+  <script>
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) {
+            sidebar.classList.toggle('active');
+        }
+    }
+</script>
 
-        function toggleSidebar() {
-            const appLayout = document.querySelector('.app-layout');
-            const sidebar = document.querySelector('.sidebar');
+<script>
+    function filtrarCategoria(categoria, event) {
+        // Previene comportamientos extraños del enlace
+        if (event) event.preventDefault();
 
-            if (window.innerWidth >= 768) {
-                if (appLayout) {
-                    appLayout.classList.toggle('sidebar-hidden');
-                }
+        const productos = document.querySelectorAll('.product-card');
+        const enlaces = document.querySelectorAll('.sidebar-link');
+
+        // Cambia la clase activa en el menú
+        enlaces.forEach(enlace => enlace.classList.remove('active'));
+        if (event && event.currentTarget) {
+            event.currentTarget.classList.add('active');
+        }
+
+        // Filtra los productos según la categoría seleccionada
+        productos.forEach(producto => {
+            const categoriaProducto = producto.getAttribute('data-categoria');
+            
+            if (categoria === 'todos' || categoriaProducto === categoria) {
+                producto.style.display = 'block';
             } else {
-                if (sidebar) {
-                    sidebar.classList.toggle('active');
-                }
+                producto.style.display = 'none';
             }
-        }
-    </script>
-    </script>
+        });
+    }
+</script>
+  
+   <div class="app-layout">
+    <!-- Botón para mostrar/ocultar la barra -->
+<button class="btn-toggle-sidebar" onclick="toggleSidebar()">
+    <i class="fa-solid fa-bars"></i>
+</button>
+   <aside class="sidebar">
+    <div class="nav-logo">Inova<span>magic</span></div>
+    
+    <nav class="sidebar-links">
+        <!-- Enlaces de categorías (Sin emojis) -->
+        <a href="#" onclick="filtrarCategoria('todos', event)" class="sidebar-link active">Todos los productos</a>
+        <a href="#" onclick="filtrarCategoria('camisas', event)" class="sidebar-link">Camisas</a>
+        <a href="#" onclick="filtrarCategoria('pantalones', event)" class="sidebar-link">Pantalones</a>
+        <a href="#" onclick="filtrarCategoria('accesorios', event)" class="sidebar-link">Accesorios</a>
+        <a href="#" onclick="filtrarCategoria('electronica', event)" class="sidebar-link">Tecnología</a>
+    </nav>
 
-    <script>
-        function filtrarCategoria(categoria, event) {
-            // Previene comportamientos extraños del enlace
-            if (event) event.preventDefault();
-
-            const productos = document.querySelectorAll('.product-card');
-            const enlaces = document.querySelectorAll('.sidebar-link');
-
-            // Cambia la clase activa en el menú
-            enlaces.forEach(enlace => enlace.classList.remove('active'));
-            if (event && event.currentTarget) {
-                event.currentTarget.classList.add('active');
-            }
-
-            // Filtra los productos según la categoría seleccionada
-            productos.forEach(producto => {
-                const categoriaProducto = producto.getAttribute('data-categoria');
-
-                if (categoria === 'todos' || categoriaProducto === categoria) {
-                    producto.style.display = 'block';
-                } else {
-                    producto.style.display = 'none';
-                }
-            });
-        }
-    </script>
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Tu Página</title>
-    <!-- Aquí van tus estilos CSS -->
-</head>
-<body>
-
-    <div class="app-layout">
-        <!-- Tu barra lateral y contenido van aquí -->
+    <!-- Espacio inferior aprovechado para rellenar el vacío -->
+    <div class="sidebar-footer">
+        <p>Inovamagic v1.0</p>
+        <span>Catálogo oficial de gestión y ventas activo.</span>
     </div>
+</aside>
 
-   <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Tu Página</title>
-</head>
-<body>
+    <!-- Contenedor principal que contiene todo lo que ya tenías -->
+    <main class="main-content">
+        <div id="toast-container"></div>
+    <!-- Contenedor principal que contiene todo lo que ya tenías -->
+    <main class="main-content">
 
-    <div class="app-layout">
-        <!-- Botón para mostrar/ocultar la barra -->
-        <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
-            <i class="fa-solid fa-bars"></i>
-        </button>
+    <div id="toast-container"></div>
 
-        <aside class="sidebar">
+    <!-- Navbar -->
+    <nav class="navbar">
+        <!-- Botón para ocultar/mostrar la barra lateral en PC -->
+<button class="nav-btn pc-sidebar-toggle" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i> Menú
+</button>
+        <div class="nav-container">
             <div class="nav-logo">Inova<span>magic</span></div>
-
-            <nav class="sidebar-links">
-                <a href="#" onclick="filtrarCategoria('todos', event)" class="sidebar-link active">Todos los</a>
-            </nav>
-        </aside>
-    </div>
-
-    <!-- Script de control (ahora sí, bien ubicado antes de cerrar el body) -->
-    <script>
-        function toggleSidebar() {
-            const layout = document.querySelector('.app-layout');
-            const sidebar = document.querySelector('.sidebar');
-
-            if (window.innerWidth >= 768) {
-                // En PC: encoje o expande el grid completo de la página
-                if (layout) {
-                    layout.classList.toggle('sidebar-collapsed');
-                }
-            } else {
-                // En Celular: desliza la barra flotante con la clase active
-                if (sidebar) {
-                    sidebar.classList.toggle('active');
-                }
-            }
-        }
-    </script>
-
-</body>
-</html>
-
-    <div class="app-layout">
-        <!-- Botón para mostrar/ocultar la barra -->
-        <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-        <aside class="sidebar">
-            <div class="nav-logo">Inova<span>magic</span></div>
-
-            <nav class="sidebar-links">
-                <!-- Enlaces de categorías (Sin emojis) -->
-                <a href="#" onclick="filtrarCategoria('todos', event)" class="sidebar-link active">Todos los
-                    productos</a>
-                <a href="#" onclick="filtrarCategoria('camisas', event)" class="sidebar-link">Camisas</a>
-                <a href="#" onclick="filtrarCategoria('pantalones', event)" class="sidebar-link">Pantalones</a>
-                <a href="#" onclick="filtrarCategoria('accesorios', event)" class="sidebar-link">Accesorios</a>
-                <a href="#" onclick="filtrarCategoria('electronica', event)" class="sidebar-link">Tecnología</a>
-            </nav>
-
-            <!-- Espacio inferior aprovechado para rellenar el vacío -->
-            <div class="sidebar-footer">
-                <p>Inovamagic v1.0</p>
-                <span>Catálogo oficial de gestión y ventas activo.</span>
-            </div>
-        </aside>
-
-        <!-- Contenedor principal que contiene todo lo que ya tenías -->
-        <main class="main-content">
-            <div id="toast-container"></div>
-
-            <!-- Navbar -->
-            <nav class="navbar">
-                <!-- Botón para ocultar/mostrar la barra lateral en PC -->
-                <button class="nav-btn pc-sidebar-toggle" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i> Menú
-                </button>
-                <div class="nav-container">
-                    <div class="nav-logo">Inova<span>magic</span></div>
-                    <div class="nav-actions">
-                        {% if usuario %}
-                        <button class="nav-btn" onclick="showProfileModal()">
-                            <i class="fas fa-user-circle"></i> Perfil
-                        </button>
-                        {% if usuario.is_admin %}
-                        <a href="{{ url_for('admin_panel') }}" class="nav-btn"><i class="fas fa-user-gear"></i>
-                            Admin</a>
-                        {% endif %}
-                        <a href="{{ url_for('logout') }}" class="nav-btn btn-logout"><i
-                                class="fas fa-sign-out-alt"></i></a>
-                        {% else %}
-                        <a href="{{ url_for('login_page') }}" class="nav-btn btn-login">Iniciar Sesión</a>
-                        {% endif %}
-                        <button class="cart-btn" onclick="openCart()" aria-label="Abrir carrito">
-                            <i class="fas fa-bag-shopping"></i>
-                            <span class="apple-badge" id="cart-badge">0</span>
-                        </button>
-                    </div>
-                </div>
-            </nav>
-
-            <!-- Nuevo contenedor estilo Mac -->
-            <div class="mac-window">
-                <div class="window-header">
-                    <div class="mac-buttons">
-                        <span class="dot red"></span>
-                        <span class="dot yellow"></span>
-                        <span class="dot green"></span>
-                    </div>
-                    <!-- Aquí metemos el perfil arriba a la izquierda como querías -->
-                    <div class="profile-preview">
-                        <i class="fas fa-user-circle"></i>
-                        <span>{{ usuario.name if usuario else 'Invitado' }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Flash Messages -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            <div style="max-width: 1200px; margin: 20px auto 0; padding: 0 20px;">
-                {% for category, message in messages %}
-                <div class="apple-toast {{ category }}"
-                    style="position: relative; top: 0; left: 0; transform: none; opacity: 1; margin-bottom: 10px;">
-                    <div class="apple-toast-icon"><i
-                            class="fas {{ 'fa-exclamation-circle' if category == 'error' else 'fa-check-circle' if category == 'success' else 'fa-info-circle' }}"></i>
-                    </div>
-                    <span>{{ message }}</span>
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-            {% endwith %}
-
-            <!-- Carrusel -->
-            <section class="carousel-section">
-                <p class="section-label">Destacados</p>
-                <div class="carousel-track">
-                    {% for c in carrusel %}
-                    <div class="carousel-item">
-                        <img src="{{ c.imagen }}" class="carousel-img" alt="{{ c.nombre }}" loading="lazy">
-                        <div class="carousel-info">
-                            <h4>{{ c.nombre }}</h4>
-                            <span>${{ "{:,.0f}".format(c.precio) }}</span>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </section>
-
-            <!-- Buscador -->
-            <div class="search-area">
-                <h2>Catálogo Institucional</h2>
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="search" id="txt-search" placeholder="Buscar prenda, talla, categoría…"
-                        autocomplete="off">
-                </div>
-            </div>
-
-            <!-- Catálogo -->
-            <main class="grid-section">
-                <div class="products-grid" id="main-products-view">
-                    {% for p in productos %}
-                    <article class="product-card" data-id="{{ p.id }}"
-                        data-search="{{ p.nombre | lower }} {{ p.descripcion | lower }} {{ p.categoria | replace('-', ' ') }}">
-                        <div class="img-container">
-                            <img src="{{ p.imagen }}" alt="{{ p.nombre }}" loading="lazy">
-                        </div>
-                        <div class="product-body">
-                            <span class="p-category">{{ p.categoria | replace('-', ' ') }}</span>
-                            <h3 class="p-name">{{ p.nombre }}</h3>
-                            <div class="p-price">${{ "{:,.0f}".format(p.precio) }}</div>
-                            <button class="btn-add" data-add="{{ p.id }}">
-                                <i class="fas fa-plus"></i> Añadir
-                            </button>
-                        </div>
-                    </article>
-                    {% endfor %}
-                </div>
-            </main>
-
-            <!-- Modal producto -->
-            <div class="modal-view" id="pop-modal">
-                <div class="modal-sheet" id="modal-sheet">
-                    <div class="sheet-handle"></div>
-                    <img src="" id="pop-img" class="modal-picture" alt="">
-                    <h3 id="pop-title" class="modal-title"></h3>
-                    <p id="pop-desc" class="modal-desc"></p>
-                    <div class="modal-footer">
-                        <span id="pop-price" class="modal-price"></span>
-                        <button class="btn-add" style="width:auto;padding:13px 24px;" id="btn-pop-buy">
-                            <i class="fas fa-bag-shopping"></i> Comprar
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal perfil -->
-            <div class="modal-view" id="profile-modal">
-                <div class="modal-sheet profile-sheet">
-                    <div class="sheet-handle"></div>
-                    <div style="text-align:center;margin-bottom:24px;">
-                        <div
-                            style="width:64px;height:64px;margin:0 auto 12px;background:var(--ios-fill);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--ios-blue);">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.03em;">Mi Perfil</h3>
-                        {% if usuario %}
-                        <p style="font-size:14px;color:var(--ios-label-secondary);margin-top:4px;">{{ usuario.role
-                            }}</p>
-                    </div>
-                    <div class="profile-row"><span>Nombre</span><span>{{ usuario.name }}</span></div>
-                    <div class="profile-row"><span>Correo</span><span>{{ usuario.email }}</span></div>
-                    <div class="profile-row"><span>Rol</span><span>{{ usuario.role }}</span></div>
-                    <div class="profile-row"><span>Institución</span><span>{{ usuario.institution }}</span></div>
-                    <div class="profile-row"><span>Dirección</span><span>{{ usuario.address }}</span></div>
-                    <div class="profile-row"><span>Barrio</span><span>{{ usuario.neighborhood }}</span></div>
-                    <div class="profile-row"><span>Teléfono</span><span>{{ usuario.phone }}</span></div>
+            <div class="nav-actions">
+                {% if usuario %}
+                    <button class="nav-btn" onclick="showProfileModal()">
+                        <i class="fas fa-user-circle"></i> Perfil
+                    </button>
                     {% if usuario.is_admin %}
-                    <div class="profile-row"><span>Administrador</span><span style="color: var(--ios-green);">Sí</span>
-                    </div>
+                    <a href="{{ url_for('admin_panel') }}" class="nav-btn"><i class="fas fa-user-gear"></i> Admin</a>
                     {% endif %}
-                    <button class="btn-receipt-close" style="margin-top:20px;"
-                        onclick="hideProfileModal()">Cerrar</button>
-                    {% else %}
-                    <p style="font-size:14px;color:var(--ios-label-secondary);margin-top:4px;">No has iniciado
-                        sesión</p>
-                </div>
-                <a href="{{ url_for('login_page') }}" class="btn-receipt-close" style="margin-top:20px;">Iniciar
-                    Sesión</a>
+                    <a href="{{ url_for('logout') }}" class="nav-btn btn-logout"><i class="fas fa-sign-out-alt"></i></a>
+                {% else %}
+                    <a href="{{ url_for('login_page') }}" class="nav-btn btn-login">Iniciar Sesión</a>
                 {% endif %}
+                <button class="cart-btn" onclick="openCart()" aria-label="Abrir carrito">
+                    <i class="fas fa-bag-shopping"></i>
+                    <span class="apple-badge" id="cart-badge">0</span>
+                </button>
             </div>
+        </div>
+    </nav>
+
+    <!-- Nuevo contenedor estilo Mac -->
+<div class="mac-window">
+    <div class="window-header">
+        <div class="mac-buttons">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+        </div>
+        <!-- Aquí metemos el perfil arriba a la izquierda como querías -->
+        <div class="profile-preview">
+            <i class="fas fa-user-circle"></i>
+            <span>{{ usuario.name if usuario else 'Invitado' }}</span>
+        </div>
+    </div>
+</div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div style="max-width: 1200px; margin: 20px auto 0; padding: 0 20px;">
+        {% for category, message in messages %}
+            <div class="apple-toast {{ category }}" style="position: relative; top: 0; left: 0; transform: none; opacity: 1; margin-bottom: 10px;">
+                <div class="apple-toast-icon"><i class="fas {{ 'fa-exclamation-circle' if category == 'error' else 'fa-check-circle' if category == 'success' else 'fa-info-circle' }}"></i></div>
+                <span>{{ message }}</span>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Carrusel -->
+    <section class="carousel-section">
+        <p class="section-label">Destacados</p>
+        <div class="carousel-track">
+            {% for c in carrusel %}
+            <div class="carousel-item">
+                <img src="{{ c.imagen }}" class="carousel-img" alt="{{ c.nombre }}" loading="lazy">
+                <div class="carousel-info">
+                    <h4>{{ c.nombre }}</h4>
+                    <span>${{ "{:,.0f}".format(c.precio) }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Buscador -->
+    <div class="search-area">
+        <h2>Catálogo Institucional</h2>
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="search" id="txt-search" placeholder="Buscar prenda, talla, categoría…" autocomplete="off">
+        </div>
+    </div>
+
+    <!-- Catálogo -->
+    <main class="grid-section">
+        <div class="products-grid" id="main-products-view">
+            {% for p in productos %}
+            <article class="product-card"
+                     data-id="{{ p.id }}"
+                     data-search="{{ p.nombre | lower }} {{ p.descripcion | lower }} {{ p.categoria | replace('-', ' ') }}">
+                <div class="img-container">
+                    <img src="{{ p.imagen }}" alt="{{ p.nombre }}" loading="lazy">
+                </div>
+                <div class="product-body">
+                    <span class="p-category">{{ p.categoria | replace('-', ' ') }}</span>
+                    <h3 class="p-name">{{ p.nombre }}</h3>
+                    <div class="p-price">${{ "{:,.0f}".format(p.precio) }}</div>
+                    <button class="btn-add" data-add="{{ p.id }}">
+                        <i class="fas fa-plus"></i> Añadir
+                    </button>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </main>
+
+    <!-- Modal producto -->
+    <div class="modal-view" id="pop-modal">
+        <div class="modal-sheet" id="modal-sheet">
+            <div class="sheet-handle"></div>
+            <img src="" id="pop-img" class="modal-picture" alt="">
+            <h3 id="pop-title" class="modal-title"></h3>
+            <p id="pop-desc" class="modal-desc"></p>
+            <div class="modal-footer">
+                <span id="pop-price" class="modal-price"></span>
+                <button class="btn-add" style="width:auto;padding:13px 24px;" id="btn-pop-buy">
+                    <i class="fas fa-bag-shopping"></i> Comprar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal perfil -->
+    <div class="modal-view" id="profile-modal">
+        <div class="modal-sheet profile-sheet">
+            <div class="sheet-handle"></div>
+            <div style="text-align:center;margin-bottom:24px;">
+                <div style="width:64px;height:64px;margin:0 auto 12px;background:var(--ios-fill);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--ios-blue);">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.03em;">Mi Perfil</h3>
+                {% if usuario %}
+                <p style="font-size:14px;color:var(--ios-label-secondary);margin-top:4px;">{{ usuario.role }}</p>
+            </div>
+            <div class="profile-row"><span>Nombre</span><span>{{ usuario.name }}</span></div>
+            <div class="profile-row"><span>Correo</span><span>{{ usuario.email }}</span></div>
+            <div class="profile-row"><span>Rol</span><span>{{ usuario.role }}</span></div>
+            <div class="profile-row"><span>Institución</span><span>{{ usuario.institution }}</span></div>
+            <div class="profile-row"><span>Dirección</span><span>{{ usuario.address }}</span></div>
+            <div class="profile-row"><span>Barrio</span><span>{{ usuario.neighborhood }}</span></div>
+            <div class="profile-row"><span>Teléfono</span><span>{{ usuario.phone }}</span></div>
+            {% if usuario.is_admin %}
+            <div class="profile-row"><span>Administrador</span><span style="color: var(--ios-green);">Sí</span></div>
+            {% endif %}
+            <button class="btn-receipt-close" style="margin-top:20px;" onclick="hideProfileModal()">Cerrar</button>
+            {% else %}
+            <p style="font-size:14px;color:var(--ios-label-secondary);margin-top:4px;">No has iniciado sesión</p>
+            </div>
+            <a href="{{ url_for('login_page') }}" class="btn-receipt-close" style="margin-top:20px;">Iniciar Sesión</a>
+            {% endif %}
+        </div>
     </div>
 
     <!-- Carrito glassmorphic -->
@@ -2159,18 +1802,6 @@
         });
 
         /* ── Product modal ── */
-        function toggleModalState(modalId, isOpen) {
-            const el = document.getElementById(modalId);
-            if (!el) return;
-            if (isOpen) {
-                el.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            } else {
-                el.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        }
-
         function showModal(id) {
             const p = CATALOG_MAP[id];
             if (!p) return;
@@ -2179,11 +1810,13 @@
             document.getElementById('pop-img').src = p.imagen;
             document.getElementById('pop-price').textContent = fmt(p.precio);
             document.getElementById('btn-pop-buy').onclick = () => { hideModal(); addItem(p.id); };
-            toggleModalState('pop-modal', true);
+            document.getElementById('pop-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
 
         function hideModal() {
-            toggleModalState('pop-modal', false);
+            document.getElementById('pop-modal').classList.remove('active');
+            document.body.style.overflow = '';
         }
 
         document.getElementById('pop-modal').addEventListener('click', e => {
@@ -2191,11 +1824,13 @@
         });
 
         function showProfileModal() {
-            toggleModalState('profile-modal', true);
+            document.getElementById('profile-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
 
         function hideProfileModal() {
-            toggleModalState('profile-modal', false);
+            document.getElementById('profile-modal').classList.remove('active');
+            document.body.style.overflow = '';
         }
 
         document.getElementById('profile-modal').addEventListener('click', e => {
@@ -2225,14 +1860,10 @@
         /* ── Keyboard ── */
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') {
-                const activeModal = document.querySelector('.modal-view.active, .cart-drawer.active, .receipt-overlay.active');
-                if (!activeModal) return;
-                switch (activeModal.id) {
-                    case 'receipt-overlay': closeReceipt(); break;
-                    case 'cart-drawer': closeCart(); break;
-                    case 'pop-modal': hideModal(); break;
-                    case 'profile-modal': hideProfileModal(); break;
-                }
+                if (document.getElementById('receipt-overlay').classList.contains('active')) closeReceipt();
+                else if (document.getElementById('cart-drawer').classList.contains('active')) closeCart();
+                else if (document.getElementById('pop-modal').classList.contains('active')) hideModal();
+                else if (document.getElementById('profile-modal').classList.contains('active')) hideProfileModal();
             }
         });
 
@@ -2255,11 +1886,10 @@
             {% endif %}
             appData.hasFlashedMessages = {% if has_flashed_messages %}true{% else %}false{% endif %};
 
-        if (appData.usuarioPresent && !appData.hasFlashedMessages) {
-            showToast(`Bienvenido de vuelta, ${appData.usuarioName}!`, 'info');
-        }
+            if (appData.usuarioPresent && !appData.hasFlashedMessages) {
+                showToast(`Bienvenido de vuelta, ${appData.usuarioName}!`, 'info');
+            }
         });
     </script>
 </body>
-
 </html>
