@@ -39,120 +39,10 @@
             --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .navbar {
-    display: flex;
-    align-items: center;
-    padding: 10px 20px;
-    /* ... lo que ya tengas de color o altura ... */
-}
-
-/* Para darle un poquito de aire al botón y que no se pegue al logo */
-.pc-sidebar-toggle {
-    margin-right: 15px;
-}
-
-        /* Asegurar que el botón del menú flotante esté siempre por encima de todo y sea fácil de tocar en el celular */
-.btn-toggle-sidebar {
-    position: fixed;
-    bottom: 20px;       /* O ponlo arriba `top: 75px;` si prefieres que flote en una esquina superior */
-    right: 20px;
-    z-index: 99999;     /* Súper alto para que ninguna otra capa lo tape */
-    background: #0071E3;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-}
-
-/* Botón flotante para el menú en celulares */
-.btn-toggle-sidebar {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 99999; /* Siempre por encima de la barra lateral para que no lo tapen */
-    background: #0071E3;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-}
-
-/* En computadores (PC) ocultamos este botón flotante porque la barra ya está fija a la izquierda */
-@media (min-width: 768px) {
-    .btn-toggle-sidebar {
-        display: none !important;
-    }
-}
-
-
-
-/* Solo se oculta en pantallas grandes de PC */
-@media (min-width: 768px) {
-    .btn-toggle-sidebar {
-        display: none !important;
-    }
-}
-
-     /* Por defecto para celulares y pantallas pequeñas */
+      /* Estructura para poner la barra a la izquierda y el contenido al lado */
 .app-layout {
     display: flex;
-    flex-direction: column;
-    width: 100%;
-}
-
-.sidebar {
-    position: fixed;
-    left: -280px; /* Oculta a la izquierda por defecto en celulares */
-    top: 0;
-    height: 100vh;
-    width: 280px;
-    background: #ffffff;
-    transition: left 0.3s ease;
-    z-index: 1100;
-}
-
-/* Cuando se active con el botón flotante en móvil */
-.sidebar.active {
-    left: 0; 
-}
-
-
-.main-content {
-    width: 100%;
-    padding: 15px;
-}
-
-
-/* Para computadores y pantallas grandes (Desktop) */
-@media (min-width: 768px) {
-    .app-layout {
-        display: grid;
-        grid-template-columns: 260px 1fr; /* Sidebar a la izquierda, catálogo a la derecha */
-    }
-
-    .sidebar {
-        position: sticky;
-        left: auto;
-        top: 65px;
-        height: calc(100vh - 65px);
-        width: 100%;
-    }
-
-    .btn-toggle-sidebar {
-        display: none; /* Oculta el botón de hamburguesa en PC porque ya está fija */
-    }
+    min-height: 100vh;
 }
 
 .sidebar {
@@ -1305,14 +1195,13 @@
 
 <body>
 
-  <script>
+    <script>
     function toggleSidebar() {
-        const sidebar = document.querySelector('.sidebar');
-        if (sidebar) {
-            sidebar.classList.toggle('active');
-        }
+        const layout = document.querySelector('.app-layout');
+        layout.classList.toggle('sidebar-hidden');
     }
 </script>
+
 
 <script>
     function filtrarCategoria(categoria, event) {
@@ -1375,10 +1264,6 @@
 
     <!-- Navbar -->
     <nav class="navbar">
-        <!-- Botón para ocultar/mostrar la barra lateral en PC -->
-<button class="nav-btn pc-sidebar-toggle" onclick="toggleSidebar()">
-    <i class="fas fa-bars"></i> Menú
-</button>
         <div class="nav-container">
             <div class="nav-logo">Inova<span>magic</span></div>
             <div class="nav-actions">
