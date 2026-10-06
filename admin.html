@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Panel · Inovamagic</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .wrap{max-width:560px;margin:0 auto;padding:30px 20px 80px}
+  .box{background:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.85);border-radius:22px;padding:20px;margin:18px 0}
+  .prow{display:flex;gap:12px;align-items:center;margin:10px 0}
+  .prow img{width:52px;height:52px;border-radius:12px;object-fit:cover}
+  .prow .t{flex:1;font-size:.92rem}
+  .del{border:0;background:rgba(255,59,48,.12);color:#c0261c;border-radius:999px;padding:7px 12px;cursor:pointer}
+  #msg{min-height:1.4em;font-size:.9rem}
+  #preview{display:none;width:90px;height:90px;object-fit:cover;border-radius:14px;margin-top:10px}
+  small{color:var(--mute)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Panel Inovamagic</h1>
+  <p id="err" style="color:#c0261c;font-size:.9rem"></p>
+
+  <form id="login" class="box">
+    <label>Correo</label><input type="text" id="email" autocomplete="username" required>
+    <label>Contraseña</label><input type="password" id="pass" autocomplete="current-password" required style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px">
+    <button class="primary" type="submit">Entrar</button>
+  </form>
+
+  <div id="panel" hidden>
+    <div class="box"><small>Sesión: <span id="who"></span><br>Tu UID (úsalo en las reglas de Firestore): <b id="uid"></b></small>
+      <button class="secondary" id="out">Cerrar sesión</button></div>
+
+    <form id="add" class="box">
+      <h2>Nuevo producto</h2>
+      <label>Local</label><select id="shop"></select>
+      <label>Categoría</label><select id="cat"></select>
+      <label>Nombre</label><input type="text" id="name" placeholder="Jean azul" required>
+      <label>Precio (COP)</label><input type="text" id="price" inputmode="numeric" placeholder="89000" required>
+      <label>Foto</label><input type="file" id="file" accept="image/*" required>
+      <img id="preview" alt="Vista previa">
+      <button class="primary" type="submit">Guardar producto</button>
+    </form>
+    <p id="msg"></p>
+
+    <div class="box"><h2>Productos publicados</h2><div id="list"></div></div>
+  </div>
+</div>
+<script>
+  // Muestra en pantalla cualquier problema para saber qué falla
+  const showErr = t => document.getElementById("err").textContent = t;
+  if (location.protocol === "file:") showErr("Abriste el archivo con doble clic. Ábrelo con Live Server (clic derecho en admin.html > Open with Live Server).");
+  window.addEventListener("error", e => {
+    if (e.target && e.target.src) showErr("No se pudo cargar el archivo: " + e.target.src.split("/").pop() + ". Revisa que esté en la misma carpeta.");
+    else showErr("Error: " + e.message);
+  }, true);
+  window.addEventListener("unhandledrejection", e => showErr("Error: " + (e.reason && e.reason.message || e.reason)));
+</script>
+<script src="shops.js"></script>
+<script type="module" src="admin.js"></script>
+</body>
+</html>
