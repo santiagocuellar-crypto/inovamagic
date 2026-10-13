@@ -6,7 +6,7 @@ const CATEGORIES = ["Todo", "Ropa", "Calzado", "Accesorios", "Juegos"];
 
 // Cada local: whatsapp (con 57 + número, sin +) y payUrl (enlace de pago: Wompi, Bre-B, etc.)
 const SHOPS = {
-  moda:  { name: "Distribuciones Cuellar",    whatsapp: "573182846511", payUrl: "https://www.nequi.com.co" },
-  pasos: { name: "Pasos Urbanos", whatsapp: "573000000002", payUrl: "https://www.bancolombia.com" },
-  juego: { name: "Juegos Mágicos", whatsapp: "573000000003", payUrl: "https://www.nequi.com.co" },
+  moda:  { name: "Distribuciones Cuellar",    whatsapp: "573153968920S", payUrl: "https://www.nequi.com.co" },
+  pasos: { name: "Pasos Urbanos", whatsapp: "573153968920", payUrl: "https://www.bancolombia.com" },
+  juego: { name: "Juegos Mágicos", whatsapp: "573153968920", payUrl: "https://www.nequi.com.co" },
 };

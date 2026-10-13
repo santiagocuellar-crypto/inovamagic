@@ -87,3 +87,26 @@ main{min-height:115vh}
   .card{padding:8px;border-radius:18px}
   .card .name{font-size:.88rem}
 }
+
+/* ===== Celular: sin desplazamiento lateral ===== */
+html{-webkit-text-size-adjust:100%}
+body{overflow-x:clip}
+img{max-width:100%}
+#search{min-width:0}
+.cats{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:640px){
+  .top{flex-wrap:wrap;padding:10px 14px;gap:8px 10px}
+  .logo{order:1;flex:1}
+  .cart-btn{order:2}
+  #search{order:3;flex:1 1 100%;max-width:none;margin:0}
+  .cats{padding:10px 14px}
+  main{padding:4px 14px 50px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;justify-content:stretch}
+  .drawer{padding:16px}
+}
+
+/* ===== Celular: que todas las categorías se vean sin deslizar ===== */
+@media (max-width:640px){
+  .cats{flex-wrap:wrap;overflow-x:visible;gap:6px}
+  .cats button{padding:7px 13px;font-size:.9rem}
+}

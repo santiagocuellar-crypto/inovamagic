@@ -3,7 +3,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyAEmETuv2oIVpVMN9_GgXf8k7NpFX762OM",
   authDomain: "inovamagic-98e92.firebaseapp.com",
   projectId: "inovamagic-98e92",

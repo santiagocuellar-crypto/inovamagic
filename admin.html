@@ -16,11 +16,13 @@
   #msg{min-height:1.4em;font-size:.9rem}
   #preview{display:none;width:90px;height:90px;object-fit:cover;border-radius:14px;margin-top:10px}
   small{color:var(--mute)}
+  .order{border-top:1px solid var(--line);padding:12px 0;font-size:.92rem;line-height:1.5}
+  .order select{margin-top:8px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Panel Inovamagic</h1>
+  <h1 id="ptitle">Panel Inovamagic</h1>
   <p id="err" style="color:#c0261c;font-size:.9rem"></p>
 
   <form id="login" class="box">
@@ -28,6 +30,15 @@
     <label>Contraseña</label><input type="password" id="pass" autocomplete="current-password" required style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px">
     <button class="primary" type="submit">Entrar</button>
   </form>
+
+  <div id="norole" class="box" hidden>
+    <h2>Tu cuenta aún no tiene un local asignado</h2>
+    <p>Envíale este código al dueño de Inovamagic para que te asigne tu local:</p>
+    <p><b id="uid2" style="word-break:break-all"></b></p>
+    <small>Cuenta: <span id="email2"></span></small>
+    <p id="roleErr" style="color:#c0261c;font-size:.9rem"></p>
+    <button class="secondary" id="out2">Cerrar sesión</button>
+  </div>
 
   <div id="panel" hidden>
     <div class="box"><small>Sesión: <span id="who"></span><br>Tu UID (úsalo en las reglas de Firestore): <b id="uid"></b></small>
@@ -45,6 +56,48 @@
     </form>
     <p id="msg"></p>
 
+    <div id="shopsBox" class="box" hidden>
+      <h2>Locales</h2>
+      <div id="shopList"></div>
+      <button class="secondary" id="importShops" hidden>Importar los locales y categorías actuales</button>
+      <form id="shopForm">
+        <h3 id="shopFormTitle">Agregar local</h3>
+        <input type="hidden" id="sKey">
+        <label>Nombre</label><input type="text" id="sName" required>
+        <label>WhatsApp (con 57, sin +)</label><input type="tel" id="sWa" placeholder="573001234567" required>
+        <label>Enlace de pago (opcional)</label><input type="text" id="sPay">
+        <button class="primary" type="submit">Guardar local</button>
+        <button class="secondary" type="button" id="sCancel" hidden>Cancelar edición</button>
+      </form>
+    </div>
+
+    <div id="catsBox" class="box" hidden>
+      <h2>Categorías</h2>
+      <div id="catList"></div>
+      <form id="catForm"><label>Nueva categoría</label><input type="text" id="newCat" required>
+        <button class="primary" type="submit">Agregar categoría</button></form>
+    </div>
+
+    <form id="newProv" class="box" hidden>
+      <h2>Crear proveedor</h2>
+      <small>Crea su cuenta y le asigna su local en un solo paso. Luego envíale el correo y la contraseña.</small>
+      <label>Correo del proveedor</label><input type="text" id="nEmail" autocomplete="off" required>
+      <label>Contraseña (mínimo 6 caracteres)</label><input type="text" id="nPass" autocomplete="off" required>
+      <label>Local</label><select id="nShop"></select>
+      <button class="primary" type="submit">Crear proveedor</button>
+    </form>
+
+    <div id="provBox" class="box" hidden><h2>Proveedores asignados</h2><div id="provList"></div></div>
+
+    <form id="provForm" class="box" hidden>
+      <h2>Asignar una cuenta que ya existe</h2>
+      <small>Si la cuenta ya está creada en Firebase, pega aquí su UID.</small>
+      <label>UID del proveedor</label><input type="text" id="pUid" required>
+      <label>Local</label><select id="pShop"></select>
+      <button class="primary" type="submit">Asignar</button>
+    </form>
+
+    <div class="box"><h2>Pedidos</h2><button class="secondary" id="delDone" hidden>Borrar pedidos entregados</button><div id="orders"></div></div>
     <div class="box"><h2>Productos publicados</h2><div id="list"></div></div>
   </div>
 </div>

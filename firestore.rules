@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner() {
+      return request.auth != null && request.auth.uid == "9stm4uj5wtdjPzOhpT50JVtBxjo2 ";
+    }
+    function isProvider() {
+      return request.auth != null && exists(/databases/$(database)/documents/providers/$(request.auth.uid));
+    }
+    function myShop() {
+      return get(/databases/$(database)/documents/providers/$(request.auth.uid)).data.shop;
+    }
+
+    // Quién es proveedor de qué local: lo asigna solo el dueño
+    match /providers/{uid} {
+      allow read: if request.auth != null && (request.auth.uid == uid || isOwner());
+      allow write: if isOwner();
+    }
+
+    // Locales y categorías: todos los leen, solo el dueño los cambia.
+    match /shops/{id} { allow read: if true; allow write: if isOwner(); }
+    match /settings/{id} { allow read: if true; allow write: if isOwner(); }
+
+    // Productos: todos los ven. El dueño maneja todos; cada proveedor, solo los de su local.
+    match /products/{id} {
+      allow read: if true;
+      allow create: if isOwner() || (isProvider() && request.resource.data.shop == myShop());
+      allow update: if isOwner() || (isProvider() && resource.data.shop == myShop() && request.resource.data.shop == myShop());
+      allow delete: if isOwner() || (isProvider() && resource.data.shop == myShop());
+    }
+
+    // Pedidos: cualquier cliente puede CREAR uno (con formato válido).
+    // Lo lee el dueño o el proveedor de ese local; el proveedor solo puede cambiar el estado.
+    match /orders/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['num','shop','items','subtotal','fee','total','customer','status','createdAt'])
+        && request.resource.data.status == 'nuevo'
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.items.size() <= 50
+        && request.resource.data.total is number
+        && request.resource.data.customer is map
+        && request.resource.data.createdAt == request.time;
+      allow read: if isOwner() || (isProvider() && resource.data.shop == myShop());
+      allow update: if isOwner() || (isProvider() && resource.data.shop == myShop()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']));
+      allow delete: if isOwner();
+    }
+
+    match /{document=**} { allow read, write: if false; }
+  }
+}

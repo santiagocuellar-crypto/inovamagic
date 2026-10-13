@@ -30,7 +30,8 @@ function loadRemote(list) {
   const real = list.filter(p => SHOPS[p.shop]);
   PRODUCTS = SHOW_DEMO ? [...real, ...DEMO] : real; // primero los reales
   cart = Object.fromEntries(Object.entries(cart).filter(([id]) => PRODUCTS.some(p => String(p.id) === id)));
-  save(); renderGrid(); renderCart();
+  if (!CATEGORIES.includes(cat)) cat = "Todo";
+  save(); renderCats(); renderGrid(); renderCart();
 }
 
 // ====== ESTADO ======
@@ -109,6 +110,9 @@ function renderReceipt() {
     const sub = arr.reduce((a, i) => a + i.price * i.q, 0);
     const fee = c.mode === "domicilio" ? DELIVERY_FEE : 0;
     const total = sub + fee;
+    if (window.saveOrder) window.saveOrder({ num, shop: s, subtotal: sub, fee, total,
+      items: arr.map(i => ({ id: String(i.id), name: i.name, price: i.price, q: i.q })),
+      customer: { name: c.name, phone: c.phone, mode: c.mode, addr: c.mode === "domicilio" ? c.addr : "" } });
     const msg = `Hola ${shop.name}, nuevo pedido ${num} (Inovamagic)\n` +
       arr.map(i => `• ${i.q} x ${i.name} - ${money(i.price * i.q)}`).join("\n") +
       `\nSubtotal: ${money(sub)}\nDomicilio: ${money(fee)}\nTotal: ${money(total)}\n` +
