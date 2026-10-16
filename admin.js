@@ -2,7 +2,7 @@ import { auth, db, firebaseConfig } from "./firebase-config.js";
 import { loadConfig } from "./config-data.js";
 import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, addDoc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, doc, query, where, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, onSnapshot, addDoc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, doc, query, where, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const $ = id => document.getElementById(id);
 const say = (t, ok) => { $("msg").textContent = t; $("msg").style.color = ok ? "#1a7f37" : "#c0261c"; };
@@ -43,7 +43,7 @@ onAuthStateChanged(auth, async user => {
   $("login").hidden = !!user;
   $("panel").hidden = true;
   $("norole").hidden = true;
-  if (!user) return;
+  if (!user) { if (unsubOrders) unsubOrders(); return; }
   const r = await detectRole(user);
   if (r.kind === "none" || r.kind === "error") {
     $("email2").textContent = user.email; $("uid2").textContent = user.uid;
@@ -55,7 +55,7 @@ onAuthStateChanged(auth, async user => {
   myShop = r.kind === "provider" ? r.shop : null;
   $("who").textContent = user.email; $("uid").textContent = user.uid;
   $("panel").hidden = false;
-  setupRole(); loadList(); loadOrders();
+  setupRole(); loadList(); loadOrders(); watchOrders();
 });
 $("login").onsubmit = async e => {
   e.preventDefault();
@@ -64,36 +64,69 @@ $("login").onsubmit = async e => {
 };
 $("out").onclick = $("out2").onclick = () => signOut(auth);
 
-// ----- Foto: se reduce y comprime en el navegador (así cabe gratis en Firestore) -----
-$("file").onchange = e => {
-  const f = e.target.files[0]; if (!f) return;
+// ----- Fotos: se reducen y comprimen en el navegador (así caben gratis en Firestore) -----
+let photos = [], thumb = ""; // photos = versiones grandes; thumb = miniatura de la primera (es la que carga la tienda)
+const shrink = (file, max, q) => new Promise((ok, fail) => {
   const img = new Image();
   img.onload = () => {
-    const s = Math.min(1, 700 / Math.max(img.width, img.height));
+    const s = Math.min(1, max / Math.max(img.width, img.height));
     const c = document.createElement("canvas");
     c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
     c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
-    imgData = c.toDataURL("image/jpeg", 0.72);
-    $("preview").src = imgData; $("preview").style.display = "block";
+    URL.revokeObjectURL(img.src); ok(c.toDataURL("image/jpeg", q));
   };
-  img.src = URL.createObjectURL(f);
+  img.onerror = fail; img.src = URL.createObjectURL(file);
+});
+$("file").onchange = async e => {
+  const files = [...e.target.files].slice(0, 4);
+  if (!files.length) return;
+  try {
+    photos = await Promise.all(files.map(f => shrink(f, 900, 0.72)));
+    thumb = await shrink(files[0], 400, 0.7);
+    $("previews").innerHTML = photos.map(s => `<img src="${s}" alt="">`).join("");
+  } catch { say("No se pudo leer alguna de las fotos."); }
 };
 
 // ----- Guardar producto -----
+const list = t => t.split(",").map(x => x.trim()).filter(Boolean).slice(0, 20);
+let editingId = null; // id del producto que se está editando (null = producto nuevo)
+const prodCache = {};
 $("add").onsubmit = async e => {
   e.preventDefault();
-  if (!imgData) return say("Elige una foto primero.");
-  if (imgData.length > 900000) return say("La foto es muy pesada, prueba con otra.");
+  if (!editingId && !photos.length) return say("Elige al menos una foto.");
+  if (photos.join("").length > 900000) return say("Las fotos pesan mucho: usa menos fotos o más livianas.");
+  const data = {
+    shop: myShop || $("shop").value, cat: $("cat").value, name: $("name").value.trim(),
+    price: Number($("price").value.replace(/\D/g, "")),
+    desc: $("desc").value.trim().slice(0, 600), sizes: list($("sizes").value), colors: list($("colors").value)
+  };
+  if (photos.length) data.img = thumb; // si no eligió fotos nuevas, se conservan las anteriores
   try {
-    await addDoc(collection(db, "products"), {
-      shop: myShop || $("shop").value, cat: $("cat").value, name: $("name").value.trim(),
-      price: Number($("price").value.replace(/\D/g, "")), img: imgData, createdAt: serverTimestamp()
-    });
-    say("Producto guardado.", true);
-    $("add").reset(); $("preview").style.display = "none"; imgData = "";
-    loadList();
+    let id = editingId;
+    if (id) await updateDoc(doc(db, "products", id), data);
+    else id = (await addDoc(collection(db, "products"), { ...data, createdAt: serverTimestamp() })).id;
+    if (photos.length) await setDoc(doc(db, "productImages", id), { imgs: photos });
+    say(editingId ? "Cambios guardados." : "Producto guardado.", true);
+    endEdit(); loadList();
   } catch { say("No se pudo guardar. Revisa las reglas de Firestore."); }
 };
+
+function startEdit(id) {
+  const p = prodCache[id]; if (!p) return;
+  editingId = id; photos = []; thumb = "";
+  if (!myShop) $("shop").value = p.shop;
+  $("cat").value = p.cat; $("name").value = p.name; $("price").value = p.price;
+  $("desc").value = p.desc || ""; $("sizes").value = (p.sizes || []).join(", "); $("colors").value = (p.colors || []).join(", ");
+  $("file").value = ""; $("previews").innerHTML = `<img src="${p.img}" alt="">`;
+  $("addTitle").textContent = "Editar producto"; $("saveBtn").textContent = "Guardar cambios"; $("cancelEdit").hidden = false;
+  $("add").scrollIntoView({ behavior: "smooth" });
+}
+function endEdit() {
+  editingId = null; photos = []; thumb = ""; $("add").reset(); $("previews").innerHTML = "";
+  $("addTitle").textContent = "Nuevo producto"; $("saveBtn").textContent = "Guardar producto"; $("cancelEdit").hidden = true;
+}
+$("cancelEdit").onclick = endEdit;
+$("list").addEventListener("click", e => { if (e.target.dataset.pedit) startEdit(e.target.dataset.pedit); });
 
 // ----- Lista y borrado de productos -----
 async function loadList() {
@@ -101,15 +134,16 @@ async function loadList() {
     const q = myShop ? query(collection(db, "products"), where("shop", "==", myShop))
                      : query(collection(db, "products"), orderBy("createdAt", "desc"));
     const docs = (await getDocs(q)).docs.sort(byDate);
+    docs.forEach(d => { prodCache[d.id] = d.data(); });
     $("list").innerHTML = !docs.length ? "<small>Aún no hay productos.</small>" : docs.map(d => {
       const p = d.data();
-      return `<div class="prow"><img src="${esc(p.img)}" alt=""><div class="t">${esc(p.name)}<br><small>${esc(shopName(p.shop))} · $${Number(p.price).toLocaleString("es-CO")}</small></div><button class="del" data-id="${d.id}">Borrar</button></div>`;
+      return `<div class="prow"><img src="${esc(p.img)}" alt=""><div class="t">${esc(p.name)}<br><small>${esc(shopName(p.shop))} · $${Number(p.price).toLocaleString("es-CO")}${p.soldOut ? " · <b>AGOTADO</b>" : ""}</small></div><button class="del" style="background:rgba(120,120,128,.14);color:inherit" data-pedit="${d.id}">Editar</button><button class="del" style="background:rgba(120,120,128,.14);color:inherit" data-psold="${d.id}" data-state="${p.soldOut ? 1 : 0}">${p.soldOut ? "Disponible" : "Agotado"}</button><button class="del" data-id="${d.id}">Borrar</button></div>`;
     }).join("");
   } catch (e) { console.error(e); $("list").innerHTML = `<small>No se pudo cargar la lista.<br><b>Motivo: ${esc(e.code || "")} ${esc(e.message || e)}</b></small>`; }
 }
 $("list").onclick = async e => {
   const id = e.target.dataset.id;
-  if (id && confirm("¿Borrar este producto?")) { try { await deleteDoc(doc(db, "products", id)); } catch { say("No se pudo borrar."); } loadList(); }
+  if (id && confirm("¿Borrar este producto?")) { try { try { await deleteDoc(doc(db, "productImages", id)); } catch {} await deleteDoc(doc(db, "products", id)); } catch { say("No se pudo borrar."); } loadList(); }
 };
 
 // ----- Pedidos -----
@@ -123,7 +157,7 @@ async function loadOrders() {
       const o = d.data(), c = o.customer || {};
       const when = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleString("es-CO") : "";
       return `<div class="order"><b>${esc(o.num)} · ${esc(shopName(o.shop))}</b><br><small>${esc(when)}</small>
-        <div>${(o.items || []).map(i => `${esc(i.q)} × ${esc(i.name)}`).join("<br>")}</div>
+        <div>${(o.items || []).map(i => `${esc(i.q)} × ${esc(i.name)}${i.size || i.color ? " (" + [i.size, i.color].filter(Boolean).map(esc).join(", ") + ")" : ""}`).join("<br>")}</div>
         <div><small>${esc(c.name)} · ${esc(c.phone)} · ${c.mode === "domicilio" ? "Domicilio: " + esc(c.addr) : "Recoge en el local"}</small></div>
         <b>Total $${Number(o.total).toLocaleString("es-CO")}</b><br>
         <select data-oid="${d.id}">${STATES.map(s => `<option ${s === o.status ? "selected" : ""}>${s}</option>`).join("")}</select>
@@ -281,3 +315,34 @@ $("catList").onclick = async e => {
     try { await saveCats(CATEGORIES.filter(x => x !== "Todo" && x !== c)); refreshAll(); } catch { say("No se pudo quitar."); }
   }
 };
+
+// ----- Marcar un producto como agotado / disponible -----
+$("list").addEventListener("click", async e => {
+  const id = e.target.dataset.psold;
+  if (!id) return;
+  try { await updateDoc(doc(db, "products", id), { soldOut: e.target.dataset.state !== "1" }); }
+  catch { say("No se pudo cambiar el estado del producto."); }
+  loadList();
+});
+
+// ----- Pedidos en tiempo real: aparecen solos y suena un aviso, sin recargar -----
+let unsubOrders, firstSnap = true;
+function beep() {
+  try {
+    const c = new (window.AudioContext || window.webkitAudioContext)(), o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination); o.frequency.value = 880; g.gain.value = 0.15; o.start();
+    setTimeout(() => { o.stop(); c.close(); }, 250);
+  } catch {}
+}
+function watchOrders() {
+  if (unsubOrders) unsubOrders();
+  firstSnap = true;
+  const q = myShop ? query(collection(db, "orders"), where("shop", "==", myShop), limit(50))
+                   : query(collection(db, "orders"), orderBy("createdAt", "desc"), limit(30));
+  unsubOrders = onSnapshot(q, snap => {
+    if (snap.metadata.fromCache) return;
+    if (firstSnap) { firstSnap = false; return; }
+    loadOrders();
+    if (snap.docChanges().some(c => c.type === "added")) { beep(); say("Llegó un pedido nuevo.", true); }
+  }, () => {});
+}

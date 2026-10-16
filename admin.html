@@ -11,11 +11,15 @@
   .box{background:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.85);border-radius:22px;padding:20px;margin:18px 0}
   .prow{display:flex;gap:12px;align-items:center;margin:10px 0}
   .prow img{width:52px;height:52px;border-radius:12px;object-fit:cover}
-  .prow .t{flex:1;font-size:.92rem}
+  .prow{flex-wrap:wrap}
+  .prow .t{flex:1;min-width:150px;font-size:.92rem}
   .del{border:0;background:rgba(255,59,48,.12);color:#c0261c;border-radius:999px;padding:7px 12px;cursor:pointer}
   #msg{min-height:1.4em;font-size:.9rem}
   #preview{display:none;width:90px;height:90px;object-fit:cover;border-radius:14px;margin-top:10px}
   small{color:var(--mute)}
+  .pvs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .pvs img{width:80px;height:80px;object-fit:cover;border-radius:12px}
+  textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;font:inherit}
   .order{border-top:1px solid var(--line);padding:12px 0;font-size:.92rem;line-height:1.5}
   .order select{margin-top:8px}
 </style>
@@ -45,14 +49,18 @@
       <button class="secondary" id="out">Cerrar sesión</button></div>
 
     <form id="add" class="box">
-      <h2>Nuevo producto</h2>
+      <h2 id="addTitle">Nuevo producto</h2>
       <label>Local</label><select id="shop"></select>
       <label>Categoría</label><select id="cat"></select>
       <label>Nombre</label><input type="text" id="name" placeholder="Jean azul" required>
+      <label>Descripción (opcional)</label><textarea id="desc" rows="3" maxlength="600" placeholder="Material, medidas, cuidados..."></textarea>
+      <label>Tallas (opcional, separadas por coma)</label><input type="text" id="sizes" placeholder="S, M, L">
+      <label>Colores (opcional, separados por coma)</label><input type="text" id="colors" placeholder="Azul, Negro">
       <label>Precio (COP)</label><input type="text" id="price" inputmode="numeric" placeholder="89000" required>
-      <label>Foto</label><input type="file" id="file" accept="image/*" required>
-      <img id="preview" alt="Vista previa">
-      <button class="primary" type="submit">Guardar producto</button>
+      <label>Fotos (hasta 4; la primera es la principal)</label><input type="file" id="file" accept="image/*" multiple>
+      <div id="previews" class="pvs"></div>
+      <button class="primary" type="submit" id="saveBtn">Guardar producto</button>
+      <button class="secondary" type="button" id="cancelEdit" hidden>Cancelar edición</button>
     </form>
     <p id="msg"></p>
 

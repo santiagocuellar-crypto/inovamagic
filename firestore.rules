@@ -3,7 +3,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     function isOwner() {
-      return request.auth != null && request.auth.uid == "9stm4uj5wtdjPzOhpT50JVtBxjo2 ";
+      return request.auth != null && request.auth.uid == "PEGA_AQ9stm4uj5wtdjPzOhpT50JVtBxjo2I_TU_UID";
     }
     function isProvider() {
       return request.auth != null && exists(/databases/$(database)/documents/providers/$(request.auth.uid));
@@ -30,6 +30,14 @@ service cloud.firestore {
       allow delete: if isOwner() || (isProvider() && resource.data.shop == myShop());
     }
 
+    // Fotos completas de cada producto (la tienda carga solo la miniatura y pide estas al abrir el detalle)
+    match /productImages/{id} {
+      allow read: if true;
+      allow write: if isOwner() || (isProvider()
+        && exists(/databases/$(database)/documents/products/$(id))
+        && get(/databases/$(database)/documents/products/$(id)).data.shop == myShop());
+    }
+
     // Pedidos: cualquier cliente puede CREAR uno (con formato válido).
     // Lo lee el dueño o el proveedor de ese local; el proveedor solo puede cambiar el estado.
     match /orders/{id} {
@@ -42,11 +50,3 @@ service cloud.firestore {
         && request.resource.data.customer is map
         && request.resource.data.createdAt == request.time;
       allow read: if isOwner() || (isProvider() && resource.data.shop == myShop());
-      allow update: if isOwner() || (isProvider() && resource.data.shop == myShop()
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']));
-      allow delete: if isOwner();
-    }
-
-    match /{document=**} { allow read, write: if false; }
-  }
-}

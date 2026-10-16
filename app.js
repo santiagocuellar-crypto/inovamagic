@@ -26,12 +26,16 @@ let PRODUCTS = [
 
 // Productos reales guardados en Firestore (los carga store-data.js). SHOW_DEMO (en shops.js) decide si se mezclan con los de ejemplo.
 const DEMO = PRODUCTS.slice(); // productos de ejemplo
+let lastSig = "";
 function loadRemote(list) {
+  const sig = JSON.stringify(list.map(p => [p.id, p.name, p.price, p.soldOut, p.cat, p.shop, (p.img || "").length, p.desc, p.sizes, p.colors]));
+  if (sig === lastSig) return; // no cambió nada: no se vuelve a dibujar
+  lastSig = sig;
   const real = list.filter(p => SHOPS[p.shop]);
   PRODUCTS = SHOW_DEMO ? [...real, ...DEMO] : real; // primero los reales
-  cart = Object.fromEntries(Object.entries(cart).filter(([id]) => PRODUCTS.some(p => String(p.id) === id)));
+  cart = Object.fromEntries(Object.entries(cart).filter(([k]) => PRODUCTS.some(p => String(p.id) === k.split("|")[0] && !p.soldOut)));
   if (!CATEGORIES.includes(cat)) cat = "Todo";
-  save(); renderCats(); renderGrid(); renderCart();
+  save(); renderCats(); renderGrid(); updateCount(); if ($("drawer").hidden) renderCart(); // no se toca el carrito si el cliente lo está llenando
 }
 
 // ====== ESTADO ======
@@ -51,20 +55,26 @@ function renderGrid() {
     (p.name + SHOPS[p.shop].name).toLowerCase().includes(q));
   $("title").textContent = cat === "Todo" ? "Todo en un solo lugar" : cat;
   $("grid").innerHTML = list.length ? list.map(p => `
-    <article class="card">
-      <img src="${p.img}" alt="${p.name}" width="400" height="400" loading="lazy" decoding="async">
+    <article class="card${p.soldOut ? " soldout" : ""}">${p.soldOut ? '<span class="badge">Agotado</span>' : ""}
+      <img data-open="${p.id}" src="${p.img}" alt="${p.name}" width="400" height="400" loading="lazy" decoding="async">
       <div class="info">
         <span class="shop">${SHOPS[p.shop].name}</span>
-        <span class="name">${p.name}</span>
+        <span class="name" data-open="${p.id}">${p.name}</span>
         <span class="price">${money(p.price)}</span>
-        <button data-add="${p.id}">Agregar</button>
+        ${p.soldOut ? `<button disabled>Agotado</button>` : `<button data-add="${p.id}">Agregar</button>`}
       </div>
     </article>`).join("") : `<p class="empty">No encontramos productos con esa búsqueda.</p>`;
   observeCards();
 }
 
 // ====== CARRITO ======
-const items = () => Object.entries(cart).map(([id, q]) => ({ ...PRODUCTS.find(p => p.id == id), q }));
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const vtxt = i => (i.size || i.color) ? ` (${[i.size, i.color].filter(Boolean).join(", ")})` : "";
+const items = () => Object.entries(cart).map(([key, q]) => {
+  const [id, size = "", color = ""] = key.split("|");
+  const p = PRODUCTS.find(p => String(p.id) === id);
+  return p && { ...p, q, key, size, color };
+}).filter(Boolean);
 function groupByShop(list) {
   const g = {};
   list.forEach(i => (g[i.shop] = g[i.shop] || []).push(i));
@@ -82,8 +92,8 @@ function renderCart() {
   const sub = list.reduce((a, i) => a + i.price * i.q, 0);
   $("drawerBody").innerHTML = Object.entries(groups).map(([s, arr]) => `
     <div class="group"><h3>${SHOPS[s].name}</h3>
-    ${arr.map(i => `<div class="line"><img src="${i.img}" alt=""><div class="t">${i.name}<br>${money(i.price)}</div>
-      <div class="qty"><button data-dec="${i.id}">−</button>${i.q}<button data-inc="${i.id}">+</button></div></div>`).join("")}
+    ${arr.map(i => `<div class="line"><img src="${i.img}" alt=""><div class="t">${i.name}${(i.size || i.color) ? `<br><small>${[i.size, i.color].filter(Boolean).map(esc).join(" · ")}</small>` : ""}<br>${money(i.price)}</div>
+      <div class="qty"><button data-dec="${esc(i.key)}">−</button>${i.q}<button data-inc="${esc(i.key)}">+</button></div></div>`).join("")}
     </div>`).join("") + `
     <div class="row total"><span>Subtotal</span><span>${money(sub)}</span></div>
     <form id="checkout">
@@ -111,15 +121,15 @@ function renderReceipt() {
     const fee = c.mode === "domicilio" ? DELIVERY_FEE : 0;
     const total = sub + fee;
     if (window.saveOrder) window.saveOrder({ num, shop: s, subtotal: sub, fee, total,
-      items: arr.map(i => ({ id: String(i.id), name: i.name, price: i.price, q: i.q })),
+      items: arr.map(i => ({ id: String(i.id), name: i.name, price: i.price, q: i.q, size: i.size, color: i.color })),
       customer: { name: c.name, phone: c.phone, mode: c.mode, addr: c.mode === "domicilio" ? c.addr : "" } });
     const msg = `Hola ${shop.name}, nuevo pedido ${num} (Inovamagic)\n` +
-      arr.map(i => `• ${i.q} x ${i.name} - ${money(i.price * i.q)}`).join("\n") +
+      arr.map(i => `• ${i.q} x ${i.name}${vtxt(i)} - ${money(i.price * i.q)}`).join("\n") +
       `\nSubtotal: ${money(sub)}\nDomicilio: ${money(fee)}\nTotal: ${money(total)}\n` +
       `Cliente: ${c.name} - ${c.phone}\n` +
       (c.mode === "domicilio" ? `Entrega a: ${c.addr}` : "Recoge en el local");
     html += `<div class="receipt"><h3>${shop.name}</h3><small>Pedido ${num}</small>
-      ${arr.map(i => `<div class="row"><span>${i.q} × ${i.name}</span><span>${money(i.price * i.q)}</span></div>`).join("")}
+      ${arr.map(i => `<div class="row"><span>${i.q} × ${i.name}${esc(vtxt(i))}</span><span>${money(i.price * i.q)}</span></div>`).join("")}
       <div class="row"><span>Domicilio</span><span>${money(fee)}</span></div>
       <div class="row total"><span>Total</span><span>${money(total)}</span></div>
       ${shop.payUrl ? `<a class="primary" href="${shop.payUrl}" target="_blank" rel="noopener">Pagar ${money(total)}</a>` : `<p><small>El pago se acuerda con el local por WhatsApp.</small></p>`}
@@ -156,17 +166,59 @@ window.addEventListener("scroll", () => {
   });
 }, { passive: true });
 
+// ====== DETALLE DEL PRODUCTO ======
+let sel = { size: "", color: "" };
+const hasOpts = p => (p.sizes && p.sizes.length) || (p.colors && p.colors.length);
+function addToCart(id, size, color) {
+  const key = (size || color) ? [id, size, color].join("|") : String(id);
+  cart[key] = (cart[key] || 0) + 1; save();
+  closeDetail(); renderCart(); openDrawer(true);
+}
+function showDetail(id) {
+  const p = PRODUCTS.find(x => String(x.id) === String(id)); if (!p) return;
+  sel = { size: "", color: "" };
+  const opt = (label, arr, field) => arr && arr.length ? `<b>${label}</b><div class="opts" data-field="${field}">${arr.map(v => `<button type="button" data-opt="${esc(v)}">${esc(v)}</button>`).join("")}</div>` : "";
+  $("detailBody").innerHTML = `<button class="dclose" id="dclose" aria-label="Cerrar">✕</button>
+    <img id="dmain" data-pid="${esc(p.id)}" src="${p.img}" alt="${esc(p.name)}"><div id="dthumbs" class="thumbs"></div>
+    <h2>${esc(p.name)}</h2><div class="shop">${esc(SHOPS[p.shop].name)}</div>
+    <div class="dprice">${money(p.price)}</div>
+    ${p.desc ? `<p class="ddesc">${esc(p.desc)}</p>` : ""}
+    ${opt("Talla", p.sizes, "size")}${opt("Color", p.colors, "color")}
+    <p id="dmsg" class="dmsg"></p>
+    ${p.soldOut ? `<button class="secondary" disabled>Agotado</button>` : `<button class="primary" data-dadd="${esc(p.id)}">Agregar al carrito</button>`}`;
+  $("detail").hidden = false; $("shade").hidden = false;
+  // fotos completas (si el producto tiene varias), se cargan al abrir el detalle
+  if (window.loadPhotos && !/^\d+$/.test(String(p.id))) window.loadPhotos(String(p.id)).then(imgs => {
+    const m = $("dmain");
+    if (!imgs.length || !m || m.dataset.pid !== String(p.id)) return;
+    m.src = imgs[0];
+    if (imgs.length > 1) $("dthumbs").innerHTML = imgs.map(s => `<img src="${s}" data-photo="1" alt="">`).join("");
+  });
+}
+function closeDetail() { $("detail").hidden = true; if ($("drawer").hidden) $("shade").hidden = true; }
+
 // ====== EVENTOS ======
 document.addEventListener("click", e => {
   const t = e.target;
   if (t.dataset.c) { cat = t.dataset.c; renderCats(); renderGrid(); }
-  if (t.dataset.add) { cart[t.dataset.add] = (cart[t.dataset.add] || 0) + 1; save(); renderCart(); openDrawer(true); }
+  if (t.dataset.open) showDetail(t.dataset.open);
+  if (t.dataset.photo) $("dmain").src = t.src;
+  if (t.dataset.add) { const p = PRODUCTS.find(x => String(x.id) === t.dataset.add); if (p && hasOpts(p)) showDetail(p.id); else if (p) addToCart(p.id, "", ""); }
+  if (t.dataset.opt !== undefined) { const w = t.parentElement; w.querySelectorAll("button").forEach(b => b.classList.remove("on")); t.classList.add("on"); sel[w.dataset.field] = t.dataset.opt; }
+  if (t.dataset.dadd) {
+    const p = PRODUCTS.find(x => String(x.id) === t.dataset.dadd);
+    if (p.sizes && p.sizes.length && !sel.size) return $("dmsg").textContent = "Elige una talla.";
+    if (p.colors && p.colors.length && !sel.color) return $("dmsg").textContent = "Elige un color.";
+    addToCart(p.id, sel.size, sel.color);
+  }
+  if (t.id === "dclose") closeDetail();
   if (t.dataset.inc) { cart[t.dataset.inc]++; save(); renderCart(); }
   if (t.dataset.dec) { if (--cart[t.dataset.dec] <= 0) delete cart[t.dataset.dec]; save(); renderCart(); }
 });
 let timer; // espera 150 ms al escribir para no redibujar en cada letra
 $("search").oninput = e => { clearTimeout(timer); timer = setTimeout(() => { query = e.target.value; renderGrid(); }, 150); };
 $("openCart").onclick = () => { renderCart(); openDrawer(true); };
-$("closeCart").onclick = $("shade").onclick = () => openDrawer(false);
+$("closeCart").onclick = $("shade").onclick = () => { openDrawer(false); closeDetail(); };
+document.addEventListener("keydown", e => { if (e.key === "Escape") { openDrawer(false); closeDetail(); } });
 
 renderCats(); renderGrid(); updateCount();
